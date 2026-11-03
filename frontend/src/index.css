@@ -265,7 +265,7 @@ body {
 .resize-handle::after { content: ""; position: absolute; inset: 0 -4px; }
 .resize-handle:hover, .resize-handle:active { background: var(--brand); }
 .brand { color: var(--brand); }
-.input:focus-within, .input:focus { outline-color: color-mix(in oklab, var(--brand) 50%, transparent); border-color: var(--brand); }
+.input:focus-within, .input:focus { --input-color: var(--brand); }
 
 /* CodeMirror */
 .cm-host { height: 100%; contain: layout paint; }
