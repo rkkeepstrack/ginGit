@@ -12,7 +12,9 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -89,6 +91,37 @@ func classify(stderr string, err error) error {
 	return err
 }
 
+var (
+	binaryOnce sync.Once
+	binary     = "git"
+)
+
+// Binary is the git executable we spawn. On macOS /usr/bin/git is Xcode's
+// xcrun shim, which adds about 6ms to every spawn; the real binary behind it
+// (or a Homebrew git) is found once.
+func Binary() string {
+	binaryOnce.Do(func() {
+		for _, candidate := range []string{"/opt/homebrew/bin/git", "/usr/local/bin/git"} {
+			if st, err := os.Stat(candidate); err == nil && !st.IsDir() {
+				binary = candidate
+				return
+			}
+		}
+		if runtime.GOOS == "darwin" {
+			if out, err := exec.Command("/usr/bin/xcrun", "--find", "git").Output(); err == nil {
+				if p := strings.TrimSpace(string(out)); p != "" {
+					binary = p
+					return
+				}
+			}
+		}
+		if p, err := exec.LookPath("git"); err == nil {
+			binary = p
+		}
+	})
+	return binary
+}
+
 func command(ctx context.Context, repoPath string, args []string) (*exec.Cmd, error) {
 	if len(args) == 0 {
 		return nil, fmt.Errorf("%w: empty argument list", ErrInvalidArg)
@@ -97,7 +130,7 @@ func command(ctx context.Context, repoPath string, args []string) (*exec.Cmd, er
 		return nil, fmt.Errorf("%w: %s", ErrDisallowed, args[0])
 	}
 	full := append([]string{"-c", "core.quotepath=off", "-c", "color.ui=never"}, args...)
-	cmd := exec.CommandContext(ctx, "git", full...)
+	cmd := exec.CommandContext(ctx, Binary(), full...)
 	cmd.Dir = repoPath
 	cmd.Env = append(os.Environ(), "GIT_TERMINAL_PROMPT=0", "LC_ALL=C", "GIT_OPTIONAL_LOCKS=0")
 	return cmd, nil

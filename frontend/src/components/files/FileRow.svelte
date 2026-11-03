@@ -24,7 +24,7 @@
   <span class="truncate fn-{change.type}">{name}</span>
   {#if mark}<span class="ct ct-{change.type}">{mark.letter}</span>{/if}
   {#if change.oldPath}<span class="opacity-40 truncate text-[10px]">← {change.oldPath.split('/').pop()}</span>{/if}
-  {#if change.touches.length > 1}<span class="text-[10.5px] opacity-50 tabular-nums shrink-0" use:hint={`Changed in ${change.touches.length} selected commits`}>×{change.touches.length}</span>{/if}
+  {#if change.touchCount > 1}<span class="text-[10.5px] opacity-50 tabular-nums shrink-0" use:hint={`Changed in ${change.touchCount} selected commits`}>×{change.touchCount}</span>{/if}
   {#if !change.composable}<Unlink size={12} strokeWidth={1.75} class="text-warning shrink-0" />{/if}
   <span class="flex-1"></span>
   {#if change.binary}

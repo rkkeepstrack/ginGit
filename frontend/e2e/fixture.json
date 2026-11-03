@@ -4,7 +4,7 @@
   "name": "demo",
   "branch": "main",
   "head": "83887abb616392e566b87c2350f506dc27c6b080",
-  "gitDir": "/private/var/folders/b4/bx680vgj5112hgkmnzdyzsy80000gn/T/TestGenerate984987462/001/.git",
+  "gitDir": "/private/var/folders/b4/bx680vgj5112hgkmnzdyzsy80000gn/T/TestGenerate751053557/001/.git",
   "detached": false,
   "bare": false
  },
@@ -331,16 +331,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "337dca297200b0b77034b05a2ca563e725a58a06",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -361,16 +352,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "337dca297200b0b77034b05a2ca563e725a58a06",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -379,16 +361,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": true,
-     "touches": [
-      {
-       "commit": "64a9d8c703b2cf80753c6773788efbd1300468b6",
-       "type": "added",
-       "path": "assets/logo.png",
-       "additions": 0,
-       "deletions": 0,
-       "binary": true
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -397,16 +370,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "52bac3fdd24b22c4c6a2fd3fc921c4a37b6d7c26",
-       "type": "added",
-       "path": "src/login.ts",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -416,25 +380,7 @@
      "additions": 3,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "52bac3fdd24b22c4c6a2fd3fc921c4a37b6d7c26",
-       "type": "modified",
-       "path": "src/main.ts",
-       "additions": 3,
-       "deletions": 1,
-       "binary": false
-      },
-      {
-       "commit": "64a9d8c703b2cf80753c6773788efbd1300468b6",
-       "type": "renamed",
-       "path": "src/main.ts",
-       "oldPath": "src/app.ts",
-       "additions": 0,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 2,
      "composable": true
     }
    ]
@@ -458,24 +404,7 @@
      "additions": 5,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "83887abb616392e566b87c2350f506dc27c6b080",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 1,
-       "deletions": 1,
-       "binary": false
-      },
-      {
-       "commit": "337dca297200b0b77034b05a2ca563e725a58a06",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 2,
      "composable": true
     },
     {
@@ -484,24 +413,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": true,
-     "touches": [
-      {
-       "commit": "fd94d890b06afb3538ab22037cc9c292112ae87e",
-       "type": "deleted",
-       "path": "assets/logo.png",
-       "additions": 0,
-       "deletions": 0,
-       "binary": true
-      },
-      {
-       "commit": "64a9d8c703b2cf80753c6773788efbd1300468b6",
-       "type": "added",
-       "path": "assets/logo.png",
-       "additions": 0,
-       "deletions": 0,
-       "binary": true
-      }
-     ],
+     "touchCount": 2,
      "composable": true
     },
     {
@@ -510,16 +422,7 @@
      "additions": 4,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "fbd53288da042e86f230774da4378c273407745c",
-       "type": "modified",
-       "path": "package.json",
-       "additions": 4,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -528,16 +431,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "52bac3fdd24b22c4c6a2fd3fc921c4a37b6d7c26",
-       "type": "added",
-       "path": "src/login.ts",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -547,25 +441,7 @@
      "additions": 3,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "52bac3fdd24b22c4c6a2fd3fc921c4a37b6d7c26",
-       "type": "modified",
-       "path": "src/main.ts",
-       "additions": 3,
-       "deletions": 1,
-       "binary": false
-      },
-      {
-       "commit": "64a9d8c703b2cf80753c6773788efbd1300468b6",
-       "type": "renamed",
-       "path": "src/main.ts",
-       "oldPath": "src/app.ts",
-       "additions": 0,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 2,
      "composable": true
     }
    ]
@@ -584,16 +460,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "52bac3fdd24b22c4c6a2fd3fc921c4a37b6d7c26",
-       "type": "added",
-       "path": "src/login.ts",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -602,16 +469,7 @@
      "additions": 3,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "52bac3fdd24b22c4c6a2fd3fc921c4a37b6d7c26",
-       "type": "modified",
-       "path": "src/main.ts",
-       "additions": 3,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -628,16 +486,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": true,
-     "touches": [
-      {
-       "commit": "64a9d8c703b2cf80753c6773788efbd1300468b6",
-       "type": "added",
-       "path": "assets/logo.png",
-       "additions": 0,
-       "deletions": 0,
-       "binary": true
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -647,17 +496,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "64a9d8c703b2cf80753c6773788efbd1300468b6",
-       "type": "renamed",
-       "path": "src/main.ts",
-       "oldPath": "src/app.ts",
-       "additions": 0,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -674,16 +513,7 @@
      "additions": 1,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "6ce9408c1cb73865dd112027cd863078aa39b1d3",
-       "type": "added",
-       "path": "src/base.ts",
-       "additions": 1,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -700,16 +530,7 @@
      "additions": 2,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "6d29c096a2b08ead328b4d5cab2e230df301f777",
-       "type": "modified",
-       "path": "src/login.ts",
-       "additions": 2,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -727,16 +548,7 @@
      "additions": 3,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-       "type": "modified",
-       "path": "src/app.ts",
-       "additions": 3,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -745,24 +557,7 @@
      "additions": 5,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "6d29c096a2b08ead328b4d5cab2e230df301f777",
-       "type": "modified",
-       "path": "src/login.ts",
-       "additions": 2,
-       "deletions": 1,
-       "binary": false
-      },
-      {
-       "commit": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-       "type": "added",
-       "path": "src/login.ts",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 2,
      "composable": true
     }
    ]
@@ -779,16 +574,7 @@
      "additions": 1,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "83887abb616392e566b87c2350f506dc27c6b080",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 1,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -806,24 +592,7 @@
      "additions": 4,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "83887abb616392e566b87c2350f506dc27c6b080",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 1,
-       "deletions": 1,
-       "binary": false
-      },
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "README.md",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 2,
      "composable": false
     },
     {
@@ -832,16 +601,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "package.json",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -850,16 +610,7 @@
      "additions": 3,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "src/app.ts",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -878,16 +629,7 @@
      "additions": 1,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "83887abb616392e566b87c2350f506dc27c6b080",
-       "type": "modified",
-       "path": "README.md",
-       "additions": 1,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -896,16 +638,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": true,
-     "touches": [
-      {
-       "commit": "fd94d890b06afb3538ab22037cc9c292112ae87e",
-       "type": "deleted",
-       "path": "assets/logo.png",
-       "additions": 0,
-       "deletions": 0,
-       "binary": true
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -914,16 +647,7 @@
      "additions": 4,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "fbd53288da042e86f230774da4378c273407745c",
-       "type": "modified",
-       "path": "package.json",
-       "additions": 4,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -940,16 +664,7 @@
      "additions": 2,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "919e9d38706fe8676d84df6c4900e2c66f308c86",
-       "type": "added",
-       "path": "src/top.ts",
-       "additions": 2,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -966,16 +681,7 @@
      "additions": 3,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-       "type": "modified",
-       "path": "src/app.ts",
-       "additions": 3,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -984,16 +690,7 @@
      "additions": 3,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-       "type": "added",
-       "path": "src/login.ts",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -1010,16 +707,7 @@
      "additions": 3,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "README.md",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -1028,16 +716,7 @@
      "additions": 4,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "package.json",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     },
     {
@@ -1046,16 +725,7 @@
      "additions": 3,
      "deletions": 0,
      "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "src/app.ts",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -1072,16 +742,7 @@
      "additions": 4,
      "deletions": 1,
      "binary": false,
-     "touches": [
-      {
-       "commit": "fbd53288da042e86f230774da4378c273407745c",
-       "type": "modified",
-       "path": "package.json",
-       "additions": 4,
-       "deletions": 1,
-       "binary": false
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]
@@ -1098,16 +759,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": true,
-     "touches": [
-      {
-       "commit": "fd94d890b06afb3538ab22037cc9c292112ae87e",
-       "type": "deleted",
-       "path": "assets/logo.png",
-       "additions": 0,
-       "deletions": 0,
-       "binary": true
-      }
-     ],
+     "touchCount": 1,
      "composable": true
     }
    ]

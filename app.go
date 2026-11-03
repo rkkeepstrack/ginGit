@@ -30,6 +30,7 @@ type App struct {
 
 	mu       sync.Mutex
 	root     string
+	refs     []repo.Ref // as last listed for the frontend
 	index    *history.Index
 	cancel   context.CancelFunc // stops the running history load
 	watcher  *fsnotify.Watcher
@@ -68,6 +69,7 @@ func (a *App) dropLocked() {
 		a.cancel = nil
 	}
 	a.index = history.NewIndex()
+	a.refs = nil
 	a.changes.Clear()
 	a.blobs.Clear()
 	a.branches.Clear()
@@ -177,20 +179,48 @@ func (a *App) Refs(root string) ([]repo.Ref, error) {
 	if refs == nil {
 		refs = []repo.Ref{}
 	}
+	a.mu.Lock()
+	if root == a.root {
+		a.refs = refs
+	}
+	a.mu.Unlock()
 	return refs, nil
 }
 
-// BranchCommits is the work on one branch: reachable from ref, not from the
-// default branch.
+// BranchCommits is the work on one branch. It runs over the loaded index;
+// only while the history is still streaming does it fall back to git.
 func (a *App) BranchCommits(root string, ref string) ([]string, error) {
-	if _, err := a.open(root); err != nil {
+	index, err := a.open(root)
+	if err != nil {
 		return nil, err
+	}
+	refs, err := a.refsFor(root)
+	if err != nil {
+		return nil, userError(err)
+	}
+	tips := make([]history.RefTip, len(refs))
+	for i, r := range refs {
+		tips[i] = history.RefTip{Full: r.Full, Hash: r.Hash, Tag: r.Kind == "tag"}
+	}
+	if hashes, ok := index.BranchCommits(tips, ref); ok {
+		return hashes, nil
 	}
 	hashes, err := repo.BranchCommits(a.ctx, root, ref)
 	if err != nil {
 		return nil, userError(err)
 	}
 	return hashes, nil
+}
+
+// refsFor returns the refs as last listed for the frontend, or lists them.
+func (a *App) refsFor(root string) ([]repo.Ref, error) {
+	a.mu.Lock()
+	refs := a.refs
+	a.mu.Unlock()
+	if refs != nil {
+		return refs, nil
+	}
+	return repo.Refs(a.ctx, root)
 }
 
 // --- history --------------------------------------------------------------

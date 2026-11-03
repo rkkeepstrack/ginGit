@@ -33,13 +33,14 @@ type Touch struct {
 }
 
 type FileChange struct {
-	Path      string  `json:"path"`
-	OldPath   string  `json:"oldPath,omitempty"`
-	Type      string  `json:"type"`
-	Additions int     `json:"additions"`
-	Deletions int     `json:"deletions"`
-	Binary    bool    `json:"binary"`
-	Touches   []Touch `json:"touches"` // newest first
+	Path       string  `json:"path"`
+	OldPath    string  `json:"oldPath,omitempty"`
+	Type       string  `json:"type"`
+	Additions  int     `json:"additions"`
+	Deletions  int     `json:"deletions"`
+	Binary     bool    `json:"binary"`
+	Touches    []Touch `json:"-"` // newest first; FileDiff reads them, the UI only needs the count
+	TouchCount int     `json:"touchCount"`
 	// Composable is true when each touch starts from the blob the previous
 	// one produced, i.e. nothing outside the selection changed the file in
 	// between. Then old(first)..new(last) is one honest patch.
@@ -125,6 +126,7 @@ func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*Cha
 			fc.OldPath = ""
 		}
 		fc.Composable = composable(fc.Touches)
+		fc.TouchCount = len(fc.Touches)
 		cs.Files = append(cs.Files, *fc)
 	}
 	sort.Slice(cs.Files, func(i, j int) bool { return cs.Files[i].Path < cs.Files[j].Path })

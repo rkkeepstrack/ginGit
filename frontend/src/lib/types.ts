@@ -34,16 +34,6 @@ export interface RecentRepo { path: string; name: string; lastOpen: string }
 
 export type ChangeType = 'added' | 'modified' | 'deleted' | 'renamed'
 
-export interface Touch {
-  commit: string
-  type: ChangeType
-  path: string
-  oldPath?: string
-  additions: number
-  deletions: number
-  binary: boolean
-}
-
 export interface FileChange {
   path: string
   oldPath?: string
@@ -51,7 +41,8 @@ export interface FileChange {
   additions: number
   deletions: number
   binary: boolean
-  touches: Touch[]
+  /** How many selected commits changed it. */
+  touchCount: number
   composable: boolean
 }
 

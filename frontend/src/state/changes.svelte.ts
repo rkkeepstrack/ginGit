@@ -21,6 +21,7 @@ export const changes = new ChangesStore()
 
 let generation = 0
 let timer: ReturnType<typeof setTimeout> | undefined
+let lastTrigger = 0
 
 function fetchChanges(repoPath: string | undefined, hashes: string[]) {
   clearTimeout(timer)
@@ -32,7 +33,10 @@ function fetchChanges(repoPath: string | undefined, hashes: string[]) {
     return
   }
   changes.loading = true
-  // A short debounce absorbs shift-click runs and arrow-key bursts.
+  // Bursts (arrow keys, shift-click runs) are debounced; a lone change goes out at once.
+  const now = performance.now()
+  const burst = now - lastTrigger < 150
+  lastTrigger = now
   timer = setTimeout(() => {
     api.listChanges(repoPath, hashes).then(
       (cs) => { if (gen === generation) { changes.changeSet = cs; changes.loading = false; changes.error = null } },
@@ -45,7 +49,7 @@ function fetchChanges(repoPath: string | undefined, hashes: string[]) {
         changes.error = e.display
       },
     )
-  }, 60)
+  }, burst ? 60 : 0)
 }
 
 $effect.root(() => {

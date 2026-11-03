@@ -68,6 +68,14 @@ func ForFile(ctx context.Context, root string, fc changes.FileChange, cache *Cac
 	}
 	res.Stacked = true
 	res.Note = "Commits outside the selection also changed this file in between, so the selected changes can't be merged into one patch. Each commit's own change is shown below."
+	// All blobs in one round, not two spawns per touch.
+	var wanted []string
+	for _, t := range fc.Touches {
+		wanted = append(wanted, t.OldBlob, t.NewBlob)
+	}
+	if _, err := fetch(ctx, root, cache, wanted...); err != nil {
+		return nil, err
+	}
 	for _, t := range fc.Touches {
 		p, err := pair(ctx, root, cache, t, t)
 		if err != nil {

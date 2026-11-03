@@ -51,7 +51,7 @@
     <span class="truncate select-text fn-{file.type}" title={file.path}>
       {#if file.oldPath}<span class="opacity-50">{file.oldPath} → </span>{/if}{file.path}
     </span>
-    {#if file.touches.length > 1}<span class="opacity-50 text-[10.5px] tabular-nums shrink-0" use:hint={`Changed in ${file.touches.length} selected commits`}>×{file.touches.length}</span>{/if}
+    {#if file.touchCount > 1}<span class="opacity-50 text-[10.5px] tabular-nums shrink-0" use:hint={`Changed in ${file.touchCount} selected commits`}>×{file.touchCount}</span>{/if}
     {#if !file.composable}<Unlink size={12} strokeWidth={1.75} class="text-warning shrink-0" />{/if}
     <div class="flex-1"></div>
     {#if file.binary}
