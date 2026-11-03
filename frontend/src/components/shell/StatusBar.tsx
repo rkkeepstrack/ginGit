@@ -4,34 +4,8 @@ import { useHint } from '../../state/hintStore'
 import { modKey } from '../../lib/platform'
 import { formatCount } from '../../lib/format'
 
-type Hint = { keys: string[]; label: string }
-
-const Key = ({ k }: { k: string }) => <kbd className="kbd kbd-xs mx-0.5 font-[inherit] text-[10px] min-h-4 h-4 px-1">{k}</kbd>
-
-function Hints({ hints }: { hints: Hint[] }) {
-  return (
-    <span className="inline-flex items-center gap-3">
-      {hints.map((h) => (
-        <span key={h.label} className="inline-flex items-center">
-          {h.keys.map((k) => <Key key={k} k={k} />)}
-          <span className="ml-1">{h.label}</span>
-        </span>
-      ))}
-    </span>
-  )
-}
-
-const idleHints: Hint[] = [
-  { keys: ['Click'], label: 'select' },
-  { keys: [`${modKey} Click`], label: 'toggle' },
-  { keys: ['⇧ Click'], label: 'range' },
-]
-const selectionHints: Hint[] = [
-  { keys: ['[', `${modKey} ↑`], label: 'previous file' },
-  { keys: [']', `${modKey} ↓`], label: 'next file' },
-  { keys: [`${modKey} ⇧ D`], label: 'diff layout' },
-  { keys: ['Esc'], label: 'clear' },
-]
+const idleHint = `Click: select · ${modKey}-click: toggle · Shift-click: range`
+const selectionHint = `[ or ${modKey}↑: previous file · ] or ${modKey}↓: next file · ${modKey}⇧D: diff layout · Esc: clear`
 
 export function StatusBar() {
   const hint = useHint((s) => s.hint)
@@ -49,8 +23,7 @@ export function StatusBar() {
         <span className="truncate opacity-60">{hint}</span>
       ) : (
         <span className="truncate opacity-60">
-          {count > 0 && <span className="mr-3 tabular-nums">{count} selected</span>}
-          <Hints hints={count > 0 ? selectionHints : idleHints} />
+          {count > 0 ? `${count} selected · ${selectionHint}` : idleHint}
         </span>
       )}
       <div className="flex-1" />
