@@ -3,7 +3,7 @@ import { absoluteDate, relativeDate, shortHash } from '../../lib/format'
 import type { Commit, Ref } from '../../lib/types'
 import { LaneCell } from './LaneCell'
 import { RefPills } from './RefPills'
-import { DATE_W, HASH_W } from './columns'
+import type { Columns } from './columns'
 import { conventionalPrefix } from '../../lib/color'
 import { copyText } from '../../lib/clipboard'
 import { hintProps, useHint } from '../../state/hintStore'
@@ -13,14 +13,14 @@ async function copyHash(hash: string) {
   useHint.getState().flashMessage(ok ? `Copied ${hash}` : 'Clipboard not available')
 }
 
-export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, selected, graphWidth, authorWidth, onClick }: {
+export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, selected, graphWidth, columns, onClick }: {
   commit: Commit
   prev: Commit | undefined
   refs: Ref[]
   isHead: boolean
   selected: boolean
   graphWidth: number
-  authorWidth: number
+  columns: Columns
   onClick: (e: React.MouseEvent) => void
 }) {
   const isMerge = commit.parents.length > 1
@@ -36,13 +36,17 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
         <RefPills refs={refs} />
         {conv ? <><span className={`kind kind-${conv.kind}`}>{conv.prefix}</span> {conv.rest}</> : commit.subject}
       </div>
-      <div className="shrink-0 overflow-hidden text-ellipsis pr-3 opacity-70" style={{ width: authorWidth }} title={`${commit.author} <${commit.authorEmail}>`}>
-        {commit.author}
-      </div>
-      <div className="shrink-0 pr-3 opacity-55 text-right tabular-nums" style={{ width: DATE_W }} title={absoluteDate(commit.authorDate)}>
-        {relativeDate(commit.authorDate)}
-      </div>
-      <div className="shrink-0 pr-2" style={{ width: HASH_W }}>
+      {columns.author > 0 && (
+        <div className="shrink-0 overflow-hidden text-ellipsis pr-3 opacity-70" style={{ width: columns.author }} title={`${commit.author} <${commit.authorEmail}>`}>
+          {commit.author}
+        </div>
+      )}
+      {columns.date > 0 && (
+        <div className="shrink-0 pr-3 opacity-55 text-right tabular-nums" style={{ width: columns.date }} title={absoluteDate(commit.authorDate)}>
+          {relativeDate(commit.authorDate)}
+        </div>
+      )}
+      {columns.hash > 0 && <div className="shrink-0 pr-2" style={{ width: columns.hash }}>
         <span
           className="hash-cell mono opacity-50"
           onMouseDown={(e) => e.stopPropagation()}
@@ -51,7 +55,7 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
         >
           {shortHash(commit.hash)}
         </span>
-      </div>
+      </div>}
     </div>
   )
 })

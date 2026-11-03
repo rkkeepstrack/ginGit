@@ -1,5 +1,5 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { hasMod } from '../../lib/platform'
 import { useRepo } from '../../state/repoStore'
@@ -7,7 +7,7 @@ import { useSearch } from '../../state/searchStore'
 import { useSelection } from '../../state/selectionStore'
 import { CommitRow } from './CommitRow'
 import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LaneCell'
-import { DATE_W, HASH_W, authorWidth } from './columns'
+import { authorWidth, fitColumns } from './columns'
 import { Notice } from '../shell/Notice'
 
 const EMPTY: never[] = []
@@ -21,6 +21,15 @@ export function CommitList() {
   const click = useSelection((s) => s.click)
   const moveCursor = useSelection((s) => s.moveCursor)
   const authorW = useMemo(() => authorWidth(commits), [commits])
+  const [panelWidth, setPanelWidth] = useState(1200)
+  const panelRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = panelRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => setPanelWidth(entry.contentRect.width))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   // Row i of the list shows commit visible[i].
   const visible = useMemo(() => matches ?? EMPTY, [matches])
@@ -36,6 +45,7 @@ export function CommitList() {
   })
 
   const graphWidth = GRAPH_PAD + Math.min(maxLanes, MAX_LANES) * LANE_W + 6
+  const columns = useMemo(() => fitColumns(panelWidth, graphWidth, authorW), [panelWidth, graphWidth, authorW])
 
   // Keep the keyboard cursor in view.
   const cursor = useSelection((s) => s.cursor)
@@ -53,13 +63,13 @@ export function CommitList() {
   }
 
   return (
-    <div className="flex flex-col h-full min-h-0" id="panel-graph">
+    <div ref={panelRef} className="flex flex-col h-full min-h-0" id="panel-graph">
       <div className="flex items-center h-8 col-head hairline-b shrink-0 overflow-hidden" style={{ scrollbarGutter: 'stable' }}>
         <div style={{ width: graphWidth }} className="shrink-0" />
         <div className="flex-1 pl-1.5">Commit</div>
-        <div className="shrink-0" style={{ width: authorW }}>Author</div>
-        <div className="shrink-0 text-right pr-3" style={{ width: DATE_W }}>Date</div>
-        <div className="shrink-0" style={{ width: HASH_W }}>Hash</div>
+        {columns.author > 0 && <div className="shrink-0" style={{ width: columns.author }}>Author</div>}
+        {columns.date > 0 && <div className="shrink-0 text-right pr-3" style={{ width: columns.date }}>Date</div>}
+        {columns.hash > 0 && <div className="shrink-0" style={{ width: columns.hash }}>Hash</div>}
       </div>
       {error && <Notice kind="error">{error}</Notice>}
       <div ref={parentRef} className="flex-1 overflow-auto outline-none" style={{ scrollbarGutter: 'stable' }} tabIndex={0} onKeyDown={onKeyDown}>
@@ -80,7 +90,7 @@ export function CommitList() {
                   isHead={c.hash === head}
                   selected={selected.has(c.hash)}
                   graphWidth={graphWidth}
-                  authorWidth={authorW}
+                  columns={columns}
                   onClick={(e) => click(idx, { toggle: hasMod(e), range: e.shiftKey })}
                 />
               </div>
