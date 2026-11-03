@@ -8,10 +8,11 @@ import { useSelection, useSelectionInfo } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
 import { useChanges } from '../../state/changesStore'
+import { iconFor } from '../../lib/fileIcon'
 import { AllFilesView } from './AllFilesView'
 import { MergeViewHost } from './MergeViewHost'
 
-export const typeLabel: Record<ChangeType, string> = { added: 'Added', modified: 'Modified', deleted: 'Deleted', renamed: 'Renamed' }
+export const typeLabel: Record<ChangeType, string> = { added: 'Added', modified: '', deleted: 'Deleted', renamed: 'Renamed' }
 
 export function stepFile(delta: number) {
   const { file, setFile } = useSelection.getState()
@@ -65,15 +66,17 @@ export function DiffPanel() {
   }
 
   const segments = file.split('/')
+  const FileIcon = iconFor(file)
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-diff">
       <div className="panel-head hairline-b">
-        {result && <span className={`ct-${result.type} text-[11px] font-medium shrink-0`}>{typeLabel[result.type]}</span>}
+        <FileIcon size={14} strokeWidth={1.75} className="opacity-55 shrink-0" />
         <span className="truncate select-text" title={file}>
           {segments.map((s, i) => (
             <span key={i} className={i === segments.length - 1 ? '' : 'opacity-50'}>{s}{i < segments.length - 1 ? '/' : ''}</span>
           ))}
         </span>
+        {result && typeLabel[result.type] && <span className={`ct-${result.type} text-[11px] font-medium shrink-0`}>{typeLabel[result.type]}</span>}
         {result && !result.stacked && result.pairs[0] && (
           <span className="opacity-50 shrink-0" title="Old commit → new commit">
             {result.pairs[0].old.missing ? '∅' : blobOrigin(result.pairs[0])} → {shortHash(result.pairs[0].commit)}
@@ -97,7 +100,7 @@ export function DiffPanel() {
                 <GitCommitHorizontal size={14} strokeWidth={1.75} className="opacity-50" />
                 <span className="mono opacity-60">{shortHash(p.commit)}</span>
                 <span className="truncate">{p.subject}</span>
-                <span className={`ct-${p.type} text-[11px] font-medium shrink-0`}>{typeLabel[p.type]}</span>
+                {typeLabel[p.type] && <span className={`ct-${p.type} text-[11px] font-medium shrink-0`}>{typeLabel[p.type]}</span>}
               </div>
               <PairView pair={p} path={file} mode={diffMode} stacked />
             </div>

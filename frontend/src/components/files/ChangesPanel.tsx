@@ -9,9 +9,10 @@ import { useRepo } from '../../state/repoStore'
 import { useSelection, useSelectionInfo } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { useChanges } from '../../state/changesStore'
+import { iconFor } from '../../lib/fileIcon'
 import { Notice } from '../shell/Notice'
 
-const letter: Record<ChangeType, string> = { added: 'A', modified: 'M', deleted: 'D', renamed: 'R' }
+const letter: Record<ChangeType, string> = { added: 'A', modified: '', deleted: 'D', renamed: 'R' }
 
 export function ChangesPanel() {
   const repoPath = useRepo((s) => s.repo?.path)
@@ -148,10 +149,12 @@ export function ChangesPanel() {
 }
 
 function FileRow({ change, name, depth, active, onClick }: { change: FileChange; name: string; depth: number; active: boolean; onClick: () => void }) {
+  const Icon = iconFor(change.path)
   return (
     <div className={`tree-row flex items-center gap-1.5 pr-2 ${active ? 'active' : ''}`} style={{ paddingLeft: 6 + depth * 14 + 17 }} onClick={onClick} title={change.oldPath ? `${change.oldPath} → ${change.path}` : change.path}>
-      <span className={`ct ct-${change.type}`}>{letter[change.type]}</span>
+      <Icon size={14} strokeWidth={1.75} className="opacity-55 shrink-0" />
       <span className={`truncate ${change.type === 'deleted' ? 'line-through opacity-60' : ''}`}>{name}</span>
+      {letter[change.type] && <span className={`ct ct-${change.type}`}>{letter[change.type]}</span>}
       {change.oldPath && <span className="opacity-40 truncate text-[10px]">← {change.oldPath.split('/').pop()}</span>}
       {change.touches.length > 1 && <span className="text-[10.5px] opacity-50 tabular-nums shrink-0" title={`Changed in ${change.touches.length} selected commits`}>×{change.touches.length}</span>}
       {!change.composable && <Unlink size={12} strokeWidth={1.75} className="text-warning shrink-0" />}

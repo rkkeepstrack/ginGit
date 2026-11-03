@@ -2,14 +2,14 @@ import { ChevronDown, ChevronRight, ChevronsDownUp, ChevronsUpDown, GitCommitHor
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ApiError, api } from '../../lib/api'
 import { shortHash } from '../../lib/format'
-import type { ChangeSet, ChangeType, DiffResult, FileChange, Mode } from '../../lib/types'
+import type { ChangeSet, DiffResult, FileChange, Mode } from '../../lib/types'
 import { useRepo } from '../../state/repoStore'
 import { useSelection } from '../../state/selectionStore'
 import type { DiffMode } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
 import { PairView, typeLabel } from './DiffPanel'
+import { iconFor } from '../../lib/fileIcon'
 
-const letter: Record<ChangeType, string> = { added: 'A', modified: 'M', deleted: 'D', renamed: 'R' }
 
 /**
  * Every changed file, one collapsible section each, in the files panel's
@@ -96,6 +96,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
   }, [near, collapsed, repoPath, file.path])
 
   const openSingle = () => useSelection.getState().setFile(file.path)
+  const Icon = iconFor(file.path)
 
   return (
     <div ref={ref} className="hairline-b">
@@ -106,7 +107,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
         title="Click to collapse, double-click to open on its own"
       >
         {collapsed ? <ChevronRight size={14} strokeWidth={1.75} className="opacity-50 shrink-0" /> : <ChevronDown size={14} strokeWidth={1.75} className="opacity-50 shrink-0" />}
-        <span className={`ct ct-${file.type}`}>{letter[file.type]}</span>
+        <Icon size={14} strokeWidth={1.75} className="opacity-55 shrink-0" />
         <span className="truncate select-text" title={file.path}>
           {file.oldPath && <span className="opacity-50">{file.oldPath} → </span>}
           {file.path}
@@ -121,7 +122,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
             <span className="stat-add">+{file.additions}</span> <span className="stat-del">−{file.deletions}</span>
           </span>
         )}
-        <span className={`ct-${file.type} text-[11px] font-medium shrink-0`}>{typeLabel[file.type]}</span>
+        {typeLabel[file.type] && <span className={`ct-${file.type} text-[11px] font-medium shrink-0`}>{typeLabel[file.type]}</span>}
       </div>
       {!collapsed && (
         <div>
