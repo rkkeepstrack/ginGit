@@ -30,3 +30,11 @@ export function shortenPath(p: string): string {
   const home = /^\/(?:Users|home)\/[^/]+/.exec(p)
   return home ? '~' + p.slice(home[0].length) : p
 }
+
+/** Keeps the start and the end of a long path, which is where it is recognisable. */
+export function abbreviatePath(p: string, max = 44): string {
+  const short = shortenPath(p)
+  if (short.length <= max) return short
+  const tail = Math.floor(max * 0.6)
+  return short.slice(0, max - tail - 1) + '…' + short.slice(-tail)
+}

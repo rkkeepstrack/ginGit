@@ -1,6 +1,6 @@
 <script lang="ts">
   import FolderOpen from '@lucide/svelte/icons/folder-open'
-  import { shortenPath } from '../../lib/format'
+  import { abbreviatePath } from '../../lib/format'
   import { open, repo } from '../../state/repo.svelte'
   import Logo from './Logo.svelte'
   import Notice from './Notice.svelte'
@@ -25,12 +25,12 @@
       </button>
       {#if repo.recent.length > 0}
         <ul class="menu menu-sm p-0 mt-2 w-full">
-          <li class="menu-title text-[10px]">Recent</li>
+          <li class="menu-title text-[10px] text-center">Recent</li>
           {#each repo.recent as r (r.path)}
             <li>
-              <button onclick={() => void open(r.path)} title={r.path} class="flex flex-col items-start gap-0 py-1">
+              <button onclick={() => void open(r.path)} title={r.path} class="flex flex-col items-center gap-0 py-1 text-center">
                 <span class="font-medium">{r.name}</span>
-                <span class="block text-[10px] opacity-50 truncate w-full text-left">{shortenPath(r.path)}</span>
+                <span class="block text-[10px] opacity-50 w-full">{abbreviatePath(r.path)}</span>
               </button>
             </li>
           {/each}
