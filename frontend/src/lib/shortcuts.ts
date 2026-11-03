@@ -1,8 +1,6 @@
 import { hasMod } from './platform'
 
-export type Action =
-  | 'open' | 'refresh' | 'search' | 'toggleDiff' | 'escape'
-  | 'focusGraph' | 'focusFiles' | 'focusDiff' | 'prevFile' | 'nextFile'
+import type { Action } from './actions'
 
 /** Maps a keydown to an app action, or null. Text inputs keep their keys. */
 export function actionFor(e: KeyboardEvent): Action | null {

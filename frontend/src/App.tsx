@@ -2,15 +2,15 @@ import { useEffect } from 'react'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { CommitList } from './components/graph/CommitList'
 import { ChangesPanel } from './components/files/ChangesPanel'
-import { DiffPanel, stepFile } from './components/diff/DiffPanel'
+import { DiffPanel } from './components/diff/DiffPanel'
 import { TitleBar } from './components/shell/TitleBar'
 import { Toolbar } from './components/shell/Toolbar'
 import { StatusBar } from './components/shell/StatusBar'
 import { Welcome } from './components/shell/Welcome'
-import { api } from './lib/api'
+import { api, events } from './lib/api'
+import { runAction, type Action } from './lib/actions'
 import { actionFor } from './lib/shortcuts'
 import { subscribeRepoEvents, useRepo } from './state/repoStore'
-import { useSearch } from './state/searchStore'
 import { useSelection } from './state/selectionStore'
 import { applyTheme, useUI, watchSystemTheme } from './state/uiStore'
 
@@ -29,29 +29,18 @@ export default function App() {
   useEffect(() => applyTheme(theme), [theme])
 
   useEffect(() => {
+    // Native menu accelerators usually swallow the key before the webview
+    // sees it; the keydown path covers the browser dev tab and anything the
+    // menu doesn't bind, like [ and ].
     const onKey = (e: KeyboardEvent) => {
       const action = actionFor(e)
       if (!action) return
-      const target = e.target as HTMLElement | null
-      switch (action) {
-        case 'open': e.preventDefault(); useSelection.getState().clear(); void useRepo.getState().open(); break
-        case 'refresh': e.preventDefault(); void useRepo.getState().refresh(); break
-        case 'search': e.preventDefault(); document.getElementById('commit-search')?.focus(); break
-        case 'toggleDiff': e.preventDefault(); useUI.getState().toggleDiffMode(); break
-        case 'escape':
-          if (target?.id === 'commit-search') { useSearch.getState().setText(''); target.blur() }
-          else if (target?.tagName === 'INPUT') target.blur()
-          else useSelection.getState().clear()
-          break
-        case 'focusGraph': e.preventDefault(); (document.querySelector('#panel-graph [tabindex]') as HTMLElement | null)?.focus(); break
-        case 'focusFiles': e.preventDefault(); (document.querySelector('#panel-files input') as HTMLElement | null)?.focus(); break
-        case 'focusDiff': e.preventDefault(); (document.querySelector('#panel-diff .cm-content') as HTMLElement | null)?.focus(); break
-        case 'prevFile': e.preventDefault(); stepFile(-1); break
-        case 'nextFile': e.preventDefault(); stepFile(1); break
-      }
+      if (action !== 'escape') e.preventDefault()
+      runAction(action, e.target as HTMLElement | null)
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    const offMenu = events.onMenu((action) => runAction(action as Action))
+    return () => { window.removeEventListener('keydown', onKey); offMenu() }
   }, [])
 
   if (!repo) return <Welcome />

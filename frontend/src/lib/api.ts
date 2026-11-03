@@ -57,4 +57,5 @@ export const events = {
   onHistoryDone: (cb: (d: HistoryDone) => void) => EventsOn('history:done', cb),
   onHistoryError: (cb: (e: HistoryError) => void) => EventsOn('history:error', cb),
   onRepoChanged: (cb: (root: string) => void) => EventsOn('repo:changed', cb),
+  onMenu: (cb: (action: string) => void) => EventsOn('menu', cb),
 }
