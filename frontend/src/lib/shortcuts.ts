@@ -16,7 +16,7 @@ export function actionFor(e: KeyboardEvent): Action | null {
   if (mod && e.key === '2') return 'focusDiff'
   if (mod && e.key === '3') return 'focusFiles'
   if (typing) return null
-  if (e.key === '[') return 'prevFile'
-  if (e.key === ']') return 'nextFile'
+  if (e.key === '[' || (mod && e.key === 'ArrowUp')) return 'prevFile'
+  if (e.key === ']' || (mod && e.key === 'ArrowDown')) return 'nextFile'
   return null
 }
