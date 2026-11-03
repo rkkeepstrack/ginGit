@@ -22,13 +22,20 @@ import (
 	"ginGit/internal/search"
 )
 
-// App is the Wails-bound facade. It owns the open repository's in-memory
-// history and the caches, and nothing else.
+// App is the Wails-bound facade. It keeps one session per opened repository
+// so several windows (or a dev window plus a browser tab) can look at
+// different repositories through the same backend.
 type App struct {
 	ctx    context.Context
 	recent *repo.RecentStore
 
-	mu        sync.Mutex
+	mu       sync.Mutex
+	sessions map[string]*session
+	loadSeq  int
+}
+
+// session is everything derived from one repository's history.
+type session struct {
 	root      string
 	index     *history.Index
 	loadID    int
@@ -40,13 +47,18 @@ type App struct {
 	watchStop chan struct{}
 }
 
-func NewApp() *App {
-	return &App{
+func newSession(root string) *session {
+	return &session{
+		root:     root,
 		index:    history.NewIndex(),
 		changes:  changes.NewCache(64),
 		blobs:    diff.NewCache(64 << 20),
 		branches: search.NewBranches(),
 	}
+}
+
+func NewApp() *App {
+	return &App{sessions: map[string]*session{}}
 }
 
 func (a *App) startup(ctx context.Context) {
@@ -60,10 +72,23 @@ func (a *App) startup(ctx context.Context) {
 func (a *App) shutdown(ctx context.Context) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	a.stopWatcherLocked()
-	if a.cancel != nil {
-		a.cancel()
+	for _, s := range a.sessions {
+		s.stopWatcher()
+		if s.cancel != nil {
+			s.cancel()
+		}
 	}
+}
+
+// get returns the session for root, or an error the frontend can show.
+func (a *App) get(root string) (*session, error) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	s, ok := a.sessions[root]
+	if !ok {
+		return nil, fmt.Errorf("object_not_found: repository %s is not open", root)
+	}
+	return s, nil
 }
 
 // --- errors ---------------------------------------------------------------
@@ -113,9 +138,11 @@ func (a *App) OpenRepository(path string) (repo.Info, error) {
 		return repo.Info{}, userError(err)
 	}
 	a.mu.Lock()
-	a.root = info.Path
-	a.resetLocked()
-	a.startWatcherLocked(info.GitDir)
+	if _, ok := a.sessions[info.Path]; !ok {
+		s := newSession(info.Path)
+		s.startWatcher(a.ctx, info.GitDir)
+		a.sessions[info.Path] = s
+	}
 	a.mu.Unlock()
 	if a.recent != nil {
 		_ = a.recent.Touch(info)
@@ -159,16 +186,16 @@ func (a *App) Refs(root string) ([]repo.Ref, error) {
 	return refs, nil
 }
 
-// resetLocked drops everything derived from the previous history.
-func (a *App) resetLocked() {
-	if a.cancel != nil {
-		a.cancel()
-		a.cancel = nil
+// reset drops everything derived from the previous history load.
+func (s *session) reset() {
+	if s.cancel != nil {
+		s.cancel()
+		s.cancel = nil
 	}
-	a.index = history.NewIndex()
-	a.changes.Clear()
-	a.blobs.Clear()
-	a.branches.Clear()
+	s.index = history.NewIndex()
+	s.changes.Clear()
+	s.blobs.Clear()
+	s.branches.Clear()
 }
 
 // --- history --------------------------------------------------------------
@@ -192,17 +219,18 @@ type HistoryError struct {
 // "history:chunk" events tagged with the returned load id; stale ids are to
 // be ignored by the frontend.
 func (a *App) LoadHistory(root string) (int, error) {
-	a.mu.Lock()
-	if root != a.root {
-		a.mu.Unlock()
-		return 0, fmt.Errorf("object_not_found: repository %s is not open", root)
+	s, err := a.get(root)
+	if err != nil {
+		return 0, err
 	}
-	a.resetLocked()
-	a.loadID++
-	id := a.loadID
+	a.mu.Lock()
+	s.reset()
+	a.loadSeq++
+	id := a.loadSeq
+	s.loadID = id
 	ctx, cancel := context.WithCancel(a.ctx)
-	a.cancel = cancel
-	index := a.index
+	s.cancel = cancel
+	index := s.index
 	a.mu.Unlock()
 
 	go func() {
@@ -233,31 +261,31 @@ func (a *App) LoadHistory(root string) (int, error) {
 func (a *App) CancelHistory(loadID int) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	if loadID == a.loadID && a.cancel != nil {
-		a.cancel()
+	for _, s := range a.sessions {
+		if s.loadID == loadID && s.cancel != nil {
+			s.cancel()
+		}
 	}
 }
 
 // --- changes and diffs ----------------------------------------------------
 
 func (a *App) ListChanges(root string, hashes []string, mode string) (*changes.ChangeSet, error) {
-	a.mu.Lock()
-	ix, ok := a.index, root == a.root
-	a.mu.Unlock()
-	if !ok {
-		return nil, fmt.Errorf("object_not_found: repository %s is not open", root)
+	s, err := a.get(root)
+	if err != nil {
+		return nil, err
 	}
 	key := changes.Key(root, hashes, changes.Mode(mode))
-	if cs, ok := a.changes.Get(key); ok {
+	if cs, ok := s.changes.Get(key); ok {
 		return cs, nil
 	}
 	ctx, cancel := context.WithTimeout(a.ctx, 60*time.Second)
 	defer cancel()
-	cs, err := changes.Compute(ctx, root, ix, hashes, changes.Mode(mode))
+	cs, err := changes.Compute(ctx, root, s.index, hashes, changes.Mode(mode))
 	if err != nil {
 		return nil, userError(err)
 	}
-	a.changes.Put(key, cs)
+	s.changes.Put(key, cs)
 	return cs, nil
 }
 
@@ -279,16 +307,17 @@ func (a *App) FileDiff(root string, hashes []string, mode string, path string) (
 	if fc == nil {
 		return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
 	}
-	a.mu.Lock()
-	ix := a.index
-	a.mu.Unlock()
+	s, err := a.get(root)
+	if err != nil {
+		return nil, err
+	}
 	subjects := func(h string) string {
-		c, _ := ix.Get(h)
+		c, _ := s.index.Get(h)
 		return c.Subject
 	}
 	ctx, cancel := context.WithTimeout(a.ctx, 30*time.Second)
 	defer cancel()
-	res, err := diff.ForFile(ctx, root, *fc, subjects, a.blobs)
+	res, err := diff.ForFile(ctx, root, *fc, subjects, s.blobs)
 	if err != nil {
 		return nil, userError(err)
 	}
@@ -298,13 +327,11 @@ func (a *App) FileDiff(root string, hashes []string, mode string, path string) (
 // --- search ---------------------------------------------------------------
 
 func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {
-	a.mu.Lock()
-	ix, ok := a.index, root == a.root
-	a.mu.Unlock()
-	if !ok {
-		return nil, fmt.Errorf("object_not_found: repository %s is not open", root)
+	s, err := a.get(root)
+	if err != nil {
+		return nil, err
 	}
-	hits, err := search.Run(a.ctx, root, ix, a.branches, q)
+	hits, err := search.Run(a.ctx, root, s.index, s.branches, q)
 	if err != nil {
 		return nil, userError(err)
 	}
@@ -314,8 +341,8 @@ func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {
 // --- watcher --------------------------------------------------------------
 
 // The watcher only lights a dot; it never reloads anything on its own.
-func (a *App) startWatcherLocked(gitDir string) {
-	a.stopWatcherLocked()
+func (s *session) startWatcher(ctx context.Context, gitDir string) {
+	s.stopWatcher()
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		return
@@ -324,8 +351,8 @@ func (a *App) startWatcherLocked(gitDir string) {
 		_ = w.Add(p)
 	}
 	stop := make(chan struct{})
-	a.watcher, a.watchStop = w, stop
-	root := a.root
+	s.watcher, s.watchStop = w, stop
+	root := s.root
 	go func() {
 		var last time.Time
 		for {
@@ -344,17 +371,17 @@ func (a *App) startWatcherLocked(gitDir string) {
 					continue
 				}
 				last = time.Now()
-				wrt.EventsEmit(a.ctx, "repo:changed", root)
+				wrt.EventsEmit(ctx, "repo:changed", root)
 			case <-w.Errors:
 			}
 		}
 	}()
 }
 
-func (a *App) stopWatcherLocked() {
-	if a.watcher != nil {
-		close(a.watchStop)
-		a.watcher.Close()
-		a.watcher, a.watchStop = nil, nil
+func (s *session) stopWatcher() {
+	if s.watcher != nil {
+		close(s.watchStop)
+		s.watcher.Close()
+		s.watcher, s.watchStop = nil, nil
 	}
 }
