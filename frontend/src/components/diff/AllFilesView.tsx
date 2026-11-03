@@ -100,7 +100,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
   return (
     <div ref={ref} className="hairline-b">
       <div
-        className="flex items-center gap-2 px-2 h-9 text-[12px] bg-base-200/50 sticky top-0 z-10 cursor-default select-none"
+        className="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
         onClick={onToggle}
         onDoubleClick={openSingle}
         title="Click to collapse, double-click to open on its own"
