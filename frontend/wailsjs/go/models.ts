@@ -198,9 +198,6 @@ export namespace repo {
 	    name: string;
 	    branch: string;
 	    head: string;
-	    gitDir: string;
-	    detached: boolean;
-	    bare: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Info(source);
@@ -212,9 +209,6 @@ export namespace repo {
 	        this.name = source["name"];
 	        this.branch = source["branch"];
 	        this.head = source["head"];
-	        this.gitDir = source["gitDir"];
-	        this.detached = source["detached"];
-	        this.bare = source["bare"];
 	    }
 	}
 	export class Recent {

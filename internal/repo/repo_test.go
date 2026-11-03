@@ -41,6 +41,26 @@ func TestOpenAndRefs(t *testing.T) {
 	}
 }
 
+func TestOpenWorktree(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a", "a")
+	r.Commit("one")
+	wt := t.TempDir() + "/wt"
+	r.Git("worktree", "add", "-q", "-b", "feature", wt)
+	info, err := Open(context.Background(), wt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// macOS reports the temp dir through /private; compare the resolved path.
+	if info.Branch != "feature" || !strings.HasSuffix(info.Path, "/wt") {
+		t.Errorf("%+v", info)
+	}
+	// HEAD is the worktree's own; refs live in the main checkout's .git.
+	if !strings.Contains(info.GitDir, "/worktrees/") || strings.Contains(info.CommonDir, "/worktrees/") {
+		t.Errorf("gitDir=%s commonDir=%s", info.GitDir, info.CommonDir)
+	}
+}
+
 func TestOpenBare(t *testing.T) {
 	r := gittest.New(t)
 	r.Write("a", "a")

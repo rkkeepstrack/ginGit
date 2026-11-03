@@ -137,7 +137,7 @@ func (a *App) OpenRepository(path string) (repo.Info, error) {
 	if info.Path != a.root {
 		a.dropLocked()
 		a.root = info.Path
-		a.startWatcherLocked(info.GitDir)
+		a.startWatcherLocked(info.GitDir, info.CommonDir)
 	}
 	a.mu.Unlock()
 	if a.recent != nil {
@@ -348,8 +348,9 @@ func (a *App) NameCommits(root string, hashes []string) (map[string]string, erro
 
 // --- watcher --------------------------------------------------------------
 
-// The watcher only lights a dot; it never reloads anything on its own.
-func (a *App) startWatcherLocked(gitDir string) {
+// The watcher only lights a dot; it never reloads anything on its own. HEAD
+// changes in this checkout's git dir, ref changes in the common one.
+func (a *App) startWatcherLocked(gitDir, commonDir string) {
 	if a.watcher != nil {
 		a.watcher.Close()
 		a.watcher = nil
@@ -358,7 +359,7 @@ func (a *App) startWatcherLocked(gitDir string) {
 	if err != nil {
 		return
 	}
-	for _, p := range []string{gitDir, filepath.Join(gitDir, "refs", "heads"), filepath.Join(gitDir, "refs", "tags"), filepath.Join(gitDir, "refs", "remotes")} {
+	for _, p := range []string{gitDir, commonDir, filepath.Join(commonDir, "refs", "heads"), filepath.Join(commonDir, "refs", "tags"), filepath.Join(commonDir, "refs", "remotes")} {
 		_ = w.Add(p)
 	}
 	a.watcher = w

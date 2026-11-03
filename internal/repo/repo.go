@@ -16,13 +16,16 @@ import (
 )
 
 type Info struct {
-	Path     string `json:"path"`
-	Name     string `json:"name"`
-	Branch   string `json:"branch"` // empty when detached
-	Head     string `json:"head"`   // full hash
-	GitDir   string `json:"gitDir"` // absolute .git dir, for the watcher
-	Detached bool   `json:"detached"`
-	Bare     bool   `json:"bare"`
+	Path   string `json:"path"`
+	Name   string `json:"name"`
+	Branch string `json:"branch"` // empty when detached
+	Head   string `json:"head"`   // full hash
+	GitDir string `json:"-"`      // this checkout's git dir: HEAD lives here
+	// CommonDir holds refs and packed-refs; for a worktree it is the main
+	// repository's .git, otherwise the same as GitDir.
+	CommonDir string `json:"-"`
+	Detached  bool   `json:"-"`
+	Bare      bool   `json:"-"`
 }
 
 type Ref struct {
@@ -43,15 +46,19 @@ func Open(ctx context.Context, path string) (Info, error) {
 	if st, err := os.Stat(abs); err != nil || !st.IsDir() {
 		return Info{}, gitcmd.ErrNotARepository
 	}
-	bare, err := gitcmd.Run(ctx, abs, "rev-parse", "--is-bare-repository", "--absolute-git-dir")
+	bare, err := gitcmd.Run(ctx, abs, "rev-parse", "--is-bare-repository", "--absolute-git-dir", "--git-common-dir")
 	if err != nil {
 		return Info{}, err
 	}
 	lines := strings.Split(strings.TrimSpace(string(bare)), "\n")
-	if len(lines) != 2 {
+	if len(lines) != 3 {
 		return Info{}, gitcmd.ErrNotARepository
 	}
 	gitDir := lines[1]
+	commonDir := lines[2]
+	if !filepath.IsAbs(commonDir) {
+		commonDir = filepath.Join(abs, commonDir)
+	}
 	root := gitDir
 	if lines[0] != "true" {
 		top, err := gitcmd.Run(ctx, abs, "rev-parse", "--show-toplevel")
@@ -60,7 +67,7 @@ func Open(ctx context.Context, path string) (Info, error) {
 		}
 		root = strings.TrimSpace(string(top))
 	}
-	info := Info{Path: root, Name: strings.TrimSuffix(filepath.Base(root), ".git"), GitDir: gitDir, Bare: lines[0] == "true"}
+	info := Info{Path: root, Name: strings.TrimSuffix(filepath.Base(root), ".git"), GitDir: gitDir, CommonDir: commonDir, Bare: lines[0] == "true"}
 	if head, err := gitcmd.Run(ctx, root, "rev-parse", "HEAD"); err == nil {
 		info.Head = strings.TrimSpace(string(head))
 	}
