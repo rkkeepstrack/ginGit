@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { ApiError, api } from '../lib/api'
 import type { ChangeSet } from '../lib/types'
-import { useRepo } from './repoStore'
+import { recoverIfNotOpen, useRepo } from './repoStore'
 import { sortedSelection, useSelection } from './selectionStore'
 
 /**
@@ -47,7 +47,12 @@ function schedule() {
   timer = setTimeout(() => {
     api.listChanges(repoPath, hashes).then(
       (cs) => { if (gen === generation) useChanges.setState({ changeSet: cs, loading: false, error: null }) },
-      (e: ApiError) => { if (gen === generation) useChanges.setState({ changeSet: null, loading: false, error: e.display }) },
+      (e: ApiError) => {
+        if (gen !== generation) return
+        // A recovery reloads the history, which re-triggers this fetch.
+        if (recoverIfNotOpen(e)) { lastKey = ''; return }
+        useChanges.setState({ changeSet: null, loading: false, error: e.display })
+      },
     )
   }, 60)
 }

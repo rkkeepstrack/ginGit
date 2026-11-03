@@ -50,6 +50,22 @@ function indexRefs(refs: Ref[]): Map<string, Ref[]> {
 
 let loadSeq = 0
 
+/**
+ * The backend can lose the open repository under us: a Go rebuild in dev
+ * restarts it empty, another window may open something else. When a call
+ * comes back "not open", re-open and reload once instead of showing errors
+ * everywhere.
+ */
+let recovering: Promise<void> | null = null
+export function recoverIfNotOpen(e: unknown): boolean {
+  const err = e as ApiError
+  if (err?.kind !== 'object_not_found' || !/is not open$/.test(err.message)) return false
+  const repo = useRepo.getState().repo
+  if (!repo || recovering) return !!recovering
+  recovering = useRepo.getState().refresh().finally(() => { recovering = null })
+  return true
+}
+
 export const useRepo = create<RepoState>()((set, get) => {
   // Opens (or re-opens) a path and streams its history.
   const load = async (path: string) => {

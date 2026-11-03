@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -197,4 +198,58 @@ func (s *RecentStore) Remove(path string) error {
 	}
 	data, _ := json.MarshalIndent(out, "", "  ")
 	return os.WriteFile(s.file, data, 0o644)
+}
+
+// defaultBranch finds the main line to measure branches against.
+func defaultBranch(refs []Ref) string {
+	for _, name := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "refs/remotes/origin/master"} {
+		for _, r := range refs {
+			if r.Full == name {
+				return name
+			}
+		}
+	}
+	return ""
+}
+
+// BranchCommits lists the commits that are on ref but not on the default
+// branch, newest first: the branch's own work. For the default branch itself
+// (or when there is none) it is what no other branch has.
+func BranchCommits(ctx context.Context, root, ref string) ([]string, error) {
+	if !strings.HasPrefix(ref, "refs/") || strings.Contains(ref, "..") || strings.Contains(ref, "\x00") {
+		return nil, fmt.Errorf("%w: ref %q", gitcmd.ErrInvalidArg, ref)
+	}
+	refs, err := Refs(ctx, root)
+	if err != nil {
+		return nil, err
+	}
+	var tip string
+	for _, r := range refs {
+		if r.Full == ref {
+			tip = r.Hash
+		}
+	}
+	if tip == "" {
+		return nil, fmt.Errorf("%w: ref %s", gitcmd.ErrObjectNotFound, ref)
+	}
+	args := []string{"rev-list", "--topo-order", ref}
+	base := defaultBranch(refs)
+	if base != "" && base != ref {
+		args = append(args, "--not", base)
+	} else {
+		for _, r := range refs {
+			if r.Kind != "tag" && r.Full != ref && r.Hash != tip {
+				args = append(args, "^"+r.Full)
+			}
+		}
+	}
+	out, err := gitcmd.Run(ctx, root, append(args, "--")...)
+	if err != nil {
+		return nil, err
+	}
+	hashes := strings.Fields(string(out))
+	if hashes == nil {
+		hashes = []string{}
+	}
+	return hashes, nil
 }

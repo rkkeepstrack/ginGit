@@ -5,6 +5,8 @@ import {changes} from '../models';
 import {repo} from '../models';
 import {search} from '../models';
 
+export function BranchCommits(arg1:string,arg2:string):Promise<Array<string>>;
+
 export function FileDiff(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
 
 export function ForgetRepository(arg1:string):Promise<void>;

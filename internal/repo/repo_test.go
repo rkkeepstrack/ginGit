@@ -61,3 +61,35 @@ func TestOpenNotARepo(t *testing.T) {
 		t.Fatalf("got %v", err)
 	}
 }
+
+func TestBranchCommits(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a", "a")
+	r.Commit("root")
+	r.Branch("feature")
+	r.Write("f1", "1")
+	r.Commit("f1")
+	r.Write("f2", "2")
+	r.Commit("f2")
+	r.Checkout("main")
+	r.Write("m", "m")
+	r.Commit("main1")
+
+	got, err := BranchCommits(context.Background(), r.Path, "refs/heads/feature")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 2 || got[0] != r.H("f2") || got[1] != r.H("f1") {
+		t.Errorf("feature: %v", got)
+	}
+	got, err = BranchCommits(context.Background(), r.Path, "refs/heads/main")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0] != r.H("main1") {
+		t.Errorf("main: %v", got)
+	}
+	if _, err := BranchCommits(context.Background(), r.Path, "--output=x"); err == nil {
+		t.Error("option-looking ref must be rejected")
+	}
+}

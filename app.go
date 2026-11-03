@@ -180,6 +180,19 @@ func (a *App) Refs(root string) ([]repo.Ref, error) {
 	return refs, nil
 }
 
+// BranchCommits is the work on one branch: reachable from ref, not from the
+// default branch.
+func (a *App) BranchCommits(root string, ref string) ([]string, error) {
+	if _, err := a.open(root); err != nil {
+		return nil, err
+	}
+	hashes, err := repo.BranchCommits(a.ctx, root, ref)
+	if err != nil {
+		return nil, userError(err)
+	}
+	return hashes, nil
+}
+
 // --- history --------------------------------------------------------------
 
 type HistoryChunk struct {

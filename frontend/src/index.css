@@ -190,8 +190,9 @@ body {
   background: color-mix(in oklab, var(--pill) 18%, var(--color-base-100));
   color: color-mix(in oklab, var(--pill) 70%, var(--color-base-content));
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pill) 40%, transparent);
-  white-space: nowrap; flex-shrink: 0;
+  white-space: nowrap; flex-shrink: 0; cursor: pointer; border: 0; font-family: inherit;
 }
+.ref-pill:hover { filter: saturate(1.4) brightness(0.97); }
 .ref-pill.head { --pill: var(--brand); font-weight: 600; }
 .ref-pill.branch { --pill: var(--color-secondary); }
 .ref-pill.remote { --pill: var(--color-neutral); }
