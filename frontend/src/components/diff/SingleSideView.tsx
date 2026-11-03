@@ -1,8 +1,17 @@
 import { EditorState, type Extension } from '@codemirror/state'
-import { EditorView, lineNumbers } from '@codemirror/view'
+import { EditorView, GutterMarker, gutter, lineNumbers } from '@codemirror/view'
 import { useEffect, useRef } from 'react'
 import { highlighting } from '../../lib/highlight'
 import { languageFor } from '../../lib/language'
+
+// Same 3px bar the merge view draws next to changed lines.
+class BarMarker extends GutterMarker {
+  constructor(cls: string) { super(); this.elementClass = cls }
+}
+const bar = (kind: 'added' | 'deleted') => {
+  const marker = new BarMarker(kind === 'added' ? 'cm-changedLineGutter' : 'cm-deletedLineGutter')
+  return gutter({ class: 'cm-changeGutter', lineMarker: () => marker })
+}
 
 /**
  * A file that only exists on one side (added or deleted) has nothing to
@@ -24,11 +33,11 @@ export function SingleSideView({ text, path, kind, stacked = false }: {
       if (disposed) return
       view = new EditorView({
         doc: text,
-        extensions: [lineNumbers(), highlighting, EditorView.editable.of(false), EditorState.readOnly.of(true), ...(lang ? [lang] : [])],
+        extensions: [lineNumbers(), bar(kind), highlighting, EditorView.editable.of(false), EditorState.readOnly.of(true), ...(lang ? [lang] : [])],
         parent: host,
       })
     })
     return () => { disposed = true; view?.destroy(); host.replaceChildren() }
-  }, [text, path])
+  }, [text, path, kind])
   return <div ref={ref} className={`cm-host single-${kind} ${stacked ? 'stacked' : ''}`} />
 }
