@@ -21,11 +21,11 @@ env:
 
 jobs:
   version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       tag: ${{ steps.bump.outputs.tag }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - id: bump
@@ -72,7 +72,7 @@ jobs:
             section Unsorted '[^a-z]|[a-z]+[^a-z(:]'
           } > notes.md
           cat notes.md
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: notes
           path: notes.md
@@ -80,13 +80,13 @@ jobs:
   macos:
     needs: version
     if: needs.version.outputs.tag != ''
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -94,7 +94,7 @@ jobs:
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
       - run: wails build -platform darwin/universal -clean
       - run: ditto -c -k --keepParent build/bin/ginGit.app ginGit-${{ needs.version.outputs.tag }}-macos-universal.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos
           path: ginGit-*-macos-universal.zip
@@ -102,13 +102,13 @@ jobs:
   linux:
     needs: version
     if: needs.version.outputs.tag != ''
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -117,7 +117,7 @@ jobs:
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
       - run: wails build -platform linux/amd64 -tags webkit2_41 -clean
       - run: tar -C build/bin -czf ginGit-${{ needs.version.outputs.tag }}-linux-amd64.tar.gz ginGit
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: linux
           path: ginGit-*-linux-amd64.tar.gz
@@ -125,10 +125,10 @@ jobs:
   publish:
     needs: [version, macos, linux]
     if: needs.version.outputs.tag != ''
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           merge-multiple: true
       - name: tag
@@ -137,7 +137,7 @@ jobs:
           git config user.email github-actions@github.com
           git tag -a "${{ needs.version.outputs.tag }}" -m "${{ needs.version.outputs.tag }}"
           git push origin "${{ needs.version.outputs.tag }}"
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.version.outputs.tag }}
           name: ${{ needs.version.outputs.tag }}
