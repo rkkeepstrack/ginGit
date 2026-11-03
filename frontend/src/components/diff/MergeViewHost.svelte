@@ -1,0 +1,29 @@
+<script lang="ts">
+  import { MergeView, unifiedMergeView } from '@codemirror/merge'
+  import { EditorView } from '@codemirror/view'
+  import type { DiffMode } from '../../state/ui.svelte'
+  import { mountEditor, readOnlyBase } from './editor'
+
+  let { oldText, newText, path, mode, stacked = false }: { oldText: string; newText: string; path: string; mode: DiffMode; stacked?: boolean } = $props()
+  let host = $state<HTMLDivElement>()
+  const collapseUnchanged = { margin: 3, minSize: 4 }
+
+  // A CodeMirror merge view for one old/new pair, side by side or unified.
+  $effect(() => {
+    if (!host) return
+    const [a, b, p, m] = [oldText, newText, path, mode]
+    return mountEditor(host, p, (el, lang) => {
+      const base = readOnlyBase(lang)
+      if (m === 'split') {
+        return new MergeView({ a: { doc: a, extensions: base }, b: { doc: b, extensions: base }, parent: el, collapseUnchanged, highlightChanges: true, gutter: true })
+      }
+      return new EditorView({
+        doc: b,
+        extensions: [...base, unifiedMergeView({ original: a, mergeControls: false, collapseUnchanged, highlightChanges: true, gutter: true })],
+        parent: el,
+      })
+    })
+  })
+</script>
+
+<div bind:this={host} class="cm-host" class:stacked></div>

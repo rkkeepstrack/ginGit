@@ -3,7 +3,7 @@
 Read-only git history explorer with multi-commit review. Select any number of
 commits, get one consolidated file list, click through the diffs.
 
-Wails v2 + Go backend, React + Tailwind + daisyUI frontend, CodeMirror diffs.
+Wails v2 + Go backend, Svelte 5 + Tailwind + daisyUI frontend, CodeMirror diffs.
 
     make dev      # hot-reloading dev build
     make build    # build/bin/ginGit.app

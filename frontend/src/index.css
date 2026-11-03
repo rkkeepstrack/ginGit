@@ -247,10 +247,10 @@ body {
 .tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .tree-row.active { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
 
-/* Resize handles: the library supplies the hit area, we only color the line. */
-.resize-handle[data-resize-handle-state="hover"], .resize-handle[data-resize-handle-state="drag"] {
-  background: var(--brand);
-}
+/* Panel splitters: a hairline with a wider invisible grab area. */
+.resize-handle { position: relative; width: 1px; flex-shrink: 0; background: color-mix(in oklab, var(--color-base-content) 10%, transparent); cursor: col-resize; }
+.resize-handle::after { content: ""; position: absolute; inset: 0 -4px; }
+.resize-handle:hover, .resize-handle:active { background: var(--brand); }
 .brand { color: var(--brand); }
 .input:focus-within, .input:focus { outline-color: color-mix(in oklab, var(--brand) 50%, transparent); border-color: var(--brand); }
 

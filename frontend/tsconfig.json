@@ -1,14 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2022"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -18,16 +13,9 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "noEmit": true,
-    "types": [
-      "vite/client"
-    ]
+    "types": ["vite/client", "svelte"]
   },
-  "include": [
-    "src",
-    "wailsjs",
-    "vite.config.ts",
-    "e2e",
-    "playwright.config.ts"
-  ]
+  "include": ["src", "wailsjs", "vite.config.ts", "e2e", "playwright.config.ts", "svelte.config.js"]
 }

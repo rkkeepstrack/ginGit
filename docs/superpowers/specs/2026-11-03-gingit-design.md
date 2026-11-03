@@ -336,3 +336,7 @@ contents, blame, per-file history, remote hosting integrations, Windows builds.
   load id so no event can arrive before it is recorded.
 - Hints live in a status bar, confirmations in toasts; the native menu bar
   carries the shortcuts.
+- The frontend moved from React to Svelte 5 (runes). Stores are classes
+  with `$state` fields in `.svelte.ts` modules, lists are virtualized by a
+  forty-line helper over fixed row heights, and the three-panel splitter is
+  our own. Same CSS, same bridge, same snapshot suite.

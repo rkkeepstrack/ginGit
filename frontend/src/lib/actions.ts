@@ -1,8 +1,8 @@
-import { useRepo } from '../state/repoStore'
-import { useSearch } from '../state/searchStore'
-import { stepFile } from '../state/changesStore'
-import { useSelection } from '../state/selectionStore'
-import { useUI } from '../state/uiStore'
+import { stepFile } from '../state/changes.svelte'
+import { open, refresh } from '../state/repo.svelte'
+import { setText } from '../state/search.svelte'
+import { clear } from '../state/selection.svelte'
+import { ui } from '../state/ui.svelte'
 
 export type Action =
   | 'open' | 'refresh' | 'search' | 'toggleDiff' | 'escape'
@@ -22,22 +22,22 @@ const focus = (selector: string) => (document.querySelector(selector) as HTMLEle
 /** One implementation behind the native menu, the keyboard and the buttons. */
 export function runAction(action: Action, target: HTMLElement | null = document.activeElement as HTMLElement | null) {
   switch (action) {
-    case 'open': useSelection.getState().clear(); void useRepo.getState().open(); break
-    case 'refresh': void useRepo.getState().refresh(); break
+    case 'open': clear(); void open(); break
+    case 'refresh': void refresh(); break
     case 'search': focus(anchors.search); break
-    case 'toggleDiff': useUI.getState().toggleDiffMode(); break
+    case 'toggleDiff': ui.toggleDiffMode(); break
     case 'escape':
-      if (target?.id === 'commit-search') { useSearch.getState().setText(''); target.blur() }
+      if (target?.id === 'commit-search') { setText(''); target.blur() }
       else if (target?.tagName === 'INPUT') target.blur()
-      else useSelection.getState().clear()
+      else clear()
       break
     case 'focusGraph': focus(anchors.graph); break
     case 'focusFiles': focus(anchors.files); break
     case 'focusDiff': focus(anchors.diff); break
     case 'prevFile': stepFile(-1); break
     case 'nextFile': stepFile(1); break
-    case 'themeLight': useUI.getState().setTheme('pastel'); break
-    case 'themeDark': useUI.getState().setTheme('dim'); break
-    case 'themeSystem': useUI.getState().setTheme('system'); break
+    case 'themeLight': ui.theme = 'pastel'; break
+    case 'themeDark': ui.theme = 'dim'; break
+    case 'themeSystem': ui.theme = 'system'; break
   }
 }

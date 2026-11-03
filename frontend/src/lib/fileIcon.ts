@@ -1,58 +1,69 @@
-import {
-  Braces, FileArchive, FileCode2, FileCog, FileImage, FileJson2, FileLock2, FileSpreadsheet,
-  FileTerminal, FileText, FileType2, Film, Music, Package, type LucideIcon,
-} from 'lucide-react'
+import AudioLines from '@lucide/svelte/icons/audio-lines'
+import Braces from '@lucide/svelte/icons/braces'
+import FileArchive from '@lucide/svelte/icons/file-archive'
+import FileCode from '@lucide/svelte/icons/file-code'
+import FileCog from '@lucide/svelte/icons/file-cog'
+import FileImage from '@lucide/svelte/icons/file-image'
+import FileLock from '@lucide/svelte/icons/file-lock'
+import FileSpreadsheet from '@lucide/svelte/icons/file-spreadsheet'
+import FileTerminal from '@lucide/svelte/icons/file-terminal'
+import FileText from '@lucide/svelte/icons/file-text'
+import FileType from '@lucide/svelte/icons/file-type'
+import Film from '@lucide/svelte/icons/film'
+import Package from '@lucide/svelte/icons/package'
+import type { Component } from 'svelte'
 
-const byExt: Record<string, LucideIcon> = {
+export type Icon = Component<{ size?: number | string; strokeWidth?: number | string; class?: string }>
+export type FileCategory = 'code' | 'style' | 'data' | 'text' | 'shell' | 'media' | 'lock'
+
+const byExt: Record<string, Icon> = {
   // code
-  ts: FileCode2, tsx: FileCode2, js: FileCode2, jsx: FileCode2, mjs: FileCode2, cjs: FileCode2,
-  go: FileCode2, rs: FileCode2, py: FileCode2, rb: FileCode2, java: FileCode2, kt: FileCode2, kts: FileCode2,
-  swift: FileCode2, c: FileCode2, h: FileCode2, cc: FileCode2, cpp: FileCode2, hpp: FileCode2, cs: FileCode2,
-  php: FileCode2, scala: FileCode2, dart: FileCode2, lua: FileCode2, ex: FileCode2, exs: FileCode2, erl: FileCode2,
-  hs: FileCode2, clj: FileCode2, el: FileCode2, vue: FileCode2, svelte: FileCode2, astro: FileCode2,
-  html: FileCode2, htm: FileCode2, css: Braces, scss: Braces, sass: Braces, less: Braces, sql: FileCode2,
+  ts: FileCode, tsx: FileCode, js: FileCode, jsx: FileCode, mjs: FileCode, cjs: FileCode,
+  go: FileCode, rs: FileCode, py: FileCode, rb: FileCode, java: FileCode, kt: FileCode, kts: FileCode,
+  swift: FileCode, c: FileCode, h: FileCode, cc: FileCode, cpp: FileCode, hpp: FileCode, cs: FileCode,
+  php: FileCode, scala: FileCode, dart: FileCode, lua: FileCode, ex: FileCode, exs: FileCode, erl: FileCode,
+  hs: FileCode, clj: FileCode, el: FileCode, vue: FileCode, svelte: FileCode, astro: FileCode,
+  html: FileCode, htm: FileCode, css: Braces, scss: Braces, sass: Braces, less: Braces, sql: FileCode,
   // data / config
-  json: FileJson2, jsonc: FileJson2, json5: FileJson2,
+  json: Braces, jsonc: Braces, json5: Braces,
   yml: FileCog, yaml: FileCog, toml: FileCog, ini: FileCog, cfg: FileCog, conf: FileCog, env: FileCog,
-  properties: FileCog, plist: FileCog, xml: FileCode2, gradle: FileCog, editorconfig: FileCog,
+  properties: FileCog, plist: FileCog, xml: FileCode, gradle: FileCog, editorconfig: FileCog,
   csv: FileSpreadsheet, tsv: FileSpreadsheet, xlsx: FileSpreadsheet,
   // text
-  md: FileText, mdx: FileText, txt: FileText, rst: FileText, adoc: FileText, log: FileText, pdf: FileType2,
+  md: FileText, mdx: FileText, txt: FileText, rst: FileText, adoc: FileText, log: FileText, pdf: FileType,
   // shell
   sh: FileTerminal, bash: FileTerminal, zsh: FileTerminal, fish: FileTerminal, ps1: FileTerminal, bat: FileTerminal,
   // media
   png: FileImage, jpg: FileImage, jpeg: FileImage, gif: FileImage, svg: FileImage, webp: FileImage, ico: FileImage, icns: FileImage,
-  mp4: Film, mov: Film, webm: Film, mp3: Music, wav: Music, ogg: Music,
+  mp4: Film, mov: Film, webm: Film, mp3: AudioLines, wav: AudioLines, ogg: AudioLines,
   zip: FileArchive, gz: FileArchive, tar: FileArchive, tgz: FileArchive, jar: FileArchive, bundle: FileArchive,
-  lock: FileLock2,
+  lock: FileLock,
 }
 
-const byName: Record<string, LucideIcon> = {
-  dockerfile: FileTerminal, makefile: FileTerminal, 'package.json': Package, 'go.mod': Package, 'go.sum': FileLock2,
-  'cargo.toml': Package, 'cargo.lock': FileLock2, 'package-lock.json': FileLock2, 'yarn.lock': FileLock2,
-  'pnpm-lock.yaml': FileLock2, 'bun.lock': FileLock2, 'bun.lockb': FileLock2, 'gemfile': Package, 'gemfile.lock': FileLock2,
+const byName: Record<string, Icon> = {
+  dockerfile: FileTerminal, makefile: FileTerminal, 'package.json': Package, 'go.mod': Package, 'go.sum': FileLock,
+  'cargo.toml': Package, 'cargo.lock': FileLock, 'package-lock.json': FileLock, 'yarn.lock': FileLock,
+  'pnpm-lock.yaml': FileLock, 'bun.lock': FileLock, 'bun.lockb': FileLock, 'gemfile': Package, 'gemfile.lock': FileLock,
   '.gitignore': FileCog, '.gitattributes': FileCog, '.editorconfig': FileCog, '.env': FileCog, 'license': FileText, 'readme': FileText,
 }
 
-export type FileCategory = 'code' | 'style' | 'data' | 'text' | 'shell' | 'media' | 'lock'
-
-const category = new Map<LucideIcon, FileCategory>([
-  [FileCode2, 'code'], [Braces, 'style'], [FileJson2, 'data'], [FileCog, 'data'], [FileSpreadsheet, 'data'], [Package, 'data'],
-  [FileText, 'text'], [FileType2, 'text'], [FileTerminal, 'shell'],
-  [FileImage, 'media'], [Film, 'media'], [Music, 'media'], [FileArchive, 'media'], [FileLock2, 'lock'],
+const category = new Map<Icon, FileCategory>([
+  [FileCode, 'code'], [Braces, 'style'], [FileCog, 'data'], [FileSpreadsheet, 'data'], [Package, 'data'],
+  [FileText, 'text'], [FileType, 'text'], [FileTerminal, 'shell'],
+  [FileImage, 'media'], [Film, 'media'], [AudioLines, 'media'], [FileArchive, 'media'], [FileLock, 'lock'],
 ])
+
+/** Picks a lucide glyph for a path. Always returns something. */
+export function iconFor(path: string): Icon {
+  const name = (path.split('/').pop() ?? path).toLowerCase()
+  if (byName[name]) return byName[name]
+  if (name.endsWith('.lock')) return FileLock
+  const dot = name.lastIndexOf('.')
+  const ext = dot >= 0 ? name.slice(dot + 1) : ''
+  return byExt[ext] ?? FileText
+}
 
 /** The category of a path's icon, for tinting. */
 export function categoryFor(path: string): FileCategory {
   return category.get(iconFor(path)) ?? 'text'
-}
-
-/** Picks a lucide glyph for a path. Always returns something. */
-export function iconFor(path: string): LucideIcon {
-  const name = (path.split('/').pop() ?? path).toLowerCase()
-  if (byName[name]) return byName[name]
-  if (name.endsWith('.lock')) return FileLock2
-  const dot = name.lastIndexOf('.')
-  const ext = dot >= 0 ? name.slice(dot + 1) : ''
-  return byExt[ext] ?? FileText
 }
