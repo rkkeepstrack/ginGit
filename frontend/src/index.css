@@ -219,11 +219,8 @@ body {
 .kind-docs { color: var(--kind-docs); }
 .kind-test { color: var(--kind-test); }
 
-/* File names carry their change type, the IDE way. */
-.fn-added { color: var(--ct-added); }
-.fn-modified { color: var(--ct-modified); }
+/* File names stay in the text color; only a deletion marks the name itself. */
 .fn-deleted { color: color-mix(in oklab, var(--ct-deleted) 70%, var(--color-base-content)); text-decoration: line-through; }
-.fn-renamed { color: var(--ct-renamed); }
 .ft-code { color: var(--ft-code); }
 .ft-style { color: var(--ft-style); }
 .ft-data { color: var(--ft-data); }
