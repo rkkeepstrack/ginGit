@@ -7,13 +7,13 @@
   import type { FileChange } from '../../lib/types'
   import { hint } from '../../state/hint.svelte'
   import { repo } from '../../state/repo.svelte'
-  import { selection, setFile } from '../../state/selection.svelte'
+  import { setFile } from '../../state/selection.svelte'
   import { ui } from '../../state/ui.svelte'
   import Notice from '../shell/Notice.svelte'
   import DiffBody from './DiffBody.svelte'
   import { FileDiff } from './fileDiff.svelte'
 
-  let { file, collapsed, ontoggle, scrollRoot }: { file: FileChange; collapsed: boolean; ontoggle: () => void; scrollRoot: HTMLElement | undefined } = $props()
+  let { file, hashes, collapsed, ontoggle, scrollRoot }: { file: FileChange; hashes: string[]; collapsed: boolean; ontoggle: () => void; scrollRoot: HTMLElement | undefined } = $props()
 
   let el = $state<HTMLDivElement>()
   let near = $state(false)
@@ -24,11 +24,13 @@
   // Only fetch once the section is within a screen or so of the viewport.
   $effect(() => {
     if (!el || near) return
-    const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) near = true }, { root: scrollRoot, rootMargin: '800px 0px' })
+    const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) near = true }, { root: scrollRoot, rootMargin: '300px 0px' })
     io.observe(el)
     return () => io.disconnect()
   })
-  $effect(() => { diff.watch(repo.info?.path, selection.hashes, file.path, near && !collapsed) })
+  $effect(() => { diff.watch(repo.info?.path, hashes, file.path, near && !collapsed) })
+  // A placeholder roughly the size of the diff keeps later sections from cascading as editors appear.
+  const placeholder = $derived(Math.min(600, 48 + (file.additions + file.deletions + 6) * 18))
 
   const openSingle = () => setFile(file.path)
 </script>
@@ -62,7 +64,7 @@
   {#if !collapsed}
     <div>
       {#if diff.error}<Notice kind="error">{diff.error}</Notice>{/if}
-      {#if !diff.result && !diff.error}<div class="h-16 flex items-center justify-center text-[11.5px] opacity-40">{near ? 'Loading…' : ''}</div>{/if}
+      {#if !diff.result && !diff.error}<div class="flex items-center justify-center text-[11.5px] opacity-40" style:height="{placeholder}px">{near ? 'Loading…' : ''}</div>{/if}
       {#if diff.result}<DiffBody result={diff.result} path={file.path} mode={ui.diffMode} stacked={true} />{/if}
     </div>
   {/if}

@@ -28,7 +28,11 @@
   const count = $derived(selection.selected.size)
   const files = $derived(filterFiles(changes.changeSet?.files ?? [], filter))
   const rows = $derived(ui.flatFiles ? flatRows(files, ui.fileSort) : flatten(buildTree(files, ui.fileSort), collapsed))
-  $effect(() => { changes.paths = visibleFilePaths(rows) })
+  $effect(() => {
+    const next = visibleFilePaths(rows)
+    const same = next.length === changes.paths.length && next.every((p, i) => p === changes.paths[i])
+    if (!same) changes.paths = next
+  })
   const range = $derived(visibleRange(scrollTop, height, ROW, rows.length, 15))
   const totals = $derived.by(() => {
     let a = 0, d = 0

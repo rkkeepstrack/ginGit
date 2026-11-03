@@ -2,6 +2,7 @@ import { EditorState, type Extension } from '@codemirror/state'
 import { EditorView, lineNumbers } from '@codemirror/view'
 import { highlighting } from '../../lib/highlight'
 import { languageFor } from '../../lib/language'
+import { gliding } from '../graph/CommitList.svelte'
 
 /** What every read-only code view in the app shares. */
 export function readOnlyBase(lang: Extension | null): Extension[] {
@@ -19,6 +20,8 @@ function enqueue(job: () => void) {
   if (pumping) return
   pumping = true
   const pump = () => {
+    // Let a glide finish before spending frames on editors.
+    if (gliding.now) { requestAnimationFrame(pump); return }
     const next = queue.shift()
     if (!next) { pumping = false; return }
     next()

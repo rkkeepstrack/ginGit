@@ -54,7 +54,7 @@ function schedule() {
 export function setText(text: string) {
   search.text = text
   // Clearing takes effect at once so the graph is back before anything scrolls it.
-  if (!text.trim()) { clearTimeout(timer); search.matches = null; search.names = {}; search.pending = false; return }
+  if (!text.trim()) { clearTimeout(timer); generation++; search.matches = null; search.names = {}; search.pending = false; return }
   schedule()
 }
 

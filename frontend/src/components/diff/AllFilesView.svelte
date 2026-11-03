@@ -4,6 +4,7 @@
   import type { FileChange } from '../../lib/types'
   import { changes } from '../../state/changes.svelte'
   import { hint } from '../../state/hint.svelte'
+  import { selection } from '../../state/selection.svelte'
   import FileSection from './FileSection.svelte'
 
   // Every changed file, one collapsible section each, in the files panel's order.
@@ -32,7 +33,7 @@
   </div>
   <div bind:this={scroller} class="flex-1 overflow-auto">
     {#each files as f (f.path)}
-      <FileSection file={f} collapsed={collapsed.has(f.path)} ontoggle={() => toggle(f.path)} scrollRoot={scroller} />
+      <FileSection file={f} hashes={selection.hashes} collapsed={collapsed.has(f.path)} ontoggle={() => toggle(f.path)} scrollRoot={scroller} />
     {/each}
   </div>
 </div>

@@ -1,4 +1,10 @@
+<script lang="ts" module>
+  /** True while a jump glides; editor mounting waits for it. */
+  export const gliding = $state({ now: false })
+</script>
+
 <script lang="ts">
+  import { untrack } from 'svelte'
   import { authorWidth, fitColumns } from '../../lib/columns'
   import { scrollTopFor, visibleRange } from '../../lib/virtual'
   import { repo } from '../../state/repo.svelte'
@@ -19,41 +25,50 @@
   let scrollTop = $state(0)
   let height = $state(0)
   let panelWidth = $state(1200)
-  /** While a jump glides, rows around the destination are rendered too, so it never scrolls into blank space. */
-  let jumpTop = $state<number | null>(null)
-  const range = $derived.by(() => {
-    const now = visibleRange(scrollTop, height, ROW_H, count)
-    if (jumpTop === null) return now
-    const there = visibleRange(jumpTop, height, ROW_H, count)
-    return { start: Math.min(now.start, there.start), end: Math.max(now.end, there.end) }
-  })
+  const range = $derived(visibleRange(scrollTop, height, ROW_H, count))
 
   // Filtered rows aren't neighbours, so lanes would lie; a pill takes their place.
   const graphWidth = $derived(search.matches ? GRAPH_PAD : GRAPH_PAD + Math.min(repo.maxLanes, MAX_LANES) * LANE_W + 6)
   const authorW = $derived(authorWidth(repo.commits))
-  const columns = $derived(fitColumns(panelWidth, graphWidth, authorW))
+  // Same object while no breakpoint is crossed, so rows don't update on every resize frame.
+  let lastColumns: ReturnType<typeof fitColumns> | null = null
+  const columns = $derived.by(() => {
+    const next = fitColumns(panelWidth, graphWidth, authorW)
+    if (!lastColumns || next.author !== lastColumns.author || next.date !== lastColumns.date || next.hash !== lastColumns.hash) lastColumns = next
+    return lastColumns
+  })
 
   // Keep the cursor in view. A jump (clicking a pill) centres it instead, so
-  // the commits around the branch are on screen too.
+  // the commits around the branch are on screen too. Only the cursor and the
+  // reveal counter are tracked; a search result must not scroll the list.
   let handledReveal = 0
   $effect(() => {
     const cursor = selection.cursor
     const reveal = selection.reveal
-    const matches = search.matches
-    if (cursor === null || !scroller) return
-    const row = matches ? matches.indexOf(cursor) : cursor
-    if (row < 0) return
-    const jump = reveal !== handledReveal
-    handledReveal = reveal
-    const top = scrollTopFor(row, ROW_H, scroller.clientHeight, scroller.scrollTop, jump ? 'center' : 'auto')
-    if (!jump) { scroller.scrollTo({ top, behavior: 'instant' }); return }
-    // A jump glides so the eye can follow where the branch went.
-    jumpTop = top
-    scroller.scrollTo({ top, behavior: 'smooth' })
-    const settle = () => { jumpTop = null; scroller?.removeEventListener('scrollend', settle) }
-    scroller.addEventListener('scrollend', settle)
-    setTimeout(settle, 1500)
+    const el = scroller
+    if (cursor === null || !el) return
+    untrack(() => {
+      const row = search.matches ? search.matches.indexOf(cursor) : cursor
+      if (row < 0) return
+      const jump = reveal !== handledReveal
+      handledReveal = reveal
+      const top = scrollTopFor(row, ROW_H, height, scrollTop, jump ? 'center' : 'auto')
+      if (!jump) { el.scrollTo({ top, behavior: 'instant' }); return }
+      glideTo(el, top)
+    })
   })
+
+  // A long glide is unfollowable and WebKit flings through it anyway: hop to
+  // two screens away instantly, then glide the rest so the eye can land.
+  function glideTo(el: HTMLDivElement, top: number) {
+    const hop = height * 2
+    if (Math.abs(top - el.scrollTop) > hop) el.scrollTo({ top: top > el.scrollTop ? top - hop : top + hop, behavior: 'instant' })
+    gliding.now = true
+    const settle = () => { gliding.now = false; el.removeEventListener('scrollend', settle); clearTimeout(timer) }
+    const timer = setTimeout(settle, 'onscrollend' in el ? 1500 : 700)
+    el.addEventListener('scrollend', settle)
+    el.scrollTo({ top, behavior: 'smooth' })
+  }
 
   function onKeyDown(e: KeyboardEvent) {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
