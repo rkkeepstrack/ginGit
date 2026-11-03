@@ -10,6 +10,23 @@ export function readOnlyBase(lang: Extension | null): Extension[] {
 
 interface Disposable { destroy(): void }
 
+// Building an editor costs a few milliseconds; a screenful at once stalls the
+// frame and any scroll animation with it. One per frame keeps things moving.
+const queue: (() => void)[] = []
+let pumping = false
+function enqueue(job: () => void) {
+  queue.push(job)
+  if (pumping) return
+  pumping = true
+  const pump = () => {
+    const next = queue.shift()
+    if (!next) { pumping = false; return }
+    next()
+    requestAnimationFrame(pump)
+  }
+  requestAnimationFrame(pump)
+}
+
 /**
  * Mounts a CodeMirror view into host once the file's grammar has loaded and
  * returns the teardown. Views are short-lived here, so rebuilding beats
@@ -18,6 +35,6 @@ interface Disposable { destroy(): void }
 export function mountEditor(host: HTMLElement, path: string, build: (host: HTMLElement, lang: Extension | null) => Disposable): () => void {
   let disposed = false
   let view: Disposable | null = null
-  languageFor(path).then((lang) => { if (!disposed) view = build(host, lang) })
+  languageFor(path).then((lang) => { enqueue(() => { if (!disposed) view = build(host, lang) }) })
   return () => { disposed = true; view?.destroy() }
 }

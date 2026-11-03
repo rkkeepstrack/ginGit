@@ -38,7 +38,9 @@
     if (row < 0) return
     const jump = reveal !== handledReveal
     handledReveal = reveal
-    scroller.scrollTop = scrollTopFor(row, ROW_H, scroller.clientHeight, scroller.scrollTop, jump ? 'center' : 'auto')
+    const top = scrollTopFor(row, ROW_H, scroller.clientHeight, scroller.scrollTop, jump ? 'center' : 'auto')
+    // A jump glides so the eye can follow where the branch went.
+    scroller.scrollTo({ top, behavior: jump ? 'smooth' : 'instant' })
   })
 
   function onKeyDown(e: KeyboardEvent) {
