@@ -266,7 +266,8 @@ body {
 .resize-handle::after { content: ""; position: absolute; inset: 0 -4px; }
 .resize-handle:hover, .resize-handle:active { background: var(--brand); }
 .brand { color: var(--brand); }
-.input:focus-within, .input:focus { --input-color: var(--brand); }
+/* daisyUI focuses inputs with a border and an offset outline; one ring is plenty. */
+.input:focus-within, .input:focus { outline: none; border-color: var(--brand); box-shadow: none; }
 
 /* CodeMirror */
 .cm-host { height: 100%; contain: layout paint; }
