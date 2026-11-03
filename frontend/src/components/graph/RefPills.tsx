@@ -1,7 +1,7 @@
 import { GitBranch, Tag, Cloud } from 'lucide-react'
 import type { Ref } from '../../lib/types'
 
-const MAX = 2
+const MAX = 3
 
 export function RefPills({ refs }: { refs: Ref[] }) {
   if (refs.length === 0) return null

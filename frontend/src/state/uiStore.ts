@@ -9,14 +9,12 @@ interface UIState {
   diffMode: DiffMode
   fileSort: 'name' | 'type'
   flatFiles: boolean
-  columns: { author: number; date: number }
   setTheme: (t: ThemeChoice) => void
   cycleTheme: () => void
   setDiffMode: (m: DiffMode) => void
   toggleDiffMode: () => void
   setFileSort: (s: 'name' | 'type') => void
   setFlatFiles: (f: boolean) => void
-  setColumn: (k: 'author' | 'date', w: number) => void
 }
 
 export const useUI = create<UIState>()(
@@ -26,7 +24,6 @@ export const useUI = create<UIState>()(
       diffMode: 'split',
       fileSort: 'name',
       flatFiles: false,
-      columns: { author: 128, date: 64 },
       setTheme: (theme) => set({ theme }),
       cycleTheme: () =>
         set((s) => ({ theme: s.theme === 'system' ? 'pastel' : s.theme === 'pastel' ? 'dim' : 'system' })),
@@ -34,9 +31,8 @@ export const useUI = create<UIState>()(
       toggleDiffMode: () => set((s) => ({ diffMode: s.diffMode === 'split' ? 'unified' : 'split' })),
       setFileSort: (fileSort) => set({ fileSort }),
       setFlatFiles: (flatFiles) => set({ flatFiles }),
-      setColumn: (k, w) => set((s) => ({ columns: { ...s.columns, [k]: Math.max(60, Math.min(400, w)) } })),
     }),
-    { name: 'gingit-ui', version: 2 },
+    { name: 'gingit-ui', version: 3 },
   ),
 )
 

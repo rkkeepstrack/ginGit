@@ -129,7 +129,7 @@ body {
   background: color-mix(in oklab, var(--pill) 18%, var(--color-base-100));
   color: color-mix(in oklab, var(--pill) 70%, var(--color-base-content));
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pill) 40%, transparent);
-  max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  white-space: nowrap; flex-shrink: 0;
 }
 .ref-pill.head { --pill: var(--color-primary); font-weight: 600; }
 .ref-pill.branch { --pill: var(--color-secondary); }

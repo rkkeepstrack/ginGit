@@ -5,9 +5,9 @@ import { hasMod } from '../../lib/platform'
 import { useRepo } from '../../state/repoStore'
 import { useSearch } from '../../state/searchStore'
 import { useSelection } from '../../state/selectionStore'
-import { useUI } from '../../state/uiStore'
 import { CommitRow } from './CommitRow'
 import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LaneCell'
+import { DATE_W, HASH_W, authorWidth } from './columns'
 import { Notice } from '../shell/Notice'
 
 const EMPTY: never[] = []
@@ -20,8 +20,7 @@ export function CommitList() {
   const selected = useSelection((s) => s.selected)
   const click = useSelection((s) => s.click)
   const moveCursor = useSelection((s) => s.moveCursor)
-  const columns = useUI((s) => s.columns)
-  const setColumn = useUI((s) => s.setColumn)
+  const authorW = useMemo(() => authorWidth(commits), [commits])
 
   // Row i of the list shows commit visible[i].
   const visible = useMemo(() => matches ?? EMPTY, [matches])
@@ -53,30 +52,14 @@ export function CommitList() {
     moveCursor(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, all)
   }
 
-  const startResize = (col: 'author' | 'date') => (e: React.MouseEvent) => {
-    e.preventDefault()
-    const startX = e.clientX
-    const startW = columns[col]
-    const move = (ev: MouseEvent) => setColumn(col, startW - (ev.clientX - startX))
-    const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up) }
-    window.addEventListener('mousemove', move)
-    window.addEventListener('mouseup', up)
-  }
-
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-graph">
       <div className="flex items-center h-8 col-head hairline-b shrink-0 pr-2">
         <div style={{ width: graphWidth }} className="shrink-0" />
         <div className="flex-1 pl-1.5">Commit</div>
-        <div className="shrink-0 relative" style={{ width: columns.author }}>
-          <span className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/60" onMouseDown={startResize('author')} />
-          <span className="pl-1">Author</span>
-        </div>
-        <div className="shrink-0 relative text-right pr-3" style={{ width: columns.date }}>
-          <span className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/60" onMouseDown={startResize('date')} />
-          Date
-        </div>
-        <div className="shrink-0 w-[64px]">Hash</div>
+        <div className="shrink-0" style={{ width: authorW }}>Author</div>
+        <div className="shrink-0 text-right pr-3" style={{ width: DATE_W }}>Date</div>
+        <div className="shrink-0" style={{ width: HASH_W }}>Hash</div>
       </div>
       {error && <Notice kind="error">{error}</Notice>}
       <div ref={parentRef} className="flex-1 overflow-auto outline-none" tabIndex={0} onKeyDown={onKeyDown}>
@@ -97,7 +80,7 @@ export function CommitList() {
                   isHead={c.hash === head}
                   selected={selected.has(c.hash)}
                   graphWidth={graphWidth}
-                  columns={columns}
+                  authorWidth={authorW}
                   onClick={(e) => click(idx, { toggle: hasMod(e), range: e.shiftKey })}
                 />
               </div>
