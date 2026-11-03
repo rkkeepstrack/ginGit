@@ -8,7 +8,7 @@ import { useSelection } from '../../state/selectionStore'
 import type { DiffMode } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
 import { PairView, typeLabel } from './DiffPanel'
-import { iconFor } from '../../lib/fileIcon'
+import { categoryFor, iconFor } from '../../lib/fileIcon'
 
 
 /**
@@ -106,8 +106,8 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
         title="Click to collapse, double-click to open on its own"
       >
         {collapsed ? <ChevronRight size={14} strokeWidth={1.75} className="opacity-50 shrink-0" /> : <ChevronDown size={14} strokeWidth={1.75} className="opacity-50 shrink-0" />}
-        <Icon size={14} strokeWidth={1.75} className="opacity-55 shrink-0" />
-        <span className="truncate select-text" title={file.path}>
+        <Icon size={14} strokeWidth={1.75} className={`shrink-0 opacity-80 ft-${categoryFor(file.path)}`} />
+        <span className={`truncate select-text fn-${file.type}`} title={file.path}>
           {file.oldPath && <span className="opacity-50">{file.oldPath} → </span>}
           {file.path}
         </span>

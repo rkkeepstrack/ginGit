@@ -4,6 +4,7 @@ import type { Commit, Ref } from '../../lib/types'
 import { LaneCell } from './LaneCell'
 import { RefPills } from './RefPills'
 import { DATE_W, HASH_W } from './columns'
+import { bucket, conventionalPrefix, initials } from '../../lib/color'
 
 export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, selected, graphWidth, authorWidth, onClick }: {
   commit: Commit
@@ -16,6 +17,8 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
   onClick: (e: React.MouseEvent) => void
 }) {
   const isMerge = commit.parents.length > 1
+  const conv = conventionalPrefix(commit.subject)
+  const lane = bucket(commit.authorEmail || commit.author)
   return (
     <div
       className={`commit-row flex items-center ${selected ? 'selected' : ''}`}
@@ -25,10 +28,11 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
       <LaneCell row={commit.row} prev={prev?.row} isMerge={isMerge} isHead={isHead} width={graphWidth} />
       <div className={`flex-1 min-w-0 pl-1.5 pr-3 overflow-hidden text-ellipsis ${isMerge ? 'opacity-70' : ''}`} title={commit.subject}>
         <RefPills refs={refs} />
-        {commit.subject}
+        {conv ? <><span className={`kind kind-${conv.kind}`}>{conv.prefix}</span> {conv.rest}</> : commit.subject}
       </div>
-      <div className="shrink-0 overflow-hidden text-ellipsis pr-3 opacity-65" style={{ width: authorWidth }} title={`${commit.author} <${commit.authorEmail}>`}>
-        {commit.author}
+      <div className="shrink-0 flex items-center overflow-hidden pr-3" style={{ width: authorWidth }} title={`${commit.author} <${commit.authorEmail}>`}>
+        <span className="avatar-dot" style={{ '--lane': `var(--lane-${lane})` } as React.CSSProperties}>{initials(commit.author)}</span>
+        <span className="truncate opacity-75">{commit.author}</span>
       </div>
       <div className="shrink-0 pr-3 opacity-55 text-right tabular-nums" style={{ width: DATE_W }} title={absoluteDate(commit.authorDate)}>
         {relativeDate(commit.authorDate)}

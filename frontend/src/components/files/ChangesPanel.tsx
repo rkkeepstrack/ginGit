@@ -8,7 +8,7 @@ import { useRepo } from '../../state/repoStore'
 import { useSelection, useSelectionInfo } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { useChanges } from '../../state/changesStore'
-import { iconFor } from '../../lib/fileIcon'
+import { categoryFor, iconFor } from '../../lib/fileIcon'
 import { Notice } from '../shell/Notice'
 
 const letter: Record<ChangeType, string> = { added: 'A', modified: '', deleted: 'D', renamed: 'R' }
@@ -139,8 +139,8 @@ function FileRow({ change, name, depth, active, onClick }: { change: FileChange;
   const Icon = iconFor(change.path)
   return (
     <div className={`tree-row flex items-center gap-1.5 pr-2 ${active ? 'active' : ''}`} style={{ paddingLeft: 6 + depth * 14 + 17 }} onClick={onClick} title={change.oldPath ? `${change.oldPath} → ${change.path}` : change.path}>
-      <Icon size={14} strokeWidth={1.75} className="opacity-55 shrink-0" />
-      <span className={`truncate ${change.type === 'deleted' ? 'line-through opacity-60' : ''}`}>{name}</span>
+      <Icon size={14} strokeWidth={1.75} className={`shrink-0 opacity-80 ft-${categoryFor(change.path)}`} />
+      <span className={`truncate fn-${change.type}`}>{name}</span>
       {letter[change.type] && <span className={`ct ct-${change.type}`}>{letter[change.type]}</span>}
       {change.oldPath && <span className="opacity-40 truncate text-[10px]">← {change.oldPath.split('/').pop()}</span>}
       {change.touches.length > 1 && <span className="text-[10.5px] opacity-50 tabular-nums shrink-0" title={`Changed in ${change.touches.length} selected commits`}>×{change.touches.length}</span>}

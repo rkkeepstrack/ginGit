@@ -34,6 +34,19 @@ const byName: Record<string, LucideIcon> = {
   '.gitignore': FileCog, '.gitattributes': FileCog, '.editorconfig': FileCog, '.env': FileCog, 'license': FileText, 'readme': FileText,
 }
 
+export type FileCategory = 'code' | 'style' | 'data' | 'text' | 'shell' | 'media' | 'lock'
+
+const category = new Map<LucideIcon, FileCategory>([
+  [FileCode2, 'code'], [Braces, 'style'], [FileJson2, 'data'], [FileCog, 'data'], [FileSpreadsheet, 'data'], [Package, 'data'],
+  [FileText, 'text'], [FileType2, 'text'], [FileTerminal, 'shell'],
+  [FileImage, 'media'], [Film, 'media'], [Music, 'media'], [FileArchive, 'media'], [FileLock2, 'lock'],
+])
+
+/** The category of a path's icon, for tinting. */
+export function categoryFor(path: string): FileCategory {
+  return category.get(iconFor(path)) ?? 'text'
+}
+
 /** Picks a lucide glyph for a path. Always returns something. */
 export function iconFor(path: string): LucideIcon {
   const name = (path.split('/').pop() ?? path).toLowerCase()

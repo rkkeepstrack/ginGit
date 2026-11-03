@@ -8,7 +8,7 @@ import { useSelection, useSelectionInfo } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
 import { useChanges } from '../../state/changesStore'
-import { iconFor } from '../../lib/fileIcon'
+import { categoryFor, iconFor } from '../../lib/fileIcon'
 import { AllFilesView } from './AllFilesView'
 import { MergeViewHost } from './MergeViewHost'
 import { SingleSideView } from './SingleSideView'
@@ -71,7 +71,7 @@ export function DiffPanel() {
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-diff">
       <div className="panel-head hairline-b">
-        <FileIcon size={14} strokeWidth={1.75} className="opacity-55 shrink-0" />
+        <FileIcon size={14} strokeWidth={1.75} className={`shrink-0 opacity-80 ft-${categoryFor(file)}`} />
         <span className="truncate select-text" title={file}>
           {segments.map((s, i) => (
             <span key={i} className={i === segments.length - 1 ? '' : 'opacity-50'}>{s}{i < segments.length - 1 ? '/' : ''}</span>
