@@ -47,23 +47,19 @@ export function CommitList() {
   const graphWidth = matches ? GRAPH_PAD : GRAPH_PAD + Math.min(maxLanes, MAX_LANES) * LANE_W + 6
   const columns = useMemo(() => fitColumns(panelWidth, graphWidth, authorW), [panelWidth, graphWidth, authorW])
 
-  // Keep the keyboard cursor in view.
+  // Keep the cursor in view. A jump (clicking a pill) centres it instead, so
+  // the commits around the branch are on screen too.
   const cursor = useSelection((s) => s.cursor)
+  const reveal = useSelection((s) => s.reveal)
+  const handledReveal = useRef(0)
   useEffect(() => {
     if (cursor === null) return
     const row = matches ? visible.indexOf(cursor) : cursor
-    if (row >= 0) virtualizer.scrollToIndex(row, { align: 'auto' })
-  }, [cursor, matches, visible, virtualizer])
-
-  // A jump (branch badge in search results) parks the cursor a quarter down the viewport.
-  const reveal = useSelection((s) => s.reveal)
-  useEffect(() => {
-    if (reveal === 0 || cursor === null || !parentRef.current) return
-    const row = matches ? visible.indexOf(cursor) : cursor
     if (row < 0) return
-    virtualizer.scrollToOffset(Math.max(0, row * ROW_H - parentRef.current.clientHeight / 4))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reveal])
+    const jump = reveal !== handledReveal.current
+    handledReveal.current = reveal
+    virtualizer.scrollToIndex(row, { align: jump ? 'center' : 'auto' })
+  }, [cursor, reveal, matches, visible, virtualizer])
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
