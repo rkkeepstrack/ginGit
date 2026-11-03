@@ -4,8 +4,12 @@ Read-only git history explorer with multi-commit review. Select any number of
 commits, or a whole branch with one click, get one consolidated file list, and
 read every diff as one review.
 
-Site: https://rkkeepstrack.github.io/ginGit/ · Releases: tag `v*` and the
-release workflow builds a universal macOS app and a Linux binary.
+Site: https://rkkeepstrack.github.io/ginGit/ · Releasing: run the `release`
+workflow from the Actions tab (or `gh workflow run release.yml`). Everything
+pushed since the last tag becomes the release: the commit prefixes decide the
+bump (feat: minor, `!` or BREAKING CHANGE: major, anything else: patch), the
+notes list the commits by type, and a universal macOS app plus a Linux binary
+are attached.
 
 Wails v2 + Go backend, Svelte 5 + Tailwind + daisyUI frontend, CodeMirror diffs.
 

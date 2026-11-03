@@ -1,10 +1,17 @@
 name: release
 
-# Tag v1.2.3 and this builds the macOS app (universal) and a Linux binary,
-# then attaches both to a GitHub release for that tag.
+# Run by hand from the Actions tab. Everything pushed since the last tag
+# becomes the release: the commit prefixes decide the bump (feat: minor,
+# fix/perf/refactor: patch, a "!" or BREAKING CHANGE: major), the notes list
+# those commits by type, the tag is created, both platforms are built and the
+# GitHub release carries the artifacts.
 on:
-  push:
-    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Explicit version (e.g. 1.2.0); empty derives it from the commits since the last tag
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -13,7 +20,66 @@ env:
   WAILS_VERSION: v2.16.0
 
 jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: bump
+        env:
+          EXPLICIT: ${{ github.event.inputs.version }}
+        run: |
+          set -euo pipefail
+          last=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || echo v0.0.0)
+          if [ "$last" = v0.0.0 ]; then range=HEAD; else range="$last..HEAD"; fi
+          if [ -z "$(git log --format=%H "$range")" ]; then
+            echo "::error::nothing has been pushed since $last, nothing to release"; exit 1
+          fi
+          if [ -n "$EXPLICIT" ]; then
+            tag="v${EXPLICIT#v}"
+          else
+            text=$(git log --format=%s%n%b "$range")
+            bump=patch
+            if grep -Eq '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE' <<<"$text"; then bump=major
+            elif grep -Eq '^feat(\([^)]*\))?:' <<<"$text"; then bump=minor
+            fi
+            IFS=. read -r major minor patch <<<"${last#v}"
+            case $bump in
+              major) if [ "$major" = 0 ]; then minor=$((minor+1)); patch=0; else major=$((major+1)); minor=0; patch=0; fi ;;
+              minor) minor=$((minor+1)); patch=0 ;;
+              patch) patch=$((patch+1)) ;;
+            esac
+            tag="v$major.$minor.$patch"
+          fi
+          echo "last=$last tag=$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          # Release notes: the commits since the last tag, grouped by type.
+          {
+            section() {
+              local title=$1 pattern=$2
+              local lines
+              lines=$(git log --format='- %s (%h)' "$range" | grep -E "^- $pattern" || true)
+              if [ -n "$lines" ]; then printf '## %s\n%s\n\n' "$title" "$lines"; fi
+            }
+            section Features 'feat'
+            section Fixes 'fix'
+            section Performance 'perf'
+            section Refactoring 'refactor'
+            section Other '(chore|docs|test|ci|build|style)'
+            section Unsorted '[^a-z]|[a-z]+[^a-z(:]'
+          } > notes.md
+          cat notes.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: notes
+          path: notes.md
+
   macos:
+    needs: version
+    if: needs.version.outputs.tag != ''
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,13 +93,15 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
       - run: wails build -platform darwin/universal -clean
-      - run: ditto -c -k --keepParent build/bin/ginGit.app ginGit-${{ github.ref_name }}-macos-universal.zip
+      - run: ditto -c -k --keepParent build/bin/ginGit.app ginGit-${{ needs.version.outputs.tag }}-macos-universal.zip
       - uses: actions/upload-artifact@v4
         with:
           name: macos
           path: ginGit-*-macos-universal.zip
 
   linux:
+    needs: version
+    if: needs.version.outputs.tag != ''
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,22 +116,32 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
       - run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
       - run: wails build -platform linux/amd64 -tags webkit2_41 -clean
-      - run: tar -C build/bin -czf ginGit-${{ github.ref_name }}-linux-amd64.tar.gz ginGit
+      - run: tar -C build/bin -czf ginGit-${{ needs.version.outputs.tag }}-linux-amd64.tar.gz ginGit
       - uses: actions/upload-artifact@v4
         with:
           name: linux
           path: ginGit-*-linux-amd64.tar.gz
 
   publish:
-    needs: [macos, linux]
+    needs: [version, macos, linux]
+    if: needs.version.outputs.tag != ''
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+      - name: tag
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag -a "${{ needs.version.outputs.tag }}" -m "${{ needs.version.outputs.tag }}"
+          git push origin "${{ needs.version.outputs.tag }}"
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ needs.version.outputs.tag }}
+          name: ${{ needs.version.outputs.tag }}
+          body_path: notes.md
           files: |
             ginGit-*-macos-universal.zip
             ginGit-*-linux-amd64.tar.gz
-          generate_release_notes: true
