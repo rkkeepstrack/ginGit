@@ -6,9 +6,10 @@ const row = (page: Page, label: string) => page.locator(`.commit-row[data-hash="
 async function loaded(page: Page) {
   await page.goto('/')
   await expect(page.locator('.commit-row').first()).toBeVisible()
-  // Grammars load lazily; wait for syntax colors before shooting code.
-  await page.waitForTimeout(200)
 }
+
+/** Editors mount a frame at a time once their grammar is in; a host is marked when fully built. */
+const ready = (page: Page) => page.locator('.cm-host[data-ready]')
 
 test('welcome screen', async ({ page }) => {
   await installBridge(page, { initialRepo: false })
@@ -30,9 +31,8 @@ test('a selection shows every file as a collapsible section', async ({ page }) =
   await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
   await expect(page.locator('#panel-diff .section-head')).toHaveCount(4)
   // the deleted logo is binary and gets a notice; the deleted changelog is full-width red
-  await expect(page.locator('.cm-editor')).toHaveCount(3)
+  await expect(ready(page)).toHaveCount(3)
   await expect(page.locator('.cm-host.single-deleted .cm-editor')).toHaveCount(1)
-  await page.waitForTimeout(200)
   await expect(page).toHaveScreenshot('overview-unified.png')
 })
 
@@ -41,8 +41,8 @@ test('a single file side by side', async ({ page }) => {
   await loaded(page)
   await row(page, "Merge branch 'feature/login'").click()
   await page.locator('#panel-files .tree-row', { hasText: 'main.ts' }).click()
+  await expect(ready(page)).toHaveCount(1)
   await expect(page.locator('.cm-mergeView')).toBeVisible()
-  await page.waitForTimeout(200)
   await expect(page).toHaveScreenshot('single-split.png')
 })
 
@@ -53,8 +53,7 @@ test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await row(page, 'chore: initial import').click({ modifiers: ['ControlOrMeta'] })
   await page.locator('#panel-files .tree-row', { hasText: 'README.md' }).click()
   await expect(page.locator('#panel-diff .alert-warning')).toBeVisible()
-  await expect(page.locator('.cm-editor')).toHaveCount(2)
-  await page.waitForTimeout(200)
+  await expect(ready(page)).toHaveCount(2)
   await expect(page).toHaveScreenshot('stacked.png')
 })
 
@@ -63,7 +62,8 @@ test('dark theme', async ({ page }) => {
   await loaded(page)
   await row(page, 'refactor: app.ts becomes main.ts, logo lands').click()
   await expect(page.locator('#panel-diff .section-head')).toHaveCount(2)
-  await page.waitForTimeout(200)
+  // the added logo is binary; only main.ts gets an editor
+  await expect(ready(page)).toHaveCount(1)
   await expect(page).toHaveScreenshot('dark.png')
 })
 

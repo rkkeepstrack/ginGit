@@ -38,6 +38,14 @@ function enqueue(job: () => void) {
 export function mountEditor(host: HTMLElement, path: string, build: (host: HTMLElement, lang: Extension | null) => Disposable): () => void {
   let disposed = false
   let view: Disposable | null = null
-  languageFor(path).then((lang) => { enqueue(() => { if (!disposed) view = build(host, lang) }) })
+  languageFor(path).then((lang) => {
+    enqueue(() => {
+      if (disposed) return
+      view = build(host, lang)
+      // Grammar loaded, view built and its first layout pass done: what the
+      // snapshot tests wait for. The merge view aligns its sides a frame late.
+      requestAnimationFrame(() => { if (!disposed) host.dataset.ready = '' })
+    })
+  })
   return () => { disposed = true; view?.destroy() }
 }
