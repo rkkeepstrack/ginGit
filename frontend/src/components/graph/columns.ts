@@ -3,7 +3,7 @@ import type { Commit } from '../../lib/types'
 export const DATE_W = 64
 export const HASH_W = 64
 const AUTHOR_MIN = 72
-const AUTHOR_MAX = 205
+const AUTHOR_MAX = 180
 
 let canvas: CanvasRenderingContext2D | null = null
 function measure(text: string): number {
@@ -23,6 +23,5 @@ export function authorWidth(commits: Commit[]): number {
     seen.add(c.author)
     widest = Math.max(widest, measure(c.author))
   }
-  // 25px for the avatar dot and its gap
-  return Math.round(Math.min(AUTHOR_MAX, Math.max(AUTHOR_MIN, widest + 16 + 25)))
+  return Math.round(Math.min(AUTHOR_MAX, Math.max(AUTHOR_MIN, widest + 16)))
 }

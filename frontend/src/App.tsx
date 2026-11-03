@@ -5,6 +5,7 @@ import { ChangesPanel } from './components/files/ChangesPanel'
 import { DiffPanel, stepFile } from './components/diff/DiffPanel'
 import { TitleBar } from './components/shell/TitleBar'
 import { Toolbar } from './components/shell/Toolbar'
+import { StatusBar } from './components/shell/StatusBar'
 import { Welcome } from './components/shell/Welcome'
 import { api } from './lib/api'
 import { actionFor } from './lib/shortcuts'
@@ -71,6 +72,7 @@ export default function App() {
         // Nothing selected: the history gets the whole window.
         <div className="flex-1 min-h-0"><CommitList /></div>
       )}
+      <StatusBar />
     </div>
   )
 }

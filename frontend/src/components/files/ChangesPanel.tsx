@@ -8,6 +8,7 @@ import { useRepo } from '../../state/repoStore'
 import { useSelection, useSelectionInfo } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { useChanges } from '../../state/changesStore'
+import { hintProps } from '../../state/hintStore'
 import { categoryFor, iconFor } from '../../lib/fileIcon'
 import { Notice } from '../shell/Notice'
 
@@ -78,17 +79,17 @@ export function ChangesPanel() {
           <>
             <span className="font-medium tabular-nums shrink-0">{count} {count === 1 ? 'commit' : 'commits'}</span>
             <div className="flex-1" />
-            <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={clear} title="Clear selection (Esc)"><X size={14} strokeWidth={1.75} /></button>
+            <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={clear} {...hintProps('Clear selection  Esc')}><X size={14} strokeWidth={1.75} /></button>
           </>
         )}
       </div>
       {count > 0 && (
         <div className="flex items-center gap-1 px-2 py-1 hairline-b shrink-0">
           <input className="input input-xs flex-1 min-w-0 text-[12px]" placeholder="Filter files" value={filter} onChange={(e) => setFilter(e.target.value)} />
-          <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={() => setFileSort(fileSort === 'name' ? 'type' : 'name')} title={fileSort === 'name' ? 'Sorted by name. Click to sort by change type.' : 'Sorted by change type. Click to sort by name.'}>
+          <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={() => setFileSort(fileSort === 'name' ? 'type' : 'name')} {...hintProps(fileSort === 'name' ? 'Sorted by name, click to sort by change type' : 'Sorted by change type, click to sort by name')}>
             {fileSort === 'name' ? <ArrowDownAZ size={15} strokeWidth={1.75} /> : <Tags size={15} strokeWidth={1.75} />}
           </button>
-          <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={() => setFlatFiles(!flatFiles)} title={flatFiles ? 'Show as tree' : 'Show as flat list'}>
+          <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={() => setFlatFiles(!flatFiles)} {...hintProps(flatFiles ? 'Show as tree' : 'Show as flat list')}>
             {flatFiles ? <ListTree size={15} strokeWidth={1.75} /> : <List size={15} strokeWidth={1.75} />}
           </button>
         </div>

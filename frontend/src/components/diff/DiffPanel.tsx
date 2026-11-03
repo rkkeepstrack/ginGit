@@ -7,6 +7,7 @@ import { useRepo } from '../../state/repoStore'
 import { useSelection, useSelectionInfo } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
+import { hintProps } from '../../state/hintStore'
 import { useChanges } from '../../state/changesStore'
 import { categoryFor, iconFor } from '../../lib/fileIcon'
 import { AllFilesView } from './AllFilesView'
@@ -85,9 +86,9 @@ export function DiffPanel() {
         )}
         <div className="flex-1" />
         <span className="opacity-50 tabular-nums shrink-0">{idx >= 0 ? `${idx + 1} / ${paths.length}` : ''}</span>
-        <button className="btn btn-ghost btn-xs btn-square" onClick={() => useSelection.getState().setFile(null)} title="All files"><LayoutList size={15} strokeWidth={1.75} /></button>
-        <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(-1)} disabled={idx <= 0} title="Previous file  ["><ChevronUp size={15} strokeWidth={1.75} /></button>
-        <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(1)} disabled={idx < 0 || idx >= paths.length - 1} title="Next file  ]"><ChevronDown size={15} strokeWidth={1.75} /></button>
+        <button className="btn btn-ghost btn-xs btn-square" onClick={() => useSelection.getState().setFile(null)} {...hintProps('Back to all files')}><LayoutList size={15} strokeWidth={1.75} /></button>
+        <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(-1)} disabled={idx <= 0} {...hintProps('Previous file  [')}><ChevronUp size={15} strokeWidth={1.75} /></button>
+        <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(1)} disabled={idx < 0 || idx >= paths.length - 1} {...hintProps('Next file  ]')}><ChevronDown size={15} strokeWidth={1.75} /></button>
       </div>
       {error && <Notice kind="error">{error}</Notice>}
       {loading && !result && <div className="p-4 text-xs opacity-50">Loading…</div>}

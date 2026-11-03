@@ -142,6 +142,7 @@ body {
 
 /* Hairline dividers instead of borders everywhere. */
 .hairline-b { box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+.hairline-t { box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 .hairline-r { box-shadow: inset -1px 0 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 
 /* Commit rows */
@@ -150,6 +151,8 @@ body {
 .commit-row.selected { background: color-mix(in oklab, var(--color-primary) 22%, transparent); }
 .commit-row.selected:hover { background: color-mix(in oklab, var(--color-primary) 28%, transparent); }
 .commit-row.dim { opacity: 0.35; }
+.hash-cell { cursor: copy; border-radius: 4px; padding: 0 4px; margin-left: -4px; }
+.hash-cell:hover { background: color-mix(in oklab, var(--color-base-content) 8%, transparent); opacity: 1; }
 
 .ref-pill {
   display: inline-flex; align-items: center; gap: 4px;
@@ -167,13 +170,6 @@ body {
 .ref-pill.tag { --pill: var(--color-accent); }
 
 /* Change-type badges */
-.avatar-dot {
-  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
-  width: 18px; height: 18px; border-radius: 50%; margin-right: 7px;
-  font-size: 8.5px; font-weight: 600; letter-spacing: 0.02em;
-  color: color-mix(in oklab, var(--lane) 55%, var(--color-base-content));
-  background: color-mix(in oklab, var(--lane) 28%, var(--color-base-100));
-}
 .kind { font-weight: 500; }
 .kind-feat { color: var(--kind-feat); }
 .kind-fix { color: var(--kind-fix); }

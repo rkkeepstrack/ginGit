@@ -7,6 +7,7 @@ import { useRepo } from '../../state/repoStore'
 import { useSelection } from '../../state/selectionStore'
 import type { DiffMode } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
+import { hintProps } from '../../state/hintStore'
 import { PairView, typeLabel } from './DiffPanel'
 import { categoryFor, iconFor } from '../../lib/fileIcon'
 
@@ -35,7 +36,7 @@ export function AllFilesView({ changeSet, paths, hashes, mode, diffMode }: {
       <div className="panel-head hairline-b">
         <span className="font-medium tabular-nums">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
         <div className="flex-1" />
-        <button className="btn btn-ghost btn-xs btn-square" onClick={() => setCollapsed(allCollapsed ? new Set() : new Set(files.map((f) => f.path)))} title={allCollapsed ? 'Expand all' : 'Collapse all'}>
+        <button className="btn btn-ghost btn-xs btn-square" onClick={() => setCollapsed(allCollapsed ? new Set() : new Set(files.map((f) => f.path)))} {...hintProps(allCollapsed ? 'Expand all files' : 'Collapse all files')}>
           {allCollapsed ? <ChevronsUpDown size={15} strokeWidth={1.75} /> : <ChevronsDownUp size={15} strokeWidth={1.75} />}
         </button>
       </div>
@@ -103,7 +104,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
         className="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
         onClick={onToggle}
         onDoubleClick={openSingle}
-        title="Click to collapse, double-click to open on its own"
+        {...hintProps('Click to collapse, double-click to open this file on its own')}
       >
         {collapsed ? <ChevronRight size={14} strokeWidth={1.75} className="opacity-50 shrink-0" /> : <ChevronDown size={14} strokeWidth={1.75} className="opacity-50 shrink-0" />}
         <Icon size={14} strokeWidth={1.75} className={`shrink-0 opacity-80 ft-${categoryFor(file.path)}`} />

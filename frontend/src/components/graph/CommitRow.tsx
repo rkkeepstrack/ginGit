@@ -4,7 +4,14 @@ import type { Commit, Ref } from '../../lib/types'
 import { LaneCell } from './LaneCell'
 import { RefPills } from './RefPills'
 import { DATE_W, HASH_W } from './columns'
-import { bucket, conventionalPrefix, initials } from '../../lib/color'
+import { conventionalPrefix } from '../../lib/color'
+import { copyText } from '../../lib/clipboard'
+import { hintProps, useHint } from '../../state/hintStore'
+
+async function copyHash(hash: string) {
+  const ok = await copyText(hash)
+  useHint.getState().flashMessage(ok ? `Copied ${hash}` : 'Clipboard not available')
+}
 
 export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, selected, graphWidth, authorWidth, onClick }: {
   commit: Commit
@@ -18,7 +25,6 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
 }) {
   const isMerge = commit.parents.length > 1
   const conv = conventionalPrefix(commit.subject)
-  const lane = bucket(commit.authorEmail || commit.author)
   return (
     <div
       className={`commit-row flex items-center ${selected ? 'selected' : ''}`}
@@ -30,14 +36,22 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
         <RefPills refs={refs} />
         {conv ? <><span className={`kind kind-${conv.kind}`}>{conv.prefix}</span> {conv.rest}</> : commit.subject}
       </div>
-      <div className="shrink-0 flex items-center overflow-hidden pr-3" style={{ width: authorWidth }} title={`${commit.author} <${commit.authorEmail}>`}>
-        <span className="avatar-dot" style={{ '--lane': `var(--lane-${lane})` } as React.CSSProperties}>{initials(commit.author)}</span>
-        <span className="truncate opacity-75">{commit.author}</span>
+      <div className="shrink-0 overflow-hidden text-ellipsis pr-3 opacity-70" style={{ width: authorWidth }} title={`${commit.author} <${commit.authorEmail}>`}>
+        {commit.author}
       </div>
       <div className="shrink-0 pr-3 opacity-55 text-right tabular-nums" style={{ width: DATE_W }} title={absoluteDate(commit.authorDate)}>
         {relativeDate(commit.authorDate)}
       </div>
-      <div className="shrink-0 mono opacity-50 pr-2" style={{ width: HASH_W }}>{shortHash(commit.hash)}</div>
+      <div className="shrink-0 pr-2" style={{ width: HASH_W }}>
+        <span
+          className="hash-cell mono opacity-50"
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); void copyHash(commit.hash) }}
+          {...hintProps(`Click to copy ${commit.hash}`)}
+        >
+          {shortHash(commit.hash)}
+        </span>
+      </div>
     </div>
   )
 })

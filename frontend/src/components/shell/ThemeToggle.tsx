@@ -1,5 +1,6 @@
 import { Check, Monitor, Moon, Sun, SunMoon } from 'lucide-react'
 import { useUI, type ThemeChoice } from '../../state/uiStore'
+import { hintProps } from '../../state/hintStore'
 
 const choices: { value: ThemeChoice; label: string; Icon: typeof Sun }[] = [
   { value: 'pastel', label: 'Light', Icon: Sun },
@@ -12,7 +13,7 @@ export function ThemeToggle() {
   const setTheme = useUI((s) => s.setTheme)
   return (
     <div className="dropdown dropdown-end">
-      <div tabIndex={0} role="button" className="btn btn-ghost btn-sm btn-square" title="Appearance">
+      <div tabIndex={0} role="button" className="btn btn-ghost btn-sm btn-square" {...hintProps('Appearance: light, dark or follow the system')}>
         <SunMoon size={16} strokeWidth={1.75} />
       </div>
       <ul tabIndex={0} className="dropdown-content menu menu-sm bg-base-100 rounded-box shadow-lg z-50 w-40 p-1 mt-1 border border-base-content/10">
