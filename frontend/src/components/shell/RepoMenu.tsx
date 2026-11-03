@@ -23,13 +23,13 @@ export function RepoMenu() {
 
   return (
     <div className="dropdown">
-      <div tabIndex={0} role="button" className="btn btn-ghost btn-sm px-2 gap-1 font-semibold normal-case">
+      <div tabIndex={0} role="button" className="btn btn-ghost btn-sm px-2 gap-1 font-semibold text-[13px]">
         {repo?.name ?? 'Open repository'}
-        <ChevronDown size={14} className="opacity-50" />
+        <ChevronDown size={14} strokeWidth={2} className="opacity-50" />
       </div>
       <ul tabIndex={0} className="dropdown-content menu menu-sm bg-base-100 rounded-box shadow-lg z-50 w-[28rem] max-w-[90vw] p-1 mt-1 border border-base-content/10 flex-nowrap overflow-hidden">
         <li>
-          <a onClick={() => pick()}><FolderOpen size={14} /> Open…</a>
+          <a onClick={() => pick()}><FolderOpen size={15} strokeWidth={1.75} /> Open…</a>
         </li>
         {recent.length > 0 && <li className="menu-title text-[10px] pt-2">Recent</li>}
         {recent.map((r) => (
@@ -44,7 +44,7 @@ export function RepoMenu() {
                 onClick={(e) => { e.stopPropagation(); void forget(r.path) }}
                 title="Remove from recent"
               >
-                <X size={12} />
+                <X size={13} strokeWidth={1.75} />
               </button>
             </a>
           </li>

@@ -1,4 +1,6 @@
 import { Columns2, GitBranch, RefreshCw, Rows3, Search, X } from 'lucide-react'
+
+const ICON = { size: 16, strokeWidth: 1.75 } as const
 import { useShallow } from 'zustand/react/shallow'
 import { formatCount } from '../../lib/format'
 import { modKey } from '../../lib/platform'
@@ -22,25 +24,25 @@ export function Toolbar() {
   const setDiffMode = useUI((s) => s.setDiffMode)
 
   return (
-    <div className="flex items-center gap-2 h-10 px-2 hairline-b shrink-0">
-      <div className="flex items-center gap-2 flex-1 min-w-0">
+    <div className="flex items-center gap-1.5 h-11 px-2 hairline-b shrink-0">
+      <div className="flex items-center gap-1.5 flex-1 min-w-0">
         <RepoMenu />
         {repo && (
-          <span className="inline-flex items-center gap-1 text-xs opacity-70 min-w-0 truncate" title={repo.detached ? `Detached at ${repo.head}` : repo.branch}>
-            <GitBranch size={12} />
+          <span className="inline-flex items-center gap-1 text-[12px] opacity-70 min-w-0 truncate ml-1" title={repo.detached ? `Detached at ${repo.head}` : repo.branch}>
+            <GitBranch size={13} strokeWidth={1.75} />
             {repo.detached ? `detached ${repo.head.slice(0, 7)}` : repo.branch}
           </span>
         )}
         {repo && (
-          <span className="text-xs opacity-50 shrink-0 tabular-nums">
+          <span className="text-[12px] opacity-50 shrink-0 tabular-nums ml-1">
             {loading && <span className="loading loading-spinner loading-xs mr-1 align-middle" />}
             {formatCount(count)}{total !== null && total !== count ? ` / ${formatCount(total)}` : ''} commits
             {matches && <span> · {formatCount(matches.length)} match</span>}
           </span>
         )}
         <div className="flex-1" />
-        <label className="input input-sm w-72 flex items-center gap-2 px-2">
-          {pending ? <span className="loading loading-spinner loading-xs" /> : <Search size={13} className="opacity-50" />}
+        <label className="input input-sm w-72 flex items-center gap-2 px-2.5 text-[12.5px]">
+          {pending ? <span className="loading loading-spinner loading-xs" /> : <Search size={14} strokeWidth={1.75} className="opacity-50" />}
           <input
             id="commit-search"
             className="grow"
@@ -49,16 +51,16 @@ export function Toolbar() {
             onChange={(e) => setText(e.target.value)}
             disabled={!repo}
           />
-          {text && <button className="btn btn-ghost btn-xs btn-square" onClick={() => setText('')}><X size={12} /></button>}
+          {text && <button className="btn btn-ghost btn-xs btn-square" onClick={() => setText('')}><X size={13} strokeWidth={1.75} /></button>}
         </label>
         <FilterPopover />
-        <button className="btn btn-ghost btn-xs btn-square relative" onClick={() => void refresh()} disabled={!repo || loading} title={`Refresh history  ${modKey}R`}>
-          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+        <button className="btn btn-ghost btn-sm btn-square relative" onClick={() => void refresh()} disabled={!repo || loading} title={`Refresh history  ${modKey}R`}>
+          <RefreshCw {...ICON} className={loading ? 'animate-spin' : ''} />
           {changed && <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-warning ring-2 ring-base-100" title="Repository changed since last load" />}
         </button>
-        <div className="join">
-          <button className={`btn btn-xs join-item ${diffMode === 'split' ? 'btn-active' : 'btn-ghost'}`} onClick={() => setDiffMode('split')} title={`Side by side  ${modKey}⇧D`}><Columns2 size={14} /></button>
-          <button className={`btn btn-xs join-item ${diffMode === 'unified' ? 'btn-active' : 'btn-ghost'}`} onClick={() => setDiffMode('unified')} title={`Unified  ${modKey}⇧D`}><Rows3 size={14} /></button>
+        <div className="join bg-base-200/60 rounded-field p-0.5 ml-1">
+          <button className={`btn btn-xs btn-square join-item ${diffMode === 'split' ? 'bg-base-100 shadow-sm' : 'btn-ghost opacity-60'}`} onClick={() => setDiffMode('split')} title={`Side by side  ${modKey}⇧D`}><Columns2 size={15} strokeWidth={1.75} /></button>
+          <button className={`btn btn-xs btn-square join-item ${diffMode === 'unified' ? 'bg-base-100 shadow-sm' : 'btn-ghost opacity-60'}`} onClick={() => setDiffMode('unified')} title={`Unified  ${modKey}⇧D`}><Rows3 size={15} strokeWidth={1.75} /></button>
         </div>
         <ThemeToggle />
       </div>

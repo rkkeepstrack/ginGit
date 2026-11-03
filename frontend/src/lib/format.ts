@@ -1,4 +1,3 @@
-const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
 const sameYear = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' })
 const otherYear = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 const full = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
@@ -7,14 +6,14 @@ export function shortHash(h: string): string {
   return h.slice(0, 7)
 }
 
+/** Compact relative date for a narrow column: "now", "24 min", "21 h", "3 d", then a date. */
 export function relativeDate(iso: string, now = Date.now()): string {
   const d = new Date(iso)
-  const diff = (d.getTime() - now) / 1000
-  const abs = Math.abs(diff)
-  if (abs < 60) return 'just now'
-  if (abs < 3600) return rtf.format(Math.round(diff / 60), 'minute')
-  if (abs < 86400) return rtf.format(Math.round(diff / 3600), 'hour')
-  if (abs < 86400 * 7) return rtf.format(Math.round(diff / 86400), 'day')
+  const s = Math.max(0, (now - d.getTime()) / 1000)
+  if (s < 60) return 'now'
+  if (s < 3600) return `${Math.round(s / 60)} min`
+  if (s < 86400) return `${Math.round(s / 3600)} h`
+  if (s < 86400 * 7) return `${Math.round(s / 86400)} d`
   return d.getFullYear() === new Date(now).getFullYear() ? sameYear.format(d) : otherYear.format(d)
 }
 

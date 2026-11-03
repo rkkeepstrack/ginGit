@@ -65,9 +65,9 @@ export function CommitList() {
 
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-graph">
-      <div className="flex items-center h-7 text-[11px] uppercase tracking-wide opacity-50 hairline-b shrink-0 pr-2">
+      <div className="flex items-center h-8 col-head hairline-b shrink-0 pr-2">
         <div style={{ width: graphWidth }} className="shrink-0" />
-        <div className="flex-1 pl-1">Commit</div>
+        <div className="flex-1 pl-1.5">Commit</div>
         <div className="shrink-0 relative" style={{ width: columns.author }}>
           <span className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/60" onMouseDown={startResize('author')} />
           <span className="pl-1">Author</span>
@@ -76,7 +76,7 @@ export function CommitList() {
           <span className="absolute left-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/60" onMouseDown={startResize('date')} />
           Date
         </div>
-        <div className="shrink-0 w-[68px]">Hash</div>
+        <div className="shrink-0 w-[64px]">Hash</div>
       </div>
       {error && <Notice kind="error">{error}</Notice>}
       <div ref={parentRef} className="flex-1 overflow-auto outline-none" tabIndex={0} onKeyDown={onKeyDown}>

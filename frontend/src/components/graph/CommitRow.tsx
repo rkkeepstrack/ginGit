@@ -22,18 +22,17 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
       data-hash={commit.hash}
     >
       <LaneCell row={commit.row} prev={prev?.row} isMerge={isMerge} isHead={isHead} width={graphWidth} />
-      <div className="flex-1 min-w-0 pl-1 pr-3 overflow-hidden text-ellipsis" title={commit.subject}>
+      <div className={`flex-1 min-w-0 pl-1.5 pr-3 overflow-hidden text-ellipsis ${isMerge ? 'opacity-70' : ''}`} title={commit.subject}>
         <RefPills refs={refs} />
-        {isMerge && <span className="mr-1.5 text-[10px] uppercase tracking-wide opacity-50">merge</span>}
         {commit.subject}
       </div>
-      <div className="shrink-0 overflow-hidden text-ellipsis pr-3 opacity-70" style={{ width: columns.author }} title={`${commit.author} <${commit.authorEmail}>`}>
+      <div className="shrink-0 overflow-hidden text-ellipsis pr-3 opacity-65" style={{ width: columns.author }} title={`${commit.author} <${commit.authorEmail}>`}>
         {commit.author}
       </div>
-      <div className="shrink-0 pr-3 opacity-60 text-right" style={{ width: columns.date }} title={absoluteDate(commit.authorDate)}>
+      <div className="shrink-0 pr-3 opacity-55 text-right tabular-nums" style={{ width: columns.date }} title={absoluteDate(commit.authorDate)}>
         {relativeDate(commit.authorDate)}
       </div>
-      <div className="shrink-0 w-[68px] mono opacity-60 pr-2">{shortHash(commit.hash)}</div>
+      <div className="shrink-0 w-[64px] mono opacity-50 pr-2">{shortHash(commit.hash)}</div>
     </div>
   )
 })

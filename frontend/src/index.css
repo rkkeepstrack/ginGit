@@ -24,6 +24,10 @@
   --diff-del-gutter: #ffc9c9;
   --diff-del-text: #ffb8b8;
   --diff-collapsed-bg: #f1f3f5;
+  --ct-added: #2f9e44;
+  --ct-modified: #1c7ed6;
+  --ct-deleted: #c92a2a;
+  --ct-renamed: #7048e8;
   --syn-keyword: #7048e8;
   --syn-string: #2b8a3e;
   --syn-number: #d9480f;
@@ -53,6 +57,10 @@
   --diff-del-gutter: #6b3139;
   --diff-del-text: #7e3a44;
   --diff-collapsed-bg: #2a2e37;
+  --ct-added: #69db7c;
+  --ct-modified: #74c0fc;
+  --ct-deleted: #ff8787;
+  --ct-renamed: #b197fc;
   --syn-keyword: #b197fc;
   --syn-string: #8ce99a;
   --syn-number: #ffa94d;
@@ -67,6 +75,7 @@
 }
 
 :root {
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
   --row-h: 28px;
 }
@@ -77,20 +86,28 @@ html, body, #root {
   overflow: hidden;
   -webkit-user-select: none;
   user-select: none;
-  font-size: 13px;
 }
 
+/* Root stays at 16px so daisyUI's rem-sized controls keep their proportions;
+   only the app's own text is dense. */
 body {
   background: var(--color-base-100);
   color: var(--color-base-content);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.4;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 1, "cv11" 1;
 }
 
 /* Wails' own drag hint; the Electron-style app-region does nothing here. */
 .drag-region { --wails-draggable: drag; }
 .no-drag, .no-drag * { --wails-draggable: no-drag; }
 
-.mono { font-family: var(--font-mono); font-size: 12px; }
+.mono { font-family: var(--font-mono); font-size: 12px; font-feature-settings: "liga" 0; }
+.panel-head { height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 8px; font-size: 12px; flex-shrink: 0; white-space: nowrap; }
+.col-head { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; color: color-mix(in oklab, var(--color-base-content) 50%, transparent); }
+
 .select-text { -webkit-user-select: text; user-select: text; }
 
 /* Hairline dividers instead of borders everywhere. */
@@ -105,9 +122,10 @@ body {
 .commit-row.dim { opacity: 0.35; }
 
 .ref-pill {
-  display: inline-flex; align-items: center; gap: 3px;
+  display: inline-flex; align-items: center; gap: 4px;
   height: 18px; padding: 0 6px; border-radius: 4px;
-  font-size: 11px; line-height: 18px; font-weight: 500;
+  font-size: 11px; line-height: 18px; font-weight: 500; letter-spacing: 0;
+  vertical-align: middle;
   background: color-mix(in oklab, var(--pill) 18%, var(--color-base-100));
   color: color-mix(in oklab, var(--pill) 70%, var(--color-base-content));
   box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pill) 40%, transparent);
@@ -119,13 +137,14 @@ body {
 .ref-pill.tag { --pill: var(--color-accent); }
 
 /* Change-type badges */
-.ct { display: inline-flex; width: 16px; height: 16px; border-radius: 4px; font-size: 10px; font-weight: 700; align-items: center; justify-content: center; font-family: var(--font-mono); }
-.ct-added { background: color-mix(in oklab, var(--color-success) 25%, transparent); color: var(--color-success); }
-.ct-modified { background: color-mix(in oklab, var(--color-info) 25%, transparent); color: var(--color-info); }
-.ct-deleted { background: color-mix(in oklab, var(--color-error) 25%, transparent); color: var(--color-error); }
-.ct-renamed { background: color-mix(in oklab, var(--color-secondary) 30%, transparent); color: var(--color-secondary); }
+/* Change-type letters: a quiet colored glyph, no box. */
+.ct { display: inline-flex; width: 14px; height: 16px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center; font-family: var(--font-ui); flex-shrink: 0; }
+.ct-added { color: var(--ct-added); }
+.ct-modified { color: var(--ct-modified); }
+.ct-deleted { color: var(--ct-deleted); }
+.ct-renamed { color: var(--ct-renamed); }
 
-.tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: default; }
+.tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: default; font-size: 12.5px; }
 .tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .tree-row.active { background: color-mix(in oklab, var(--color-primary) 22%, transparent); }
 
@@ -172,6 +191,5 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-base-content) 30%, transparent); background-clip: padding-box; border: 2px solid transparent; }
 ::-webkit-scrollbar-track { background: transparent; }
 
-/* Pastel success/error are too faint for small numbers; mix toward text. */
-.stat-add { color: color-mix(in oklab, var(--color-success) 55%, var(--color-base-content)); }
-.stat-del { color: color-mix(in oklab, var(--color-error) 60%, var(--color-base-content)); }
+.stat-add { color: var(--ct-added); }
+.stat-del { color: var(--ct-deleted); }

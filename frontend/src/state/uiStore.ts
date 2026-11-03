@@ -26,7 +26,7 @@ export const useUI = create<UIState>()(
       diffMode: 'split',
       fileSort: 'name',
       flatFiles: false,
-      columns: { author: 150, date: 96 },
+      columns: { author: 128, date: 64 },
       setTheme: (theme) => set({ theme }),
       cycleTheme: () =>
         set((s) => ({ theme: s.theme === 'system' ? 'pastel' : s.theme === 'pastel' ? 'dim' : 'system' })),
@@ -36,7 +36,7 @@ export const useUI = create<UIState>()(
       setFlatFiles: (flatFiles) => set({ flatFiles }),
       setColumn: (k, w) => set((s) => ({ columns: { ...s.columns, [k]: Math.max(60, Math.min(400, w)) } })),
     }),
-    { name: 'gingit-ui' },
+    { name: 'gingit-ui', version: 2 },
   ),
 )
 

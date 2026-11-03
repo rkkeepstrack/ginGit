@@ -25,7 +25,7 @@ export function Welcome() {
         {gitMissing && <Notice kind="error">git was not found on PATH. Install git and restart ginGit.</Notice>}
         {error && !gitMissing && <Notice kind="error">{error}</Notice>}
         <button className="btn btn-primary btn-sm" onClick={() => void open()}>
-          <FolderOpen size={14} /> Open repository… <kbd className="kbd kbd-xs ml-1">{modKey} O</kbd>
+          <FolderOpen size={15} strokeWidth={1.75} /> Open repository… <kbd className="kbd kbd-xs ml-1">{modKey} O</kbd>
         </button>
         {recent.length > 0 && (
           <ul className="menu menu-sm p-0 mt-2 w-full">

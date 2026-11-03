@@ -42,7 +42,7 @@ export const LaneCell = memo(function LaneCell({ row, prev, isMerge, isHead, wid
   return (
     <svg width={width} height={ROW_H} className="shrink-0 block" style={{ overflow: 'hidden' }}>
       {paths.map((p, i) => (
-        <path key={i} d={p.d} fill="none" stroke={`var(--lane-${p.color})`} strokeWidth={2} opacity={p.faded ? 0.25 : 1} />
+        <path key={i} d={p.d} fill="none" stroke={`var(--lane-${p.color})`} strokeWidth={2} strokeLinecap="round" opacity={p.faded ? 0.25 : 1} />
       ))}
       {isHead && <circle cx={nx} cy={MID} r={7} fill="none" stroke={stroke} strokeWidth={1.5} opacity={0.6} />}
       {isMerge

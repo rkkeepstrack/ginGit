@@ -12,8 +12,8 @@ export function FilterPopover() {
 
   return (
     <div className="dropdown dropdown-end">
-      <div tabIndex={0} role="button" className={`btn btn-ghost btn-xs btn-square ${active ? 'text-primary' : ''}`} title="Filter by branch, author, date">
-        <Filter size={14} />
+      <div tabIndex={0} role="button" className={`btn btn-ghost btn-sm btn-square ${active ? 'text-primary' : ''}`} title="Filter by branch, author, date">
+        <Filter size={16} strokeWidth={1.75} />
         {active && <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-primary" />}
       </div>
       <div tabIndex={0} className="dropdown-content bg-base-100 rounded-box shadow-lg z-50 w-72 p-3 mt-1 border border-base-content/10 flex flex-col gap-2">

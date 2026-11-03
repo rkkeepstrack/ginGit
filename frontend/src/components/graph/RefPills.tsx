@@ -1,7 +1,7 @@
 import { GitBranch, Tag, Cloud } from 'lucide-react'
 import type { Ref } from '../../lib/types'
 
-const MAX = 3
+const MAX = 2
 
 export function RefPills({ refs }: { refs: Ref[] }) {
   if (refs.length === 0) return null
@@ -15,7 +15,7 @@ export function RefPills({ refs }: { refs: Ref[] }) {
           className={`ref-pill ${r.isHead ? 'head' : r.kind === 'head' ? 'branch' : r.kind}`}
           title={r.full}
         >
-          {r.kind === 'tag' ? <Tag size={10} /> : r.kind === 'remote' ? <Cloud size={10} /> : <GitBranch size={10} />}
+          {r.kind === 'tag' ? <Tag size={11} strokeWidth={2} /> : r.kind === 'remote' ? <Cloud size={11} strokeWidth={2} /> : <GitBranch size={11} strokeWidth={2} />}
           {r.name}
         </span>
       ))}
