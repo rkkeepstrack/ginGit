@@ -38,6 +38,7 @@ export const api = {
   forgetRepository: (path: string) => wrap(App.ForgetRepository(path)),
   refs: (root: string) => wrap(App.Refs(root)) as Promise<Ref[]>,
   branchCommits: (root: string, ref: string) => wrap(App.BranchCommits(root, ref)) as Promise<string[]>,
+  nameCommits: (root: string, hashes: string[]) => wrap(App.NameCommits(root, hashes)) as Promise<Record<string, string>>,
   loadHistory: (root: string, loadId: number) => wrap(App.LoadHistory(root, loadId)),
   listChanges: (root: string, hashes: string[]) =>
     wrap(App.ListChanges(root, hashes)) as unknown as Promise<ChangeSet>,

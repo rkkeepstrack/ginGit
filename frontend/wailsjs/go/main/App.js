@@ -26,6 +26,10 @@ export function LoadHistory(arg1, arg2) {
   return window['go']['main']['App']['LoadHistory'](arg1, arg2);
 }
 
+export function NameCommits(arg1, arg2) {
+  return window['go']['main']['App']['NameCommits'](arg1, arg2);
+}
+
 export function OpenRepository(arg1) {
   return window['go']['main']['App']['OpenRepository'](arg1);
 }

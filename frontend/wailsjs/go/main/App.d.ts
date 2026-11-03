@@ -17,6 +17,8 @@ export function ListChanges(arg1:string,arg2:Array<string>):Promise<changes.Chan
 
 export function LoadHistory(arg1:string,arg2:number):Promise<void>;
 
+export function NameCommits(arg1:string,arg2:Array<string>):Promise<Record<string, string>>;
+
 export function OpenRepository(arg1:string):Promise<repo.Info>;
 
 export function OpenRepositoryDialog():Promise<repo.Info>;

@@ -261,3 +261,39 @@ func BranchCommits(ctx context.Context, root, ref string) ([]string, error) {
 	}
 	return hashes, nil
 }
+
+// NameCommits names each commit after the local branch that describes it
+// best ("main", "feature/x"), the way `git name-rev` sees it. Commits no
+// branch reaches are left out of the result.
+func NameCommits(ctx context.Context, root string, hashes []string) (map[string]string, error) {
+	if len(hashes) == 0 {
+		return map[string]string{}, nil
+	}
+	for _, h := range hashes {
+		if err := gitcmd.ValidateHash(h); err != nil {
+			return nil, err
+		}
+	}
+	out, err := gitcmd.RunInput(ctx, root, []byte(strings.Join(hashes, "\n")+"\n"),
+		"name-rev", "--name-only", "--refs=refs/heads/*", "--annotate-stdin")
+	if err != nil {
+		return nil, err
+	}
+	names := map[string]string{}
+	lines := strings.Split(strings.TrimRight(string(out), "\n"), "\n")
+	for i, line := range lines {
+		if i >= len(hashes) {
+			break
+		}
+		name := strings.TrimSpace(line)
+		if name == "" || name == hashes[i] || name == "undefined" {
+			continue
+		}
+		// "main~3^2" → "main"
+		if cut := strings.IndexAny(name, "~^"); cut >= 0 {
+			name = name[:cut]
+		}
+		names[hashes[i]] = name
+	}
+	return names, nil
+}

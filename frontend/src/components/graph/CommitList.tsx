@@ -16,6 +16,7 @@ export function CommitList() {
     commits: s.commits, refsByHash: s.refsByHash, head: s.repo?.head, maxLanes: s.maxLanes, loading: s.loading, error: s.error,
   })))
   const matches = useSearch((s) => s.matches)
+  const names = useSearch((s) => s.names)
   const selected = useSelection((s) => s.selected)
   const moveCursor = useSelection((s) => s.moveCursor)
   const authorW = useMemo(() => authorWidth(commits), [commits])
@@ -42,7 +43,8 @@ export function CommitList() {
     overscan: 20,
   })
 
-  const graphWidth = GRAPH_PAD + Math.min(maxLanes, MAX_LANES) * LANE_W + 6
+  // Filtered rows aren't neighbours, so lanes would lie; a branch badge takes their place.
+  const graphWidth = matches ? GRAPH_PAD : GRAPH_PAD + Math.min(maxLanes, MAX_LANES) * LANE_W + 6
   const columns = useMemo(() => fitColumns(panelWidth, graphWidth, authorW), [panelWidth, graphWidth, authorW])
 
   // Keep the keyboard cursor in view.
@@ -90,6 +92,7 @@ export function CommitList() {
                   selected={selected.has(c.hash)}
                   graphWidth={graphWidth}
                   columns={columns}
+                  branch={matches ? names[c.hash] ?? '' : undefined}
                 />
               </div>
             )

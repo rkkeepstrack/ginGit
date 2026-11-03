@@ -303,6 +303,19 @@ func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {
 	return hits, nil
 }
 
+// NameCommits labels commits with the branch that describes them best, for
+// search results where the graph can't show lanes.
+func (a *App) NameCommits(root string, hashes []string) (map[string]string, error) {
+	if _, err := a.open(root); err != nil {
+		return nil, err
+	}
+	names, err := repo.NameCommits(a.ctx, root, hashes)
+	if err != nil {
+		return nil, userError(err)
+	}
+	return names, nil
+}
+
 // --- watcher --------------------------------------------------------------
 
 // The watcher only lights a dot; it never reloads anything on its own.

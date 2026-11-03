@@ -101,3 +101,25 @@ func TestBranchCommits(t *testing.T) {
 		t.Error("option-looking ref must be rejected")
 	}
 }
+
+func TestNameCommits(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a", "a")
+	r.Commit("root")
+	r.Branch("feature")
+	r.Write("f", "f")
+	r.Commit("f1")
+	r.Checkout("main")
+	r.Write("m", "m")
+	r.Commit("m1")
+	names, err := NameCommits(context.Background(), r.Path, []string{r.H("f1"), r.H("m1"), r.H("root"), "4b825dc642cb6eb9a060e54bf8d69288fbee4904"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if names[r.H("f1")] != "feature" || names[r.H("m1")] != "main" || names[r.H("root")] == "" {
+		t.Errorf("%v", names)
+	}
+	if _, ok := names["4b825dc642cb6eb9a060e54bf8d69288fbee4904"]; ok {
+		t.Error("unreachable object must not be named")
+	}
+}

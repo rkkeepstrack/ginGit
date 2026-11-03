@@ -1,6 +1,6 @@
 import type { Commit } from '../../lib/types'
 
-export const DATE_W = 64
+export const DATE_W = 72
 export const HASH_W = 64
 const AUTHOR_MIN = 72
 const AUTHOR_MAX = 180

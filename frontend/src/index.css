@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/inter";
 
 @plugin "daisyui" {
   themes: pastel --default, dim --prefersdark;
@@ -136,7 +137,8 @@
 }
 
 :root {
-  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  /* SF on macOS, bundled Inter elsewhere (and in the snapshot container). */
+  --font-ui: -apple-system, BlinkMacSystemFont, "Inter Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -197,6 +199,8 @@ body {
 .ref-pill.branch { --pill: var(--color-secondary); }
 .ref-pill.remote { --pill: var(--color-neutral); }
 .ref-pill.tag { --pill: var(--color-accent); }
+.ref-pill.name { --pill: var(--color-neutral); cursor: default; }
+.ref-pill.name:hover { filter: none; }
 
 /* Change-type badges */
 .kind { font-weight: 500; }

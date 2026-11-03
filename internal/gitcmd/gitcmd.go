@@ -35,6 +35,7 @@ var allowed = map[string]bool{
 	"diff-tree":    true,
 	"cat-file":     true,
 	"for-each-ref": true,
+	"name-rev":     true,
 }
 
 var fullHashRe = regexp.MustCompile(`^[0-9a-f]{40}$`)

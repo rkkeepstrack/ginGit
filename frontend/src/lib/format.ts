@@ -1,12 +1,12 @@
 const sameYear = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' })
-const otherYear = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+const otherYear = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short' })
 const full = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 
 export function shortHash(h: string): string {
   return h.slice(0, 7)
 }
 
-/** Compact relative date for a narrow column: "now", "24 min", "21 h", "3 d", then a date. */
+/** Compact relative date for a narrow column: "now", "24 min", "21 h", "3 d", "Oct 18", then "Jan 2024". */
 export function relativeDate(iso: string, now = Date.now()): string {
   const d = new Date(iso)
   const s = Math.max(0, (now - d.getTime()) / 1000)
