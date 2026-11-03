@@ -5,10 +5,10 @@ import { Logo } from './Logo'
 export function TitleBar() {
   return (
     <div
-      className="drag-region flex items-center justify-center h-[38px] shrink-0 hairline-b text-base-content"
+      className="drag-region flex items-center justify-center h-[40px] shrink-0 hairline-b text-base-content"
       onDoubleClick={() => WindowToggleMaximise()}
     >
-      <Logo size={22} />
+      <span className="translate-y-[1px]"><Logo size={22} /></span>
       <span className="ml-2 text-[13px] font-semibold tracking-tight">ginGit</span>
     </div>
   )
