@@ -34,7 +34,7 @@ export function Welcome() {
               <li key={r.path}>
                 <a onClick={() => void open(r.path)} title={r.path} className="flex flex-col items-start gap-0 py-1">
                   <span className="font-medium">{r.name}</span>
-                  <span className="text-[10px] opacity-50 truncate w-full">{r.path}</span>
+                  <span className="block text-[10px] opacity-50 truncate w-full">{r.path.replace(/^\/(?:Users|home)\/[^/]+/, '~')}</span>
                 </a>
               </li>
             ))}

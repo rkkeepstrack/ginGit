@@ -106,6 +106,9 @@ func (a *App) GitVersion() (string, error) {
 
 func (a *App) OpenRepository(path string) (repo.Info, error) {
 	info, err := repo.Open(a.ctx, path)
+	if errors.Is(err, gitcmd.ErrNotARepository) {
+		return repo.Info{}, fmt.Errorf("not_a_repository: %s is not a git repository", path)
+	}
 	if err != nil {
 		return repo.Info{}, userError(err)
 	}
