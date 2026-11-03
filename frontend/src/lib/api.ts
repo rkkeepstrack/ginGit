@@ -33,6 +33,7 @@ async function wrap<T>(p: Promise<T>): Promise<T> {
 export const api = {
   gitVersion: () => wrap(App.GitVersion()),
   initialRepository: () => wrap(App.InitialRepository()),
+  titleBarCenter: () => wrap(App.TitleBarCenter()),
   openRepository: (path: string) => wrap(App.OpenRepository(path)) as Promise<RepoInfo>,
   openRepositoryDialog: () => wrap(App.OpenRepositoryDialog()) as Promise<RepoInfo>,
   recentRepositories: () => wrap(App.RecentRepositories()) as Promise<RecentRepo[]>,

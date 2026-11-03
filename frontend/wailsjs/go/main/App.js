@@ -49,3 +49,7 @@ export function Refs(arg1) {
 export function SearchCommits(arg1, arg2) {
   return window['go']['main']['App']['SearchCommits'](arg1, arg2);
 }
+
+export function TitleBarCenter() {
+  return window['go']['main']['App']['TitleBarCenter']();
+}

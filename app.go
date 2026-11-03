@@ -124,6 +124,16 @@ func (a *App) InitialRepository() string {
 	return os.Getenv("GINGIT_REPO")
 }
 
+// TitleBarCenter is the vertical centre of the window controls from the top
+// edge, in CSS pixels, or 0 where the platform draws no such thing.
+func (a *App) TitleBarCenter() float64 {
+	y := trafficLightCenterY()
+	if os.Getenv("GINGIT_DEBUG") != "" {
+		log.Printf("titlebar: traffic lights centred %.1fpt from the top", y)
+	}
+	return y
+}
+
 func (a *App) GitVersion() (string, error) {
 	return gitcmd.Version(a.ctx)
 }
