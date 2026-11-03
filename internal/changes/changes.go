@@ -68,14 +68,6 @@ func newestFirst(lk Lookup, hashes []string) ([]string, error) {
 	return out, nil
 }
 
-func firstParent(lk Lookup, hash string) string {
-	p, ok := lk.Parents(hash)
-	if !ok || len(p) == 0 {
-		return gitcmd.EmptyTree
-	}
-	return p[0]
-}
-
 // Compute builds the change set. hashes may be in any order.
 func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*ChangeSet, error) {
 	if len(hashes) == 0 {
@@ -96,15 +88,15 @@ func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*Cha
 			cs.Merges = append(cs.Merges, h)
 		}
 	}
+	perCommit, err := diffAll(ctx, root, sorted)
+	if err != nil {
+		return nil, err
+	}
 	// Oldest first so renames can carry earlier touches forward.
 	byPath := map[string]*FileChange{}
 	for i := len(sorted) - 1; i >= 0; i-- {
 		h := sorted[i]
-		touches, err := diffTree(ctx, root, firstParent(lk, h), h)
-		if err != nil {
-			return nil, err
-		}
-		for _, t := range touches {
+		for _, t := range perCommit[h] {
 			t.Commit = h
 			if t.OldPath != "" && t.OldPath != t.Path {
 				if prev, ok := byPath[t.OldPath]; ok {
@@ -167,14 +159,30 @@ func combinedType(touches []Touch) string {
 	return "modified"
 }
 
-// diffTree runs one raw+numstat diff between two trees and merges both
-// sections into touches, in git's output order.
-func diffTree(ctx context.Context, root, from, to string) ([]Touch, error) {
-	out, err := gitcmd.Run(ctx, root, "diff-tree", "-r", "-M", "-z", "--raw", "--numstat", from, to)
+// diffAll fetches every commit's diff against its first parent in one git
+// process: a thousand diff-tree spawns is what made big selections crawl.
+// Each commit's record starts with RS, then its hash, then the same raw and
+// numstat entries diff-tree would print.
+func diffAll(ctx context.Context, root string, hashes []string) (map[string][]Touch, error) {
+	args := []string{"log", "--no-walk=unsorted", "-m", "--first-parent", "--root", "-M", "--raw", "--numstat", "--no-abbrev", "-z", "--format=%x1e%H%x00"}
+	out, err := gitcmd.Run(ctx, root, append(append(args, hashes...), "--")...)
 	if err != nil {
 		return nil, err
 	}
-	return parseRawNumstat(string(out))
+	result := map[string][]Touch{}
+	for _, rec := range strings.Split(string(out), "\x1e") {
+		rec = strings.TrimLeft(rec, "\n")
+		hash, rest, ok := strings.Cut(rec, "\x00")
+		if !ok || len(hash) != 40 {
+			continue
+		}
+		touches, err := parseRawNumstat(rest)
+		if err != nil {
+			return nil, err
+		}
+		result[hash] = touches
+	}
+	return result, nil
 }
 
 func parseRawNumstat(out string) ([]Touch, error) {
@@ -192,9 +200,11 @@ func parseRawNumstat(out string) ([]Touch, error) {
 	}
 	for {
 		tok, ok := next()
-		if !ok || tok == "" && i >= len(tokens) {
+		if !ok {
 			break
 		}
+		// git log separates a commit header from its entries with a newline.
+		tok = strings.TrimLeft(tok, "\n")
 		if tok == "" {
 			continue
 		}

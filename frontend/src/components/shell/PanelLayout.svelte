@@ -2,7 +2,8 @@
   import type { Snippet } from 'svelte'
   import { ui } from '../../state/ui.svelte'
 
-  let { left, middle, right }: { left: Snippet; middle: Snippet; right: Snippet } = $props()
+  /** With `single`, the left panel takes the whole width and the others are not rendered. */
+  let { left, middle, right, single = false }: { left: Snippet; middle: Snippet; right: Snippet; single?: boolean } = $props()
 
   const MIN = [20, 20, 12] // percent, per panel
   let host = $state<HTMLDivElement>()
@@ -33,9 +34,11 @@
 </script>
 
 <div bind:this={host} class="flex-1 min-h-0 flex">
-  <div class="min-w-0 min-h-0" style:width="{ui.panels[0]}%">{@render left()}</div>
-  <div class="resize-handle" onpointerdown={drag(0)} role="separator" aria-orientation="vertical"></div>
-  <div class="min-w-0 min-h-0" style:width="{ui.panels[1]}%">{@render middle()}</div>
-  <div class="resize-handle" onpointerdown={drag(1)} role="separator" aria-orientation="vertical"></div>
-  <div class="min-w-0 min-h-0 flex-1">{@render right()}</div>
+  <div class="min-w-0 min-h-0" style:width={single ? '100%' : `${ui.panels[0]}%`}>{@render left()}</div>
+  {#if !single}
+    <div class="resize-handle" onpointerdown={drag(0)} role="separator" aria-orientation="vertical"></div>
+    <div class="min-w-0 min-h-0" style:width="{ui.panels[1]}%">{@render middle()}</div>
+    <div class="resize-handle" onpointerdown={drag(1)} role="separator" aria-orientation="vertical"></div>
+    <div class="min-w-0 min-h-0 flex-1">{@render right()}</div>
+  {/if}
 </div>

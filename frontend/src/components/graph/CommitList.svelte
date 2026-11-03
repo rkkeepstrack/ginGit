@@ -19,7 +19,14 @@
   let scrollTop = $state(0)
   let height = $state(0)
   let panelWidth = $state(1200)
-  const range = $derived(visibleRange(scrollTop, height, ROW_H, count))
+  /** While a jump glides, rows around the destination are rendered too, so it never scrolls into blank space. */
+  let jumpTop = $state<number | null>(null)
+  const range = $derived.by(() => {
+    const now = visibleRange(scrollTop, height, ROW_H, count)
+    if (jumpTop === null) return now
+    const there = visibleRange(jumpTop, height, ROW_H, count)
+    return { start: Math.min(now.start, there.start), end: Math.max(now.end, there.end) }
+  })
 
   // Filtered rows aren't neighbours, so lanes would lie; a pill takes their place.
   const graphWidth = $derived(search.matches ? GRAPH_PAD : GRAPH_PAD + Math.min(repo.maxLanes, MAX_LANES) * LANE_W + 6)
@@ -39,8 +46,13 @@
     const jump = reveal !== handledReveal
     handledReveal = reveal
     const top = scrollTopFor(row, ROW_H, scroller.clientHeight, scroller.scrollTop, jump ? 'center' : 'auto')
+    if (!jump) { scroller.scrollTo({ top, behavior: 'instant' }); return }
     // A jump glides so the eye can follow where the branch went.
-    scroller.scrollTo({ top, behavior: jump ? 'smooth' : 'instant' })
+    jumpTop = top
+    scroller.scrollTo({ top, behavior: 'smooth' })
+    const settle = () => { jumpTop = null; scroller?.removeEventListener('scrollend', settle) }
+    scroller.addEventListener('scrollend', settle)
+    setTimeout(settle, 1500)
   })
 
   function onKeyDown(e: KeyboardEvent) {

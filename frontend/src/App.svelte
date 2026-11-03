@@ -37,16 +37,12 @@
   <div class="h-full flex flex-col">
     <TitleBar />
     <Toolbar />
-    {#if hasSelection}
-      <PanelLayout>
-        {#snippet left()}<CommitList />{/snippet}
-        {#snippet middle()}<DiffPanel />{/snippet}
-        {#snippet right()}<ChangesPanel />{/snippet}
-      </PanelLayout>
-    {:else}
-      <!-- Nothing selected: the history gets the whole window. -->
-      <div class="flex-1 min-h-0"><CommitList /></div>
-    {/if}
+    <!-- One list instance throughout: with nothing selected it simply takes the whole width. -->
+    <PanelLayout single={!hasSelection}>
+      {#snippet left()}<CommitList />{/snippet}
+      {#snippet middle()}<DiffPanel />{/snippet}
+      {#snippet right()}<ChangesPanel />{/snippet}
+    </PanelLayout>
     <StatusBar />
     <Toasts />
   </div>
