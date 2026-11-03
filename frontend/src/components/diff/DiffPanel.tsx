@@ -11,6 +11,7 @@ import { useChanges } from '../../state/changesStore'
 import { iconFor } from '../../lib/fileIcon'
 import { AllFilesView } from './AllFilesView'
 import { MergeViewHost } from './MergeViewHost'
+import { SingleSideView } from './SingleSideView'
 
 export const typeLabel: Record<ChangeType, string> = { added: 'Added', modified: '', deleted: 'Deleted', renamed: 'Renamed' }
 
@@ -121,6 +122,14 @@ export function PairView({ pair, path, mode, stacked = false }: { pair: Pair; pa
     : null
   if (problem) {
     return <div className={`${stacked ? 'p-3' : 'flex-1 flex items-center justify-center'} text-xs opacity-50`}>{problem}</div>
+  }
+  if (pair.old.missing !== pair.new.missing) {
+    const kind = pair.old.missing ? 'added' : 'deleted'
+    return (
+      <div className={stacked ? '' : 'flex-1 min-h-0'}>
+        <SingleSideView text={pair.old.missing ? pair.new.content : pair.old.content} path={path} kind={kind} stacked={stacked} />
+      </div>
+    )
   }
   return (
     <div className={stacked ? '' : 'flex-1 min-h-0'}>
