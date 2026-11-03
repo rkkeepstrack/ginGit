@@ -11,7 +11,9 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
   expect: {
-    toHaveScreenshot: { animations: 'disabled', caret: 'hide', maxDiffPixelRatio: 0.001 },
+    // Default per-pixel tolerance (0.2) waves through subtle tints like the
+    // toolbar wash; a tight one makes colour changes count.
+    toHaveScreenshot: { animations: 'disabled', caret: 'hide', threshold: 0.02, maxDiffPixelRatio: 0.001 },
   },
   use: {
     baseURL: 'http://127.0.0.1:4173',

@@ -35,4 +35,4 @@ snapshots:
 	$(SNAPSHOT_RUN)"
 
 snapshots-update:
-	$(SNAPSHOT_RUN) --update-snapshots"
+	$(SNAPSHOT_RUN) --update-snapshots=all"
