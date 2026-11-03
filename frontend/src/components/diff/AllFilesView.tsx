@@ -107,7 +107,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
       >
         {collapsed ? <ChevronRight size={14} strokeWidth={1.75} className="opacity-50 shrink-0" /> : <ChevronDown size={14} strokeWidth={1.75} className="opacity-50 shrink-0" />}
         <span className={`ct ct-${file.type}`}>{letter[file.type]}</span>
-        <span className="mono truncate select-text" title={file.path}>
+        <span className="truncate select-text" title={file.path}>
           {file.oldPath && <span className="opacity-50">{file.oldPath} → </span>}
           {file.path}
         </span>
@@ -117,7 +117,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
         {file.binary ? (
           <span className="opacity-40 text-[10.5px]">binary</span>
         ) : (
-          <span className="mono text-[10.5px] tabular-nums shrink-0">
+          <span className="text-[11px] tabular-nums shrink-0">
             <span className="stat-add">+{file.additions}</span> <span className="stat-del">−{file.deletions}</span>
           </span>
         )}
@@ -135,7 +135,7 @@ function FileSection({ file, hashes, mode, diffMode, collapsed, onToggle, scroll
                 <div key={p.commit}>
                   <div className="flex items-center gap-2 px-3 h-7 text-[11.5px] opacity-70">
                     <GitCommitHorizontal size={13} strokeWidth={1.75} />
-                    <span className="mono">{shortHash(p.commit)}</span>
+                    <span className="mono opacity-80">{shortHash(p.commit)}</span>
                     <span className="truncate">{p.subject}</span>
                   </div>
                   <PairView pair={p} path={file.path} mode={diffMode} stacked />

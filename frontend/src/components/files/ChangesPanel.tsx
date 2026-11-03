@@ -101,11 +101,11 @@ export function ChangesPanel() {
       )}
       {changeSet && (
         <div className="flex items-center gap-2 px-2 h-7 text-[11.5px] opacity-70 hairline-b shrink-0 whitespace-nowrap overflow-hidden">
-          <span className="tabular-nums mono shrink-0">
+          <span className="tabular-nums shrink-0">
             {changeSet.files.length} {changeSet.files.length === 1 ? 'file' : 'files'} <span className="stat-add">+{totals.a}</span> <span className="stat-del">−{totals.d}</span>
           </span>
           {mode === 'range' && (
-            <span className="mono truncate" title="Snapshot comparison: everything between the base and the newest selected commit">
+            <span className="truncate" title="Snapshot comparison: everything between the base and the newest selected commit">
               range {changeSet.rangeBase === '4b825dc642cb6eb9a060e54bf8d69288fbee4904' ? '∅' : shortHash(changeSet.rangeBase ?? '')}..{shortHash(changeSet.hashes[0])}
             </span>
           )}
@@ -159,7 +159,7 @@ function FileRow({ change, name, depth, active, onClick }: { change: FileChange;
       {change.binary ? (
         <span className="opacity-40 text-[10px]">bin</span>
       ) : (
-        <span className="mono text-[10.5px] tabular-nums shrink-0">
+        <span className="text-[11px] tabular-nums shrink-0">
           <span className="stat-add">+{change.additions}</span> <span className="stat-del">−{change.deletions}</span>
         </span>
       )}

@@ -69,13 +69,13 @@ export function DiffPanel() {
     <div className="flex flex-col h-full min-h-0" id="panel-diff">
       <div className="panel-head hairline-b">
         {result && <span className={`ct-${result.type} text-[11px] font-medium shrink-0`}>{typeLabel[result.type]}</span>}
-        <span className="truncate mono select-text" title={file}>
+        <span className="truncate select-text" title={file}>
           {segments.map((s, i) => (
             <span key={i} className={i === segments.length - 1 ? '' : 'opacity-50'}>{s}{i < segments.length - 1 ? '/' : ''}</span>
           ))}
         </span>
         {result && !result.stacked && result.pairs[0] && (
-          <span className="opacity-50 mono shrink-0" title="Old commit → new commit">
+          <span className="opacity-50 shrink-0" title="Old commit → new commit">
             {result.pairs[0].old.missing ? '∅' : blobOrigin(result.pairs[0])} → {shortHash(result.pairs[0].commit)}
           </span>
         )}

@@ -16,6 +16,7 @@ import { applyTheme, useUI, watchSystemTheme } from './state/uiStore'
 export default function App() {
   const repo = useRepo((s) => s.repo)
   const theme = useUI((s) => s.theme)
+  const hasSelection = useSelection((s) => s.selected.size > 0)
 
   useEffect(() => {
     subscribeRepoEvents()
@@ -58,13 +59,18 @@ export default function App() {
     <div className="h-full flex flex-col">
       <TitleBar />
       <Toolbar />
-      <PanelGroup direction="horizontal" autoSaveId="gingit-panels-v2" className="flex-1 min-h-0">
-        <Panel defaultSize={40} minSize={25} className="hairline-r"><CommitList /></Panel>
-        <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
-        <Panel defaultSize={40} minSize={20} className="hairline-r"><DiffPanel /></Panel>
-        <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
-        <Panel defaultSize={20} minSize={12}><ChangesPanel /></Panel>
-      </PanelGroup>
+      {hasSelection ? (
+        <PanelGroup direction="horizontal" autoSaveId="gingit-panels-v2" className="flex-1 min-h-0">
+          <Panel defaultSize={40} minSize={25} className="hairline-r"><CommitList /></Panel>
+          <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
+          <Panel defaultSize={40} minSize={20} className="hairline-r"><DiffPanel /></Panel>
+          <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
+          <Panel defaultSize={20} minSize={12}><ChangesPanel /></Panel>
+        </PanelGroup>
+      ) : (
+        // Nothing selected: the history gets the whole window.
+        <div className="flex-1 min-h-0"><CommitList /></div>
+      )}
     </div>
   )
 }
