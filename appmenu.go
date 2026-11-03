@@ -47,8 +47,8 @@ func (a *App) appMenu() *menu.Menu {
 	appearance.AddText("System", nil, act("themeSystem"))
 
 	nav := m.AddSubmenu("Navigate")
-	nav.AddText("Previous File", keys.CmdOrCtrl("up"), act("prevFile"))
-	nav.AddText("Next File", keys.CmdOrCtrl("down"), act("nextFile"))
+	nav.AddText("Previous File", keys.Key("["), act("prevFile"))
+	nav.AddText("Next File", keys.Key("]"), act("nextFile"))
 
 	if runtime.GOOS == "darwin" {
 		m.Append(menu.WindowMenu())

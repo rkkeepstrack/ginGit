@@ -27,8 +27,8 @@ const idleHints: Hint[] = [
   { keys: ['⇧ Click'], label: 'range' },
 ]
 const selectionHints: Hint[] = [
-  { keys: ['['], label: 'previous file' },
-  { keys: [']'], label: 'next file' },
+  { keys: ['[', `${modKey} ↑`], label: 'previous file' },
+  { keys: [']', `${modKey} ↓`], label: 'next file' },
   { keys: [`${modKey} ⇧ D`], label: 'diff layout' },
   { keys: ['Esc'], label: 'clear' },
 ]
