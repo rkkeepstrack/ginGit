@@ -61,7 +61,7 @@ jobs:
             section() {
               local title=$1 pattern=$2
               local lines
-              lines=$(git log --format='- %s (%h)' "$range" | grep -E "^- $pattern" || true)
+              lines=$(git log --format='- %s (%h)' "$range" | grep -E "^- ($pattern)" || true)
               if [ -n "$lines" ]; then printf '## %s\n%s\n\n' "$title" "$lines"; fi
             }
             section Features 'feat'
