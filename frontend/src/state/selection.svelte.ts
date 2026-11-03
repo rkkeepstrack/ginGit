@@ -2,6 +2,7 @@ import { api } from '../lib/api'
 import { applyClick, type ClickModifiers } from '../lib/selection'
 import type { Ref } from '../lib/types'
 import { positionOf, repo } from './repo.svelte'
+import { setText } from './search.svelte'
 
 /** Selected hashes newest first. Only commits present in the loaded history count. */
 export function sortedSelection(selected: Set<string>): string[] {
@@ -72,6 +73,9 @@ export async function selectBranch(ref: Ref, opts: { reveal?: boolean } = {}): P
   const hashes = await api.branchCommits(repo.info.path, ref.full)
   if (hashes.length === 0) return `${ref.name} has no commits of its own`
   if (hashes.length > MAX_BRANCH_SELECTION) return `${ref.name} has ${hashes.length} commits, too many to review at once`
+  // Leave the search in the same flush as the selection: the list's scroll
+  // effect must see the full history, not the hits, when the cursor moves.
+  setText('')
   selectMany(hashes, opts)
   return `Selected ${hashes.length} ${hashes.length === 1 ? 'commit' : 'commits'} on ${ref.name}`
 }

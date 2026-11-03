@@ -3,16 +3,14 @@
   import Tag from '@lucide/svelte/icons/tag'
   import type { Ref } from '../../lib/types'
   import { flashMessage, hint } from '../../state/hint.svelte'
-  import { setText } from '../../state/search.svelte'
   import { selectBranch } from '../../state/selection.svelte'
 
   let { r }: { r: Ref } = $props()
 
-  /** Click: review the ref's own commits, drop any search, and scroll to its tip. */
+  /** Click: review the ref's own commits (any search is dropped) and scroll to its tip. */
   async function pick() {
     try {
       const message = await selectBranch(r, { reveal: true })
-      setText('')
       if (message) flashMessage(message)
     } catch (e) {
       flashMessage((e as Error).message)
