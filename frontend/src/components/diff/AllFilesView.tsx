@@ -34,7 +34,6 @@ export function AllFilesView({ changeSet, paths, hashes, mode, diffMode }: {
     <div className="flex flex-col h-full min-h-0" id="panel-diff">
       <div className="panel-head hairline-b">
         <span className="font-medium tabular-nums">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
-        <span className="opacity-50">{mode === 'range' ? 'range' : 'aggregate'}</span>
         <div className="flex-1" />
         <button className="btn btn-ghost btn-xs btn-square" onClick={() => setCollapsed(allCollapsed ? new Set() : new Set(files.map((f) => f.path)))} title={allCollapsed ? 'Expand all' : 'Collapse all'}>
           {allCollapsed ? <ChevronsUpDown size={15} strokeWidth={1.75} /> : <ChevronsDownUp size={15} strokeWidth={1.75} />}

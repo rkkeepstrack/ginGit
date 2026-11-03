@@ -3,7 +3,6 @@ import { ArrowDownAZ, ChevronDown, ChevronRight, Folder, FolderOpen, GitMerge, L
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ApiError, api } from '../../lib/api'
 import { buildTree, filterFiles, flatten, visibleFilePaths, type FlatRow } from '../../lib/fileTree'
-import { shortHash } from '../../lib/format'
 import type { ChangeSet, ChangeType, FileChange } from '../../lib/types'
 import { useRepo } from '../../state/repoStore'
 import { useSelection, useSelectionInfo } from '../../state/selectionStore'
@@ -16,9 +15,7 @@ const letter: Record<ChangeType, string> = { added: 'A', modified: '', deleted: 
 
 export function ChangesPanel() {
   const repoPath = useRepo((s) => s.repo?.path)
-  const { hashes, contiguous, mode, count } = useSelectionInfo()
-  const requestedMode = useSelection((s) => s.mode)
-  const setMode = useSelection((s) => s.setMode)
+  const { hashes, mode, count } = useSelectionInfo()
   const clear = useSelection((s) => s.clear)
   const file = useSelection((s) => s.file)
   const setFile = useSelection((s) => s.setFile)
@@ -80,10 +77,6 @@ export function ChangesPanel() {
         ) : (
           <>
             <span className="font-medium tabular-nums shrink-0">{count} {count === 1 ? 'commit' : 'commits'}</span>
-            <div className="join shrink-0" title={contiguous ? 'Range: one snapshot diff across the chain. Aggregate: the union of each commit\'s own changes.' : 'Range needs a contiguous first-parent chain of commits'}>
-              <button className={`btn btn-xs join-item ${requestedMode === 'aggregate' ? 'btn-active' : 'btn-ghost'}`} onClick={() => setMode('aggregate')}>Aggregate</button>
-              <button className={`btn btn-xs join-item ${requestedMode === 'range' && contiguous ? 'btn-active' : 'btn-ghost'}`} disabled={!contiguous} onClick={() => setMode('range')}>Range</button>
-            </div>
             <div className="flex-1" />
             <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={clear} title="Clear selection (Esc)"><X size={14} strokeWidth={1.75} /></button>
           </>
@@ -105,12 +98,6 @@ export function ChangesPanel() {
           <span className="tabular-nums shrink-0">
             {changeSet.files.length} {changeSet.files.length === 1 ? 'file' : 'files'} <span className="stat-add">+{totals.a}</span> <span className="stat-del">−{totals.d}</span>
           </span>
-          {mode === 'range' && (
-            <span className="truncate" title="Snapshot comparison: everything between the base and the newest selected commit">
-              range {changeSet.rangeBase === '4b825dc642cb6eb9a060e54bf8d69288fbee4904' ? '∅' : shortHash(changeSet.rangeBase ?? '')}..{shortHash(changeSet.hashes[0])}
-            </span>
-          )}
-          {mode === 'aggregate' && count > 1 && <span className="truncate" title="Union of each selected commit's own changes">aggregate</span>}
           <div className="flex-1" />
           {changeSet.merges.length > 0 && (
             <span className="inline-flex items-center gap-1 shrink-0" title="Merge commits are diffed against their first parent: what the merge brought into the branch.">
