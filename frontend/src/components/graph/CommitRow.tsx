@@ -6,9 +6,17 @@ import { conventionalPrefix } from '../../lib/color'
 import { copyText } from '../../lib/clipboard'
 import { hintProps, useHint } from '../../state/hintStore'
 import { useSelection } from '../../state/selectionStore'
+import { useRepo } from '../../state/repoStore'
 import { LaneCell, ROW_H } from './LaneCell'
+import { RefPill } from './RefPill'
 import { RefPills } from './RefPills'
 import type { Columns } from './columns'
+
+/** The ref behind a search hit's branch name, or a stand-in if the list has moved on. */
+function branchRef(name: string): Ref {
+  return useRepo.getState().refs.find((r) => r.kind === 'head' && r.name === name)
+    ?? { name, full: `refs/heads/${name}`, hash: '', kind: 'head', isHead: false }
+}
 
 async function copyHash(hash: string) {
   const ok = await copyText(hash)
@@ -41,7 +49,7 @@ export const CommitRow = memo(function CommitRow({ index, commit, prev, refs, is
         ? <LaneCell row={commit.row} prev={prev?.row} isMerge={isMerge} isHead={isHead} width={graphWidth} />
         : <div className="shrink-0" style={{ width: graphWidth }} />}
       <div className={`flex-1 min-w-0 pl-1.5 pr-3 overflow-hidden text-ellipsis ${isMerge ? 'opacity-70' : ''}`} title={commit.subject}>
-        {branch && !refs.some((r) => r.name === branch) && <span className="ref-pill name mr-2" title={`On ${branch}`}>{branch}</span>}
+        {branch && !refs.some((r) => r.name === branch) && <span className="mr-2"><RefPill r={branchRef(branch)} /></span>}
         <RefPills refs={refs} />
         {conv ? <><span className={`kind kind-${conv.kind}`}>{conv.prefix}</span> {conv.rest}</> : commit.subject}
       </div>

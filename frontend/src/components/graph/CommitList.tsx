@@ -55,6 +55,16 @@ export function CommitList() {
     if (row >= 0) virtualizer.scrollToIndex(row, { align: 'auto' })
   }, [cursor, matches, visible, virtualizer])
 
+  // A jump (branch badge in search results) parks the cursor a quarter down the viewport.
+  const reveal = useSelection((s) => s.reveal)
+  useEffect(() => {
+    if (reveal === 0 || cursor === null || !parentRef.current) return
+    const row = matches ? visible.indexOf(cursor) : cursor
+    if (row < 0) return
+    virtualizer.scrollToOffset(Math.max(0, row * ROW_H - parentRef.current.clientHeight / 4))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reveal])
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
     e.preventDefault()

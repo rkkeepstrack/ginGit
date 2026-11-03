@@ -81,6 +81,18 @@ test('search narrows the list', async ({ page }) => {
   await expect(page.locator('.commit-row')).toHaveCount(3)
   // no lanes while filtering; a branch badge says where each hit lives
   await expect(page.locator('.commit-row > svg')).toHaveCount(0)
-  await expect(page.locator('.ref-pill.name').first()).toBeVisible()
+  await expect(page.locator('.ref-pill.branch').first()).toBeVisible()
   await expect(page).toHaveScreenshot('search.png')
+})
+
+test('a branch badge in search results reviews the branch and jumps to it', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await page.locator('#commit-search').fill('password')
+  await expect(page.locator('.commit-row')).toHaveCount(1)
+  await page.locator('.commit-row .ref-pill.branch', { hasText: 'feature/login' }).click()
+  await expect(page.locator('#commit-search')).toHaveValue('')
+  await expect(page.locator('.commit-row.selected')).toHaveCount(2)
+  await expect(page.locator('#panel-files')).toContainText('2 commits')
+  await expect(page.locator('.commit-row > svg').first()).toBeVisible()
 })

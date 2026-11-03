@@ -199,8 +199,6 @@ body {
 .ref-pill.branch { --pill: var(--color-secondary); }
 .ref-pill.remote { --pill: var(--color-neutral); }
 .ref-pill.tag { --pill: var(--color-accent); }
-.ref-pill.name { --pill: var(--color-neutral); cursor: default; }
-.ref-pill.name:hover { filter: none; }
 
 /* Change-type badges */
 .kind { font-weight: 500; }

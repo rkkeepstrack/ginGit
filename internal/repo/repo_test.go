@@ -100,6 +100,20 @@ func TestBranchCommits(t *testing.T) {
 	if _, err := BranchCommits(context.Background(), r.Path, "--output=x"); err == nil {
 		t.Error("option-looking ref must be rejected")
 	}
+
+	// Merging A into main must not turn A's own commits into A's whole ancestry.
+	r.Merge("merge A", "A")
+	got, err := BranchCommits(context.Background(), r.Path, "refs/heads/A")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Join(got, ",") != r.H("a1") {
+		t.Errorf("merged A: got %v want [%s]", got, r.H("a1"))
+	}
+	got, _ = BranchCommits(context.Background(), r.Path, "refs/heads/main")
+	if strings.Join(got, ",") != r.H("merge A")+","+r.H("main1") {
+		t.Errorf("main after merge: got %v", got)
+	}
 }
 
 func TestNameCommits(t *testing.T) {

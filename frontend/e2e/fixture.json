@@ -4,7 +4,7 @@
   "name": "demo",
   "branch": "main",
   "head": "83887abb616392e566b87c2350f506dc27c6b080",
-  "gitDir": "/private/var/folders/b4/bx680vgj5112hgkmnzdyzsy80000gn/T/TestGenerate2874558244/001/.git",
+  "gitDir": "/private/var/folders/b4/bx680vgj5112hgkmnzdyzsy80000gn/T/TestGenerate984987462/001/.git",
   "detached": false,
   "bare": false
  },
@@ -714,54 +714,17 @@
     }
    ]
   },
-  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": {
+  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156": {
    "hashes": [
     "6d29c096a2b08ead328b4d5cab2e230df301f777",
-    "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-    "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9"
+    "b179da9e48d66a81a6dda4f0d4fa01301ab54156"
    ],
    "merges": [],
    "files": [
     {
-     "path": "README.md",
-     "type": "added",
-     "additions": 3,
-     "deletions": 0,
-     "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "README.md",
-       "additions": 3,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
-     "composable": true
-    },
-    {
-     "path": "package.json",
-     "type": "added",
-     "additions": 4,
-     "deletions": 0,
-     "binary": false,
-     "touches": [
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "package.json",
-       "additions": 4,
-       "deletions": 0,
-       "binary": false
-      }
-     ],
-     "composable": true
-    },
-    {
      "path": "src/app.ts",
-     "type": "added",
-     "additions": 6,
+     "type": "modified",
+     "additions": 3,
      "deletions": 1,
      "binary": false,
      "touches": [
@@ -771,14 +734,6 @@
        "path": "src/app.ts",
        "additions": 3,
        "deletions": 1,
-       "binary": false
-      },
-      {
-       "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-       "type": "added",
-       "path": "src/app.ts",
-       "additions": 3,
-       "deletions": 0,
        "binary": false
       }
      ],
@@ -1594,78 +1549,20 @@
     }
    ]
   },
-  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": {
-   "path": "README.md",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "README.md",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n",
-      "size": 44,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": {
-   "path": "package.json",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "package.json",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
-      "path": "package.json",
-      "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.0.0\"\n}\n",
-      "size": 43,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": {
+  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": {
    "path": "src/app.ts",
-   "type": "added",
+   "type": "modified",
    "stacked": false,
    "pairs": [
     {
      "commit": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-     "type": "added",
+     "type": "modified",
      "old": {
-      "blob": "0000000000000000000000000000000000000000",
+      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
       "path": "src/app.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
+      "content": "export function main() {\n  console.log('hello')\n}\n",
+      "size": 50,
+      "missing": false,
       "binary": false,
       "tooLarge": false
      },
@@ -1681,7 +1578,7 @@
     }
    ]
   },
-  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/login.ts": {
+  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": {
    "path": "src/login.ts",
    "type": "added",
    "stacked": false,
@@ -2201,8 +2098,7 @@
  "branches": {
   "refs/heads/feature/login": [
    "6d29c096a2b08ead328b4d5cab2e230df301f777",
-   "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9"
+   "b179da9e48d66a81a6dda4f0d4fa01301ab54156"
   ],
   "refs/heads/feature/stack-base": [
    "6ce9408c1cb73865dd112027cd863078aa39b1d3"

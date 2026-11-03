@@ -55,6 +55,8 @@ export const useSearch = create<SearchState>()((set) => ({
   pending: false,
   setText(text) {
     set({ text })
+    // Clearing takes effect at once so the graph is back before anything scrolls it.
+    if (!text.trim()) { clearTimeout(timer); set({ matches: null, names: {}, pending: false }); return }
     schedule()
   },
 }))
