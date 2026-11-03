@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,6 +51,7 @@ func NewApp() *App {
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	fixFullscreenTitlebar()
 	if rs, err := repo.NewRecentStore(); err == nil {
 		a.recent = rs
 	}
@@ -202,10 +204,17 @@ func (a *App) LoadHistory(root string) (int, error) {
 
 	go func() {
 		defer cancel()
-		total, err := history.Load(ctx, root, history.Options{All: true, ChunkSize: 1000}, func(cs []history.Commit) {
+		started := time.Now()
+		var emitting time.Duration
+		total, err := history.Load(ctx, root, history.Options{All: true, ChunkSize: 2500}, func(cs []history.Commit) {
 			index.Append(cs)
+			t := time.Now()
 			wrt.EventsEmit(a.ctx, "history:chunk", HistoryChunk{LoadID: id, Rows: cs})
+			emitting += time.Since(t)
 		})
+		if os.Getenv("GINGIT_DEBUG") != "" {
+			log.Printf("history: %d commits in %v (%v spent emitting)", total, time.Since(started), emitting)
+		}
 		if err != nil && ctx.Err() == nil {
 			wrt.EventsEmit(a.ctx, "history:error", HistoryError{LoadID: id, Message: userError(err).Error()})
 			return

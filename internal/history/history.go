@@ -21,8 +21,10 @@ type Commit struct {
 	AuthorDate  time.Time `json:"authorDate"`
 	CommitDate  time.Time `json:"commitDate"`
 	Subject     string    `json:"subject"`
-	Body        string    `json:"body"`
-	Row         graph.Row `json:"row"`
+	// Body stays in Go: search reads it from the index, the UI does not need
+	// 86k long commit messages shipped over the bridge.
+	Body string    `json:"-"`
+	Row  graph.Row `json:"row"`
 }
 
 // Options control which commits are walked.

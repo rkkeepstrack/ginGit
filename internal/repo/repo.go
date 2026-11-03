@@ -22,6 +22,7 @@ type Info struct {
 	Head     string `json:"head"`   // full hash
 	GitDir   string `json:"gitDir"` // absolute .git dir, for the watcher
 	Detached bool   `json:"detached"`
+	Bare     bool   `json:"bare"`
 }
 
 type Ref struct {
@@ -42,16 +43,24 @@ func Open(ctx context.Context, path string) (Info, error) {
 	if st, err := os.Stat(abs); err != nil || !st.IsDir() {
 		return Info{}, gitcmd.ErrNotARepository
 	}
-	top, err := gitcmd.Run(ctx, abs, "rev-parse", "--show-toplevel")
+	bare, err := gitcmd.Run(ctx, abs, "rev-parse", "--is-bare-repository", "--absolute-git-dir")
 	if err != nil {
 		return Info{}, err
 	}
-	root := strings.TrimSpace(string(top))
-	gitDir, err := gitcmd.Run(ctx, root, "rev-parse", "--absolute-git-dir")
-	if err != nil {
-		return Info{}, err
+	lines := strings.Split(strings.TrimSpace(string(bare)), "\n")
+	if len(lines) != 2 {
+		return Info{}, gitcmd.ErrNotARepository
 	}
-	info := Info{Path: root, Name: filepath.Base(root), GitDir: strings.TrimSpace(string(gitDir))}
+	gitDir := lines[1]
+	root := gitDir
+	if lines[0] != "true" {
+		top, err := gitcmd.Run(ctx, abs, "rev-parse", "--show-toplevel")
+		if err != nil {
+			return Info{}, err
+		}
+		root = strings.TrimSpace(string(top))
+	}
+	info := Info{Path: root, Name: strings.TrimSuffix(filepath.Base(root), ".git"), GitDir: gitDir, Bare: lines[0] == "true"}
 	if head, err := gitcmd.Run(ctx, root, "rev-parse", "HEAD"); err == nil {
 		info.Head = strings.TrimSpace(string(head))
 	}

@@ -22,7 +22,7 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
       data-hash={commit.hash}
     >
       <LaneCell row={commit.row} prev={prev?.row} isMerge={isMerge} isHead={isHead} width={graphWidth} />
-      <div className="flex-1 min-w-0 pl-1 pr-3 overflow-hidden text-ellipsis" title={commit.subject + (commit.body ? '\n\n' + commit.body : '')}>
+      <div className="flex-1 min-w-0 pl-1 pr-3 overflow-hidden text-ellipsis" title={commit.subject}>
         <RefPills refs={refs} />
         {isMerge && <span className="mr-1.5 text-[10px] uppercase tracking-wide opacity-50">merge</span>}
         {commit.subject}

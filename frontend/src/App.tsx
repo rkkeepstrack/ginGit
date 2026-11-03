@@ -3,6 +3,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { CommitList } from './components/graph/CommitList'
 import { ChangesPanel } from './components/files/ChangesPanel'
 import { DiffPanel, stepFile } from './components/diff/DiffPanel'
+import { TitleBar } from './components/shell/TitleBar'
 import { Toolbar } from './components/shell/Toolbar'
 import { Welcome } from './components/shell/Welcome'
 import { api } from './lib/api'
@@ -55,6 +56,7 @@ export default function App() {
 
   return (
     <div className="h-full flex flex-col">
+      <TitleBar />
       <Toolbar />
       <PanelGroup direction="horizontal" autoSaveId="gingit-panels" className="flex-1 min-h-0">
         <Panel defaultSize={45} minSize={25} className="hairline-r"><CommitList /></Panel>

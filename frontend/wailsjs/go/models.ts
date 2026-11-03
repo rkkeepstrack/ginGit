@@ -230,6 +230,7 @@ export namespace repo {
 	    head: string;
 	    gitDir: string;
 	    detached: boolean;
+	    bare: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Info(source);
@@ -243,6 +244,7 @@ export namespace repo {
 	        this.head = source["head"];
 	        this.gitDir = source["gitDir"];
 	        this.detached = source["detached"];
+	        this.bare = source["bare"];
 	    }
 	}
 	export class Recent {

@@ -86,6 +86,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Wails' own drag hint; the Electron-style app-region does nothing here. */
+.drag-region { --wails-draggable: drag; }
+.no-drag, .no-drag * { --wails-draggable: no-drag; }
+
 .mono { font-family: var(--font-mono); font-size: 12px; }
 .select-text { -webkit-user-select: text; user-select: text; }
 

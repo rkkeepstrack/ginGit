@@ -2,6 +2,7 @@ import { FolderOpen } from 'lucide-react'
 import { useRepo } from '../../state/repoStore'
 import { modKey } from '../../lib/platform'
 import { Logo } from './Logo'
+import { TitleBar } from './TitleBar'
 import { Notice } from './Notice'
 
 export function Welcome() {
@@ -10,7 +11,9 @@ export function Welcome() {
   const error = useRepo((s) => s.error)
   const gitMissing = useRepo((s) => s.gitMissing)
   return (
-    <div className="h-full flex flex-col items-center justify-center gap-6 p-8" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
+    <div className="h-full flex flex-col">
+    <TitleBar />
+    <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8">
       <div className="flex items-center gap-4 text-base-content/80">
         <Logo size={56} />
         <div>
@@ -18,7 +21,7 @@ export function Welcome() {
           <div className="text-sm opacity-60">Read-only git history, multi-commit review.</div>
         </div>
       </div>
-      <div style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties} className="flex flex-col items-stretch gap-2 w-80">
+      <div className="flex flex-col items-stretch gap-2 w-80">
         {gitMissing && <Notice kind="error">git was not found on PATH. Install git and restart ginGit.</Notice>}
         {error && !gitMissing && <Notice kind="error">{error}</Notice>}
         <button className="btn btn-primary btn-sm" onClick={() => void open()}>
@@ -38,6 +41,7 @@ export function Welcome() {
           </ul>
         )}
       </div>
+    </div>
     </div>
   )
 }

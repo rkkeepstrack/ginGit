@@ -12,7 +12,6 @@ export interface Commit {
   authorDate: string
   commitDate: string
   subject: string
-  body: string
   row: Row
 }
 
@@ -23,6 +22,7 @@ export interface RepoInfo {
   head: string
   gitDir: string
   detached: boolean
+  bare: boolean
 }
 
 export interface Ref {

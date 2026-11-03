@@ -6,7 +6,6 @@ import { useRepo } from '../../state/repoStore'
 import { useSearch } from '../../state/searchStore'
 import { useUI } from '../../state/uiStore'
 import { FilterPopover } from './FilterPopover'
-import { Logo } from './Logo'
 import { RepoMenu } from './RepoMenu'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -23,10 +22,8 @@ export function Toolbar() {
   const setDiffMode = useUI((s) => s.setDiffMode)
 
   return (
-    <div className="flex items-center gap-2 h-11 px-3 hairline-b shrink-0" style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}>
-      <div className="w-[68px] shrink-0" /> {/* traffic lights on macOS */}
-      <span className="text-base-content/70 shrink-0"><Logo size={22} /></span>
-      <div style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties} className="flex items-center gap-2 flex-1 min-w-0">
+    <div className="flex items-center gap-2 h-10 px-2 hairline-b shrink-0">
+      <div className="flex items-center gap-2 flex-1 min-w-0">
         <RepoMenu />
         {repo && (
           <span className="inline-flex items-center gap-1 text-xs opacity-70 min-w-0 truncate" title={repo.detached ? `Detached at ${repo.head}` : repo.branch}>

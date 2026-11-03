@@ -5,7 +5,7 @@ import type { Commit } from './types'
 const rows = ['e', 'd', 'c', 'b', 'a']
 
 function commit(hash: string, parents: string[]): Commit {
-  return { hash, parents, author: '', authorEmail: '', authorDate: '', commitDate: '', subject: '', body: '', row: { lane: 0, color: 0, segments: [], lanes: 1 } }
+  return { hash, parents, author: '', authorEmail: '', authorDate: '', commitDate: '', subject: '', row: { lane: 0, color: 0, segments: [], lanes: 1 } }
 }
 
 describe('applyClick', () => {

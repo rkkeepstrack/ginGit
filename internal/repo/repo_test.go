@@ -40,6 +40,21 @@ func TestOpenAndRefs(t *testing.T) {
 	}
 }
 
+func TestOpenBare(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a", "a")
+	r.Commit("one")
+	bare := t.TempDir() + "/x.git"
+	r.Git("clone", "-q", "--bare", r.Path, bare)
+	info, err := Open(context.Background(), bare)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !info.Bare || info.Name != "x" || info.Head != r.H("one") || info.Branch != "main" {
+		t.Errorf("%+v", info)
+	}
+}
+
 func TestOpenNotARepo(t *testing.T) {
 	_, err := Open(context.Background(), t.TempDir())
 	if !errors.Is(err, gitcmd.ErrNotARepository) {
