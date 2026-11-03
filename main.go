@@ -29,7 +29,7 @@ func main() {
 		OnShutdown:       app.shutdown,
 		Bind:             []interface{}{app},
 		Mac: &mac.Options{
-			TitleBar:             mac.TitleBarHiddenInset(),
+			TitleBar:             mac.TitleBarHidden(),
 			WebviewIsTransparent: false,
 		},
 	})
