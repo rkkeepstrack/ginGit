@@ -1,4 +1,4 @@
-import { GitBranch, Tag, Cloud } from 'lucide-react'
+import { GitBranch, Tag } from 'lucide-react'
 import type { Ref } from '../../lib/types'
 import { selectBranch } from '../../state/selectionStore'
 import { hintProps, useHint } from '../../state/hintStore'
@@ -14,7 +14,9 @@ async function pick(ref: Ref) {
   }
 }
 
-export function RefPills({ refs }: { refs: Ref[] }) {
+/** Local branches and tags only; remote-tracking refs add nothing to the picture. */
+export function RefPills({ refs: all }: { refs: Ref[] }) {
+  const refs = all.filter((r) => r.kind !== 'remote')
   if (refs.length === 0) return null
   const shown = refs.slice(0, MAX)
   const rest = refs.length - shown.length
@@ -29,7 +31,7 @@ export function RefPills({ refs }: { refs: Ref[] }) {
           onClick={(e) => { e.stopPropagation(); void pick(r) }}
           {...hintProps(`${r.full} · click to select its commits`)}
         >
-          {r.kind === 'tag' ? <Tag size={11} strokeWidth={2} /> : r.kind === 'remote' ? <Cloud size={11} strokeWidth={2} /> : <GitBranch size={11} strokeWidth={2} />}
+          {r.kind === 'tag' ? <Tag size={11} strokeWidth={2} /> : <GitBranch size={11} strokeWidth={2} />}
           {r.name}
         </button>
       ))}

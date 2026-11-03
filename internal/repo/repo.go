@@ -200,21 +200,25 @@ func (s *RecentStore) Remove(path string) error {
 	return os.WriteFile(s.file, data, 0o644)
 }
 
-// defaultBranch finds the main line to measure branches against.
-func defaultBranch(refs []Ref) string {
-	for _, name := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "refs/remotes/origin/master"} {
-		for _, r := range refs {
-			if r.Full == name {
-				return name
-			}
+// shortName strips refs/heads/ or refs/remotes/<remote>/ so a branch and its
+// remote-tracking counterparts compare equal.
+func shortName(full string) string {
+	if strings.HasPrefix(full, "refs/heads/") {
+		return strings.TrimPrefix(full, "refs/heads/")
+	}
+	if rest, ok := strings.CutPrefix(full, "refs/remotes/"); ok {
+		if _, name, ok := strings.Cut(rest, "/"); ok {
+			return name
 		}
 	}
-	return ""
+	return full
 }
 
-// BranchCommits lists the commits that are on ref but not on the default
-// branch, newest first: the branch's own work. For the default branch itself
-// (or when there is none) it is what no other branch has.
+// BranchCommits lists the branch's own work, newest first: the commits on
+// ref that no unrelated branch has. A branch stacked on top of ref contains
+// ref's tip and is left out of the comparison, so clicking the base of a
+// stack still yields its commits; ref's own remote counterparts are left
+// out too, or a lagging origin/x would hide the pushed ones.
 func BranchCommits(ctx context.Context, root, ref string) ([]string, error) {
 	if !strings.HasPrefix(ref, "refs/") || strings.Contains(ref, "..") || strings.Contains(ref, "\x00") {
 		return nil, fmt.Errorf("%w: ref %q", gitcmd.ErrInvalidArg, ref)
@@ -232,18 +236,22 @@ func BranchCommits(ctx context.Context, root, ref string) ([]string, error) {
 	if tip == "" {
 		return nil, fmt.Errorf("%w: ref %s", gitcmd.ErrObjectNotFound, ref)
 	}
-	args := []string{"rev-list", "--topo-order", ref}
-	base := defaultBranch(refs)
-	if base != "" && base != ref {
-		args = append(args, "--not", base)
-	} else {
-		for _, r := range refs {
-			if r.Kind != "tag" && r.Full != ref && r.Hash != tip {
-				args = append(args, "^"+r.Full)
-			}
-		}
+	out, err := gitcmd.Run(ctx, root, "for-each-ref", "--format=%(refname)", "--contains", tip, "refs/heads", "refs/remotes")
+	if err != nil {
+		return nil, err
 	}
-	out, err := gitcmd.Run(ctx, root, append(args, "--")...)
+	descends := map[string]bool{}
+	for _, name := range strings.Fields(string(out)) {
+		descends[name] = true
+	}
+	args := []string{"rev-list", "--topo-order", ref}
+	for _, r := range refs {
+		if r.Kind == "tag" || descends[r.Full] || shortName(r.Full) == shortName(ref) {
+			continue
+		}
+		args = append(args, "^"+r.Full)
+	}
+	out, err = gitcmd.Run(ctx, root, append(args, "--")...)
 	if err != nil {
 		return nil, err
 	}

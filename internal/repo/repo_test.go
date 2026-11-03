@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"ginGit/internal/gitcmd"
@@ -63,31 +64,38 @@ func TestOpenNotARepo(t *testing.T) {
 }
 
 func TestBranchCommits(t *testing.T) {
+	// main: root, main1 | A (off root): a1 | B (off A): b1, b2
 	r := gittest.New(t)
 	r.Write("a", "a")
 	r.Commit("root")
-	r.Branch("feature")
-	r.Write("f1", "1")
-	r.Commit("f1")
-	r.Write("f2", "2")
-	r.Commit("f2")
+	r.Branch("A")
+	r.Write("a1", "1")
+	r.Commit("a1")
+	r.Branch("B")
+	r.Write("b1", "1")
+	r.Commit("b1")
+	r.Write("b2", "2")
+	r.Commit("b2")
 	r.Checkout("main")
 	r.Write("m", "m")
 	r.Commit("main1")
+	// origin/B lags one commit behind B; it must not hide b2's sibling.
+	r.Git("update-ref", "refs/remotes/origin/B", r.H("b1"))
+	r.Git("update-ref", "refs/remotes/origin/main", r.H("main1"))
 
-	got, err := BranchCommits(context.Background(), r.Path, "refs/heads/feature")
-	if err != nil {
-		t.Fatal(err)
+	want := map[string][]string{
+		"refs/heads/B":    {r.H("b2"), r.H("b1")},
+		"refs/heads/A":    {r.H("a1")},
+		"refs/heads/main": {r.H("main1")},
 	}
-	if len(got) != 2 || got[0] != r.H("f2") || got[1] != r.H("f1") {
-		t.Errorf("feature: %v", got)
-	}
-	got, err = BranchCommits(context.Background(), r.Path, "refs/heads/main")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(got) != 1 || got[0] != r.H("main1") {
-		t.Errorf("main: %v", got)
+	for ref, hashes := range want {
+		got, err := BranchCommits(context.Background(), r.Path, ref)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Join(got, ",") != strings.Join(hashes, ",") {
+			t.Errorf("%s: got %v want %v", ref, got, hashes)
+		}
 	}
 	if _, err := BranchCommits(context.Background(), r.Path, "--output=x"); err == nil {
 		t.Error("option-looking ref must be rejected")
