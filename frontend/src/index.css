@@ -1,0 +1,169 @@
+@import "tailwindcss";
+@import "@fontsource-variable/jetbrains-mono";
+
+@plugin "daisyui" {
+  themes: pastel --default, dim --prefersdark;
+  logs: false;
+}
+
+/* Lane, diff and syntax colors live next to the daisyUI theme they belong
+   to, so switching data-theme switches everything at once. */
+[data-theme="pastel"] {
+  --lane-0: #5c7cfa;
+  --lane-1: #f06595;
+  --lane-2: #20c997;
+  --lane-3: #fd7e14;
+  --lane-4: #845ef7;
+  --lane-5: #15aabf;
+  --lane-6: #e64980;
+  --lane-7: #74b816;
+  --diff-add-bg: #d3f9d8;
+  --diff-add-gutter: #b2f2bb;
+  --diff-add-text: #c0eec8;
+  --diff-del-bg: #ffe3e3;
+  --diff-del-gutter: #ffc9c9;
+  --diff-del-text: #ffb8b8;
+  --diff-collapsed-bg: #f1f3f5;
+  --syn-keyword: #7048e8;
+  --syn-string: #2b8a3e;
+  --syn-number: #d9480f;
+  --syn-comment: #868e96;
+  --syn-type: #1971c2;
+  --syn-fn: #c2255c;
+  --syn-prop: #0b7285;
+  --syn-op: #495057;
+  --syn-punct: #868e96;
+  --syn-tag: #e8590c;
+  --syn-attr: #5c7cfa;
+}
+
+[data-theme="dim"] {
+  --lane-0: #91a7ff;
+  --lane-1: #faa2c1;
+  --lane-2: #63e6be;
+  --lane-3: #ffc078;
+  --lane-4: #b197fc;
+  --lane-5: #66d9e8;
+  --lane-6: #f783ac;
+  --lane-7: #c0eb75;
+  --diff-add-bg: #1f3a2a;
+  --diff-add-gutter: #2b5a3b;
+  --diff-add-text: #2f6b45;
+  --diff-del-bg: #44262b;
+  --diff-del-gutter: #6b3139;
+  --diff-del-text: #7e3a44;
+  --diff-collapsed-bg: #2a2e37;
+  --syn-keyword: #b197fc;
+  --syn-string: #8ce99a;
+  --syn-number: #ffa94d;
+  --syn-comment: #868e96;
+  --syn-type: #74c0fc;
+  --syn-fn: #faa2c1;
+  --syn-prop: #66d9e8;
+  --syn-op: #ced4da;
+  --syn-punct: #adb5bd;
+  --syn-tag: #ffa94d;
+  --syn-attr: #91a7ff;
+}
+
+:root {
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --row-h: 28px;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  font-size: 13px;
+}
+
+body {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono { font-family: var(--font-mono); font-size: 12px; }
+.select-text { -webkit-user-select: text; user-select: text; }
+
+/* Hairline dividers instead of borders everywhere. */
+.hairline-b { box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+.hairline-r { box-shadow: inset -1px 0 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+
+/* Commit rows */
+.commit-row { height: var(--row-h); line-height: var(--row-h); white-space: nowrap; cursor: default; }
+.commit-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
+.commit-row.selected { background: color-mix(in oklab, var(--color-primary) 22%, transparent); }
+.commit-row.selected:hover { background: color-mix(in oklab, var(--color-primary) 28%, transparent); }
+.commit-row.dim { opacity: 0.35; }
+
+.ref-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  height: 18px; padding: 0 6px; border-radius: 4px;
+  font-size: 11px; line-height: 18px; font-weight: 500;
+  background: color-mix(in oklab, var(--pill) 18%, var(--color-base-100));
+  color: color-mix(in oklab, var(--pill) 70%, var(--color-base-content));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pill) 40%, transparent);
+  max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ref-pill.head { --pill: var(--color-primary); font-weight: 600; }
+.ref-pill.branch { --pill: var(--color-secondary); }
+.ref-pill.remote { --pill: var(--color-neutral); }
+.ref-pill.tag { --pill: var(--color-accent); }
+
+/* Change-type badges */
+.ct { display: inline-flex; width: 16px; height: 16px; border-radius: 4px; font-size: 10px; font-weight: 700; align-items: center; justify-content: center; font-family: var(--font-mono); }
+.ct-added { background: color-mix(in oklab, var(--color-success) 25%, transparent); color: var(--color-success); }
+.ct-modified { background: color-mix(in oklab, var(--color-info) 25%, transparent); color: var(--color-info); }
+.ct-deleted { background: color-mix(in oklab, var(--color-error) 25%, transparent); color: var(--color-error); }
+.ct-renamed { background: color-mix(in oklab, var(--color-secondary) 30%, transparent); color: var(--color-secondary); }
+
+.tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: default; }
+.tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
+.tree-row.active { background: color-mix(in oklab, var(--color-primary) 22%, transparent); }
+
+/* Resize handles */
+.resize-handle { position: relative; }
+.resize-handle::after {
+  content: ""; position: absolute; inset: 0 -3px; cursor: col-resize;
+}
+.resize-handle[data-resize-handle-state="hover"], .resize-handle[data-resize-handle-state="drag"] {
+  background: var(--color-primary);
+}
+
+/* CodeMirror */
+.cm-host { height: 100%; }
+.cm-host .cm-mergeView { height: 100%; }
+.cm-host .cm-mergeViewEditors { height: 100%; }
+.cm-host .cm-mergeViewEditor { overflow: hidden; }
+.cm-host .cm-editor { height: 100%; font-size: 12px; background: var(--color-base-100); color: var(--color-base-content); }
+.cm-host.stacked .cm-editor { height: auto; }
+.cm-host .cm-scroller { font-family: var(--font-mono); line-height: 1.5; }
+.cm-host .cm-gutters { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); color: color-mix(in oklab, var(--color-base-content) 45%, transparent); border-right: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+.cm-host .cm-content { -webkit-user-select: text; user-select: text; }
+.cm-host .cm-activeLine { background: transparent; }
+.cm-host .cm-changedLine { background: var(--diff-add-bg); }
+.cm-host .cm-changedText { background: var(--diff-add-text); }
+.cm-host .cm-deletedChunk { background: var(--diff-del-bg); }
+.cm-host .cm-deletedText { background: var(--diff-del-text); }
+.cm-host .cm-insertedLine { background: var(--diff-add-bg); }
+.cm-host .cm-insertedLine .cm-changedText { background: var(--diff-add-text); }
+.cm-host .cm-changedLineGutter { background: var(--diff-add-gutter); }
+.cm-host .cm-deletedLineGutter { background: var(--diff-del-gutter); }
+.cm-host .cm-mergeViewEditor:first-child .cm-changedLine { background: var(--diff-del-bg); }
+.cm-host .cm-mergeViewEditor:first-child .cm-changedText { background: var(--diff-del-text); }
+.cm-host .cm-mergeViewEditor:first-child .cm-changedLineGutter { background: var(--diff-del-gutter); }
+.cm-host .cm-collapsedLines { background: var(--diff-collapsed-bg); color: color-mix(in oklab, var(--color-base-content) 60%, transparent); padding: 2px 8px; font-size: 11px; cursor: pointer; }
+.cm-host .cm-mergeSpacer { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); }
+.cm-host .cm-merge-gap { background: var(--color-base-200); }
+.cm-host .cm-deletedChunk .cm-chunkButtons { display: none; }
+.cm-host .cm-chunkButtons { display: none; }
+.cm-host .cm-editor.cm-focused { outline: none; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-base-content) 18%, transparent); border-radius: 6px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-base-content) 30%, transparent); background-clip: padding-box; border: 2px solid transparent; }
+::-webkit-scrollbar-track { background: transparent; }

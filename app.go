@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -86,6 +88,15 @@ func userError(err error) error {
 }
 
 // --- repository -----------------------------------------------------------
+
+// InitialRepository is the path given on the command line (or GINGIT_REPO),
+// so `ginGit .` from a terminal opens straight into the graph.
+func (a *App) InitialRepository() string {
+	if len(os.Args) > 1 && !strings.HasPrefix(os.Args[1], "-") {
+		return os.Args[1]
+	}
+	return os.Getenv("GINGIT_REPO")
+}
 
 func (a *App) GitVersion() (string, error) {
 	return gitcmd.Version(a.ctx)
