@@ -26,16 +26,21 @@ func shortName(full string) string {
 	return full
 }
 
-// BranchCommits is the branch's own work, newest first: the commits reachable
-// from ref that sit on no unrelated branch's first-parent line. It runs over
-// the loaded index, no git involved, because the git version spawned one
-// rev-list per descendant branch and took a second on old branches.
+// BranchCommits is the branch's own work, newest first.
 //
-// A branch stacked on top of ref carries ref's tip on its first-parent line
-// and is left out of the comparison, so the base of a stack keeps its
-// commits. Ref's own remote counterparts are left out too, or a lagging
-// origin/x would hide the pushed ones. Returns ok=false when the ref's tip is
-// not in the index (history still loading).
+// For every other branch, the newest commit of its first-parent line that
+// the ref can reach is where the two meet; everything reachable from there
+// belongs to that other branch and is subtracted. Only first-parent lines
+// count as meeting points, so a branch merged into main still owns its
+// commits (main reaches them, but its first-parent line never passes through
+// them). Subtracting full reachability from the meeting point is what keeps
+// pull requests merged into main, whose branches are long deleted, from
+// being claimed by a branch stacked on top of main.
+//
+// A branch stacked on top of ref carries ref's tip on its own first-parent
+// line and is left out, so the base of a stack keeps its commits. Ref's own
+// remote counterparts are left out too, or a lagging origin/x would hide the
+// pushed ones. Returns ok=false when the ref's tip is not in the index yet.
 func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok bool) {
 	ix.mu.RLock()
 	defer ix.mu.RUnlock()
@@ -49,60 +54,61 @@ func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok b
 	if !known {
 		return nil, false
 	}
-	firstParent := func(h string) (string, bool) {
-		p, ok := ix.pos[h]
-		if !ok || len(ix.commits[p].Parents) == 0 {
-			return "", false
+	firstParent := func(p int) (int, bool) {
+		parents := ix.commits[p].Parents
+		if len(parents) == 0 {
+			return 0, false
 		}
-		return ix.commits[p].Parents[0], true
+		q, ok := ix.pos[parents[0]]
+		return q, ok
 	}
-	// Topo order puts children before parents: once a first-parent walk passes
-	// the tip's position it can no longer reach the tip.
-	stackedOn := func(h string) bool {
-		for h != "" {
-			if h == tip {
+	// Topo order puts children before parents: once a first-parent walk is
+	// past the tip's position it can no longer reach the tip.
+	stackedOn := func(p int) bool {
+		for {
+			if p == tipPos {
 				return true
 			}
-			if p, ok := ix.pos[h]; !ok || p > tipPos {
+			if p > tipPos {
 				return false
 			}
-			next, ok := firstParent(h)
+			next, ok := firstParent(p)
 			if !ok {
 				return false
 			}
-			h = next
+			p = next
 		}
-		return false
 	}
-	taken := make([]bool, len(ix.commits))
+	// Everything the ref reaches.
+	reach := make([]bool, len(ix.commits))
+	ix.walk(tipPos, reach)
+	// Everything that belongs to another branch, from each meeting point down.
+	cut := make([]bool, len(ix.commits))
 	for _, r := range refs {
-		if r.Tag || r.Full == ref || shortName(r.Full) == shortName(ref) || stackedOn(r.Hash) {
+		if r.Tag || r.Full == ref || shortName(r.Full) == shortName(ref) {
 			continue
 		}
-		for h := r.Hash; h != ""; {
-			p, ok := ix.pos[h]
-			if !ok || taken[p] {
+		p, ok := ix.pos[r.Hash]
+		if !ok || stackedOn(p) {
+			continue
+		}
+		for {
+			if reach[p] {
+				ix.walk(p, cut)
 				break
 			}
-			taken[p] = true
-			h, _ = firstParent(h)
+			next, ok := firstParent(p)
+			if !ok {
+				break
+			}
+			p = next
 		}
 	}
-	seen := make([]bool, len(ix.commits))
 	var own []int
-	stack := []string{tip}
-	for len(stack) > 0 {
-		h := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		p, ok := ix.pos[h]
-		if !ok || seen[p] {
-			continue
-		}
-		seen[p] = true
-		if !taken[p] {
+	for p := range reach {
+		if reach[p] && !cut[p] {
 			own = append(own, p)
 		}
-		stack = append(stack, ix.commits[p].Parents...)
 	}
 	sort.Ints(own)
 	hashes = make([]string, len(own))
@@ -110,4 +116,22 @@ func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok b
 		hashes[i] = ix.commits[p].Hash
 	}
 	return hashes, true
+}
+
+// walk marks every commit reachable from p, stopping at ones already marked.
+func (ix *Index) walk(p int, seen []bool) {
+	stack := []int{p}
+	for len(stack) > 0 {
+		p := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if seen[p] {
+			continue
+		}
+		seen[p] = true
+		for _, h := range ix.commits[p].Parents {
+			if q, ok := ix.pos[h]; ok && !seen[q] {
+				stack = append(stack, q)
+			}
+		}
+	}
 }

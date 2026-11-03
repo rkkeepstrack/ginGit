@@ -83,59 +83,6 @@ func TestOpenNotARepo(t *testing.T) {
 	}
 }
 
-func TestBranchCommits(t *testing.T) {
-	// main: root, main1 | A (off root): a1 | B (off A): b1, b2
-	r := gittest.New(t)
-	r.Write("a", "a")
-	r.Commit("root")
-	r.Branch("A")
-	r.Write("a1", "1")
-	r.Commit("a1")
-	r.Branch("B")
-	r.Write("b1", "1")
-	r.Commit("b1")
-	r.Write("b2", "2")
-	r.Commit("b2")
-	r.Checkout("main")
-	r.Write("m", "m")
-	r.Commit("main1")
-	// origin/B lags one commit behind B; it must not hide b2's sibling.
-	r.Git("update-ref", "refs/remotes/origin/B", r.H("b1"))
-	r.Git("update-ref", "refs/remotes/origin/main", r.H("main1"))
-
-	want := map[string][]string{
-		"refs/heads/B":    {r.H("b2"), r.H("b1")},
-		"refs/heads/A":    {r.H("a1")},
-		"refs/heads/main": {r.H("main1")},
-	}
-	for ref, hashes := range want {
-		got, err := BranchCommits(context.Background(), r.Path, ref)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if strings.Join(got, ",") != strings.Join(hashes, ",") {
-			t.Errorf("%s: got %v want %v", ref, got, hashes)
-		}
-	}
-	if _, err := BranchCommits(context.Background(), r.Path, "--output=x"); err == nil {
-		t.Error("option-looking ref must be rejected")
-	}
-
-	// Merging A into main must not turn A's own commits into A's whole ancestry.
-	r.Merge("merge A", "A")
-	got, err := BranchCommits(context.Background(), r.Path, "refs/heads/A")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if strings.Join(got, ",") != r.H("a1") {
-		t.Errorf("merged A: got %v want [%s]", got, r.H("a1"))
-	}
-	got, _ = BranchCommits(context.Background(), r.Path, "refs/heads/main")
-	if strings.Join(got, ",") != r.H("merge A")+","+r.H("main1") {
-		t.Errorf("main after merge: got %v", got)
-	}
-}
-
 func TestNameCommits(t *testing.T) {
 	r := gittest.New(t)
 	r.Write("a", "a")

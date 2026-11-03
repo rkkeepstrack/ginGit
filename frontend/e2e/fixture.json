@@ -3,10 +3,7 @@
   "path": "/home/demo/repos/demo",
   "name": "demo",
   "branch": "main",
-  "head": "83887abb616392e566b87c2350f506dc27c6b080",
-  "gitDir": "/private/var/folders/b4/bx680vgj5112hgkmnzdyzsy80000gn/T/TestGenerate751053557/001/.git",
-  "detached": false,
-  "bare": false
+  "head": "83887abb616392e566b87c2350f506dc27c6b080"
  },
  "refs": [
   {

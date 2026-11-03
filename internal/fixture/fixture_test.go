@@ -107,11 +107,12 @@ func TestGenerate(t *testing.T) {
 		[]string{r.H("docs: more usage"), r.H("chore: logo was a mistake"), r.H("chore(LD-2): depend on left-pad, as one does")},
 		[]string{r.H("docs: more usage"), r.H("chore: initial import")}, // README twice with "usage section" in between: stacked diff
 	)
+	var tips []history.RefTip
 	for _, ref := range refs {
-		hashes, err := repo.BranchCommits(ctx, r.Path, ref.Full)
-		if err != nil {
-			t.Fatal(err)
-		}
+		tips = append(tips, history.RefTip{Full: ref.Full, Hash: ref.Hash, Tag: ref.Kind == "tag"})
+	}
+	for _, ref := range refs {
+		hashes, _ := ix.BranchCommits(tips, ref.Full)
 		fx.Branches[ref.Full] = hashes
 		if len(hashes) > 0 {
 			selections = append(selections, hashes)

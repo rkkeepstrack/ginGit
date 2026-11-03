@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -205,105 +204,6 @@ func (s *RecentStore) Remove(path string) error {
 	}
 	data, _ := json.MarshalIndent(out, "", "  ")
 	return os.WriteFile(s.file, data, 0o644)
-}
-
-// shortName strips refs/heads/ or refs/remotes/<remote>/ so a branch and its
-// remote-tracking counterparts compare equal.
-func shortName(full string) string {
-	if strings.HasPrefix(full, "refs/heads/") {
-		return strings.TrimPrefix(full, "refs/heads/")
-	}
-	if rest, ok := strings.CutPrefix(full, "refs/remotes/"); ok {
-		if _, name, ok := strings.Cut(rest, "/"); ok {
-			return name
-		}
-	}
-	return full
-}
-
-// BranchCommits lists the branch's own work, newest first: what is reachable
-// from ref but not on the first-parent line of any other branch. First-parent
-// lines matter twice over: a merged branch sits on main's second parent, so
-// main still counts against it; and a branch stacked on top of ref carries
-// ref's tip on its first-parent line, so it is left out of the comparison and
-// the base of a stack keeps its commits. Remote counterparts of ref are left
-// out too, or a lagging origin/x would hide the pushed ones.
-func BranchCommits(ctx context.Context, root, ref string) ([]string, error) {
-	if !strings.HasPrefix(ref, "refs/") || strings.Contains(ref, "..") || strings.Contains(ref, "\x00") {
-		return nil, fmt.Errorf("%w: ref %q", gitcmd.ErrInvalidArg, ref)
-	}
-	refs, err := Refs(ctx, root)
-	if err != nil {
-		return nil, err
-	}
-	var tip string
-	for _, r := range refs {
-		if r.Full == ref {
-			tip = r.Hash
-		}
-	}
-	if tip == "" {
-		return nil, fmt.Errorf("%w: ref %s", gitcmd.ErrObjectNotFound, ref)
-	}
-	out, err := gitcmd.Run(ctx, root, "for-each-ref", "--format=%(refname)", "--contains", tip, "refs/heads", "refs/remotes")
-	if err != nil {
-		return nil, err
-	}
-	descends := map[string]bool{}
-	for _, name := range strings.Fields(string(out)) {
-		descends[name] = true
-	}
-	var others []string
-	for _, r := range refs {
-		if r.Kind == "tag" || r.Full == ref || shortName(r.Full) == shortName(ref) {
-			continue
-		}
-		if descends[r.Full] {
-			stacked, err := onFirstParentLine(ctx, root, r.Full, tip)
-			if err != nil {
-				return nil, err
-			}
-			if stacked {
-				continue
-			}
-		}
-		others = append(others, r.Full)
-	}
-	taken := map[string]bool{}
-	if len(others) > 0 {
-		out, err := gitcmd.Run(ctx, root, append([]string{"rev-list", "--first-parent"}, append(others, "--")...)...)
-		if err != nil {
-			return nil, err
-		}
-		for _, h := range strings.Fields(string(out)) {
-			taken[h] = true
-		}
-	}
-	out, err = gitcmd.Run(ctx, root, "rev-list", "--topo-order", ref, "--")
-	if err != nil {
-		return nil, err
-	}
-	hashes := []string{}
-	for _, h := range strings.Fields(string(out)) {
-		if !taken[h] {
-			hashes = append(hashes, h)
-		}
-	}
-	return hashes, nil
-}
-
-// onFirstParentLine reports whether commit sits on ref's first-parent line.
-func onFirstParentLine(ctx context.Context, root, ref, commit string) (bool, error) {
-	out, err := gitcmd.Run(ctx, root, "rev-list", "--first-parent", ref, "--")
-	if err != nil {
-		return false, err
-	}
-	for _, h := range strings.Fields(string(out)) {
-		if h == commit {
-			return true, nil
-		}
-	}
-	return false, nil
 }
 
 // NameCommits names each commit after the local branch that describes it

@@ -187,8 +187,7 @@ func (a *App) Refs(root string) ([]repo.Ref, error) {
 	return refs, nil
 }
 
-// BranchCommits is the work on one branch. It runs over the loaded index;
-// only while the history is still streaming does it fall back to git.
+// BranchCommits is the work on one branch, computed over the loaded index.
 func (a *App) BranchCommits(root string, ref string) ([]string, error) {
 	index, err := a.open(root)
 	if err != nil {
@@ -202,12 +201,9 @@ func (a *App) BranchCommits(root string, ref string) ([]string, error) {
 	for i, r := range refs {
 		tips[i] = history.RefTip{Full: r.Full, Hash: r.Hash, Tag: r.Kind == "tag"}
 	}
-	if hashes, ok := index.BranchCommits(tips, ref); ok {
-		return hashes, nil
-	}
-	hashes, err := repo.BranchCommits(a.ctx, root, ref)
-	if err != nil {
-		return nil, userError(err)
+	hashes, ok := index.BranchCommits(tips, ref)
+	if !ok {
+		return nil, fmt.Errorf("object_not_found: %s is not in the loaded history yet", ref)
 	}
 	return hashes, nil
 }
