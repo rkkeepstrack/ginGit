@@ -54,7 +54,7 @@ export function CommitList() {
 
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-graph">
-      <div className="flex items-center h-8 col-head hairline-b shrink-0 pr-2">
+      <div className="flex items-center h-8 col-head hairline-b shrink-0 overflow-hidden" style={{ scrollbarGutter: 'stable' }}>
         <div style={{ width: graphWidth }} className="shrink-0" />
         <div className="flex-1 pl-1.5">Commit</div>
         <div className="shrink-0" style={{ width: authorW }}>Author</div>
@@ -62,7 +62,7 @@ export function CommitList() {
         <div className="shrink-0" style={{ width: HASH_W }}>Hash</div>
       </div>
       {error && <Notice kind="error">{error}</Notice>}
-      <div ref={parentRef} className="flex-1 overflow-auto outline-none" tabIndex={0} onKeyDown={onKeyDown}>
+      <div ref={parentRef} className="flex-1 overflow-auto outline-none" style={{ scrollbarGutter: 'stable' }} tabIndex={0} onKeyDown={onKeyDown}>
         {count === 0 && !loading && !error && (
           <div className="p-6 text-center opacity-50">{matches ? 'No commits match.' : 'No commits.'}</div>
         )}
