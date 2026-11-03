@@ -57,16 +57,16 @@
   --diff-add-bar: #2b2;
   --diff-del-bar: #e43;
   --ct-added: #2f9e44;
-  --ct-modified: #1c7ed6;
+  --ct-modified: #1b5fd1;
   --ct-deleted: #c92a2a;
   --ct-renamed: #7048e8;
   --kind-feat: #2f9e44;
   --kind-fix: #e03131;
   --kind-chore: #868e96;
   --kind-refactor: #f08c00;
-  --kind-docs: #1c7ed6;
+  --kind-docs: #1b5fd1;
   --kind-test: #7048e8;
-  --ft-code: #4c6ef5;
+  --ft-code: #3b5bdb;
   --ft-style: #e64980;
   --ft-data: #f08c00;
   --ft-text: #868e96;
@@ -226,10 +226,20 @@ body {
 .ct-deleted { color: var(--ct-deleted); }
 .ct-renamed { color: var(--ct-renamed); }
 
-/* Accordion headers in the all-files review. */
-.section-head { cursor: pointer; background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); transition: background 80ms; }
-.section-head:hover { background: var(--color-base-200); }
+/* Accordion headers in the all-files review: solid bars with a gap between
+   them, so a run of collapsed files reads as separate things. */
+.section { margin-top: 3px; }
+.section:first-child { margin-top: 0; }
+.section-head {
+  cursor: pointer;
+  background: var(--color-base-200);
+  border-top: 1px solid color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  transition: background 80ms;
+}
+.section-head:hover { background: color-mix(in oklab, var(--color-base-content) 6%, var(--color-base-200)); }
 .section-head:active { background: color-mix(in oklab, var(--color-base-content) 10%, var(--color-base-200)); }
+.section-head.open { box-shadow: inset 2px 0 0 var(--brand); }
 .tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: pointer; font-size: 12.5px; }
 .tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .tree-row.active { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }

@@ -33,8 +33,18 @@ export const useUI = create<UIState>()(
   ),
 )
 
-/** daisyUI follows the OS on its own when no data-theme is set. */
+const dark = window.matchMedia('(prefers-color-scheme: dark)')
+
+/**
+ * Always sets an explicit data-theme: the app's own variables (lanes, diff
+ * tints, brand) are defined per theme name, so "system" must resolve to one.
+ */
 export function applyTheme(choice: ThemeChoice) {
-  if (choice === 'system') document.documentElement.removeAttribute('data-theme')
-  else document.documentElement.setAttribute('data-theme', choice)
+  const theme = choice === 'system' ? (dark.matches ? 'dim' : 'pastel') : choice
+  document.documentElement.setAttribute('data-theme', theme)
+}
+
+/** Re-applies "system" when the OS switches. Call once. */
+export function followSystemTheme() {
+  dark.addEventListener('change', () => applyTheme(useUI.getState().theme))
 }

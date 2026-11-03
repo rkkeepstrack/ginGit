@@ -77,9 +77,9 @@ function FileSection({ file, collapsed, onToggle, scrollRoot }: {
   const openSingle = () => useSelection.getState().setFile(file.path)
 
   return (
-    <div ref={ref} className="hairline-b">
+    <div ref={ref} className="section">
       <div
-        className="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
+        className={`section-head ${collapsed ? '' : 'open'} flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none`}
         onClick={onToggle}
         onDoubleClick={openSingle}
         {...pressable(onToggle)}
