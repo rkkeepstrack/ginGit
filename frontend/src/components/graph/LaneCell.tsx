@@ -4,8 +4,10 @@ import type { Row } from '../../lib/types'
 export const LANE_W = 14
 export const ROW_H = 28
 export const MAX_LANES = 12
+/** Breathing room before the first lane so nodes don't kiss the window edge. */
+export const GRAPH_PAD = 12
 
-const cx = (lane: number) => lane * LANE_W + LANE_W / 2
+const cx = (lane: number) => GRAPH_PAD + lane * LANE_W + LANE_W / 2
 const MID = ROW_H / 2
 
 /**

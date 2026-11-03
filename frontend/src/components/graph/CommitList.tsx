@@ -7,7 +7,7 @@ import { useSearch } from '../../state/searchStore'
 import { useSelection } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { CommitRow } from './CommitRow'
-import { LANE_W, MAX_LANES, ROW_H } from './LaneCell'
+import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LaneCell'
 import { Notice } from '../shell/Notice'
 
 const EMPTY: never[] = []
@@ -36,7 +36,7 @@ export function CommitList() {
     overscan: 20,
   })
 
-  const graphWidth = Math.min(maxLanes, MAX_LANES) * LANE_W + 4
+  const graphWidth = GRAPH_PAD + Math.min(maxLanes, MAX_LANES) * LANE_W + 6
 
   // Keep the keyboard cursor in view.
   const cursor = useSelection((s) => s.cursor)
