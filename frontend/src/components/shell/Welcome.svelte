@@ -1,7 +1,6 @@
 <script lang="ts">
   import FolderOpen from '@lucide/svelte/icons/folder-open'
   import { shortenPath } from '../../lib/format'
-  import { modKey } from '../../lib/platform'
   import { open, repo } from '../../state/repo.svelte'
   import Logo from './Logo.svelte'
   import Notice from './Notice.svelte'
@@ -22,7 +21,7 @@
       {#if repo.gitMissing}<Notice kind="error">git was not found on PATH. Install git and restart ginGit.</Notice>
       {:else if repo.error}<Notice kind="error">{repo.error}</Notice>{/if}
       <button class="btn btn-primary btn-sm" onclick={() => void open()}>
-        <FolderOpen size={15} strokeWidth={1.75} /> Open repository… <kbd class="kbd kbd-xs ml-1">{modKey} O</kbd>
+        <FolderOpen size={15} strokeWidth={1.75} /> Open repository…
       </button>
       {#if repo.recent.length > 0}
         <ul class="menu menu-sm p-0 mt-2 w-full">
