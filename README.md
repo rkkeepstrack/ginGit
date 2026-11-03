@@ -21,3 +21,12 @@ Wails v2 + Go backend, Svelte 5 + Tailwind + daisyUI frontend, CodeMirror diffs.
     make fixture           # regenerate frontend/e2e/fixture.json from the scripted repo
 
 Design notes: docs/superpowers/specs/2026-11-03-gingit-design.md
+
+## License
+
+ginGit is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE.md).
+
+In short: you may use, copy, modify and share it for any noncommercial
+purpose, including personal projects, education, research and use by
+charities and public institutions. Any commercial use is not permitted
+under this license. If you want to use ginGit in a business, get in touch.
