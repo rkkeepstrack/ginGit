@@ -167,3 +167,7 @@ body {
 ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-base-content) 18%, transparent); border-radius: 6px; border: 2px solid transparent; background-clip: padding-box; }
 ::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-base-content) 30%, transparent); background-clip: padding-box; border: 2px solid transparent; }
 ::-webkit-scrollbar-track { background: transparent; }
+
+/* Pastel success/error are too faint for small numbers; mix toward text. */
+.stat-add { color: color-mix(in oklab, var(--color-success) 55%, var(--color-base-content)); }
+.stat-del { color: color-mix(in oklab, var(--color-error) 60%, var(--color-base-content)); }

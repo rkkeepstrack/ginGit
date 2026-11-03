@@ -62,8 +62,8 @@ export function DiffPanel() {
   const segments = file.split('/')
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-diff">
-      <div className="flex items-center gap-2 h-7 px-2 hairline-b shrink-0 text-xs">
-        {result && <span className={`badge badge-xs badge-soft ${typeBadge[result.type]}`}>{typeLabel[result.type]}</span>}
+      <div className="flex items-center gap-2 h-7 px-2 hairline-b shrink-0 text-xs whitespace-nowrap">
+        {result && <span className={`badge badge-xs badge-soft shrink-0 ${typeBadge[result.type]}`}>{typeLabel[result.type]}</span>}
         <span className="truncate mono select-text" title={file}>
           {segments.map((s, i) => (
             <span key={i} className={i === segments.length - 1 ? '' : 'opacity-50'}>{s}{i < segments.length - 1 ? '/' : ''}</span>
@@ -75,7 +75,7 @@ export function DiffPanel() {
           </span>
         )}
         <div className="flex-1" />
-        <span className="opacity-50 tabular-nums">{idx >= 0 ? `${idx + 1} / ${paths.length}` : ''}</span>
+        <span className="opacity-50 tabular-nums shrink-0">{idx >= 0 ? `${idx + 1} / ${paths.length}` : ''}</span>
         <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(-1)} disabled={idx <= 0} title="Previous file  ["><ChevronUp size={14} /></button>
         <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(1)} disabled={idx < 0 || idx >= paths.length - 1} title="Next file  ]"><ChevronDown size={14} /></button>
       </div>

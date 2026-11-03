@@ -28,13 +28,13 @@ const MaxSide = 2 * 1024 * 1024
 const zeroBlob = "0000000000000000000000000000000000000000"
 
 type Side struct {
-	Blob    string `json:"blob"`
-	Path    string `json:"path"`
-	Content string `json:"content"`
-	Size    int    `json:"size"`
-	Missing bool   `json:"missing"` // added (old side) or deleted (new side)
-	Binary  bool   `json:"binary"`
-	TooLarge bool  `json:"tooLarge"`
+	Blob     string `json:"blob"`
+	Path     string `json:"path"`
+	Content  string `json:"content"`
+	Size     int    `json:"size"`
+	Missing  bool   `json:"missing"` // added (old side) or deleted (new side)
+	Binary   bool   `json:"binary"`
+	TooLarge bool   `json:"tooLarge"`
 }
 
 // Pair is one renderable old/new comparison.

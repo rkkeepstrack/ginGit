@@ -78,46 +78,50 @@ export function ChangesPanel() {
 
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-files">
-      <div className="flex items-center gap-2 h-7 px-2 hairline-b shrink-0 text-xs">
+      <div className="flex items-center gap-2 h-7 px-2 hairline-b shrink-0 text-xs whitespace-nowrap">
         {count === 0 ? (
           <span className="opacity-50">No commits selected</span>
         ) : (
           <>
-            <span className="font-medium tabular-nums">{count} {count === 1 ? 'commit' : 'commits'}</span>
-            <div className="join" title={contiguous ? 'Range: one snapshot diff across the chain. Aggregate: the union of each commit\'s own changes.' : 'Range needs a contiguous first-parent chain of commits'}>
+            <span className="font-medium tabular-nums shrink-0">{count} {count === 1 ? 'commit' : 'commits'}</span>
+            <div className="join shrink-0" title={contiguous ? 'Range: one snapshot diff across the chain. Aggregate: the union of each commit\'s own changes.' : 'Range needs a contiguous first-parent chain of commits'}>
               <button className={`btn btn-xs join-item ${requestedMode === 'aggregate' ? 'btn-active' : 'btn-ghost'}`} onClick={() => setMode('aggregate')}>Aggregate</button>
               <button className={`btn btn-xs join-item ${requestedMode === 'range' && contiguous ? 'btn-active' : 'btn-ghost'}`} disabled={!contiguous} onClick={() => setMode('range')}>Range</button>
             </div>
-            {changeSet && (
-              <span className="opacity-60 tabular-nums mono">
-                {changeSet.files.length} files <span className="text-success">+{totals.a}</span> <span className="text-error">−{totals.d}</span>
-              </span>
-            )}
             <div className="flex-1" />
-            <button className="btn btn-ghost btn-xs btn-square" onClick={clear} title="Clear selection (Esc)"><X size={12} /></button>
+            <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={clear} title="Clear selection (Esc)"><X size={12} /></button>
           </>
         )}
       </div>
       {count > 0 && (
         <div className="flex items-center gap-1 px-2 py-1 hairline-b shrink-0">
-          <input className="input input-xs flex-1" placeholder="Filter files" value={filter} onChange={(e) => setFilter(e.target.value)} />
-          <select className="select select-xs w-20" value={fileSort} onChange={(e) => setFileSort(e.target.value as 'name' | 'type')} title="Sort">
+          <input className="input input-xs flex-1 min-w-0" placeholder="Filter files" value={filter} onChange={(e) => setFilter(e.target.value)} />
+          <select className="select select-xs w-20 shrink-0" value={fileSort} onChange={(e) => setFileSort(e.target.value as 'name' | 'type')} title="Sort">
             <option value="name">Name</option>
             <option value="type">Type</option>
           </select>
-          <button className="btn btn-ghost btn-xs btn-square" onClick={() => setFlatFiles(!flatFiles)} title={flatFiles ? 'Show as tree' : 'Show as flat list'}>
+          <button className="btn btn-ghost btn-xs btn-square shrink-0" onClick={() => setFlatFiles(!flatFiles)} title={flatFiles ? 'Show as tree' : 'Show as flat list'}>
             {flatFiles ? <ListTree size={14} /> : <List size={14} />}
           </button>
         </div>
       )}
-      {mode === 'range' && changeSet && (
-        <div className="px-2 py-1 text-[11px] opacity-60 hairline-b shrink-0 mono">
-          Range {changeSet.rangeBase === '4b825dc642cb6eb9a060e54bf8d69288fbee4904' ? '∅' : shortHash(changeSet.rangeBase ?? '')}..{shortHash(changeSet.hashes[0])}
-        </div>
-      )}
-      {changeSet && changeSet.merges.length > 0 && (
-        <div className="px-2 py-1 text-[11px] opacity-60 hairline-b shrink-0 flex items-center gap-1" title="Merge commits are diffed against their first parent: what the merge brought into the branch.">
-          <GitMerge size={12} /> {changeSet.merges.length} merge {changeSet.merges.length === 1 ? 'commit' : 'commits'}, diffed against first parent
+      {changeSet && (
+        <div className="flex items-center gap-2 px-2 h-6 text-[11px] opacity-70 hairline-b shrink-0 whitespace-nowrap overflow-hidden">
+          <span className="tabular-nums mono shrink-0">
+            {changeSet.files.length} {changeSet.files.length === 1 ? 'file' : 'files'} <span className="stat-add">+{totals.a}</span> <span className="stat-del">−{totals.d}</span>
+          </span>
+          {mode === 'range' && (
+            <span className="mono truncate" title="Snapshot comparison: everything between the base and the newest selected commit">
+              range {changeSet.rangeBase === '4b825dc642cb6eb9a060e54bf8d69288fbee4904' ? '∅' : shortHash(changeSet.rangeBase ?? '')}..{shortHash(changeSet.hashes[0])}
+            </span>
+          )}
+          {mode === 'aggregate' && count > 1 && <span className="truncate" title="Union of each selected commit's own changes">aggregate</span>}
+          <div className="flex-1" />
+          {changeSet.merges.length > 0 && (
+            <span className="inline-flex items-center gap-1 shrink-0" title="Merge commits are diffed against their first parent: what the merge brought into the branch.">
+              <GitMerge size={11} /> {changeSet.merges.length}
+            </span>
+          )}
         </div>
       )}
       {error && <Notice kind="error">{error}</Notice>}
@@ -162,7 +166,7 @@ function FileRow({ change, name, depth, active, onClick }: { change: FileChange;
         <span className="opacity-40 text-[10px]">bin</span>
       ) : (
         <span className="mono text-[10px] tabular-nums shrink-0">
-          <span className="text-success">+{change.additions}</span> <span className="text-error">−{change.deletions}</span>
+          <span className="stat-add">+{change.additions}</span> <span className="stat-del">−{change.deletions}</span>
         </span>
       )}
     </div>

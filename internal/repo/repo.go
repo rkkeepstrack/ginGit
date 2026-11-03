@@ -18,15 +18,15 @@ import (
 type Info struct {
 	Path     string `json:"path"`
 	Name     string `json:"name"`
-	Branch   string `json:"branch"`   // empty when detached
-	Head     string `json:"head"`     // full hash
-	GitDir   string `json:"gitDir"`   // absolute .git dir, for the watcher
+	Branch   string `json:"branch"` // empty when detached
+	Head     string `json:"head"`   // full hash
+	GitDir   string `json:"gitDir"` // absolute .git dir, for the watcher
 	Detached bool   `json:"detached"`
 }
 
 type Ref struct {
-	Name   string `json:"name"`   // short name: main, origin/main, v1.2
-	Full   string `json:"full"`   // refs/heads/main
+	Name   string `json:"name"` // short name: main, origin/main, v1.2
+	Full   string `json:"full"` // refs/heads/main
 	Hash   string `json:"hash"`
 	Kind   string `json:"kind"`   // head, remote, tag
 	IsHead bool   `json:"isHead"` // current branch

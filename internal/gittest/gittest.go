@@ -83,7 +83,7 @@ func (r *Repo) Commit(label string) string {
 	return h
 }
 
-func (r *Repo) Branch(name string) { r.T.Helper(); r.Git("checkout", "-q", "-b", name) }
+func (r *Repo) Branch(name string)   { r.T.Helper(); r.Git("checkout", "-q", "-b", name) }
 func (r *Repo) Checkout(name string) { r.T.Helper(); r.Git("checkout", "-q", name) }
 
 func (r *Repo) Merge(label, branch string) string {
