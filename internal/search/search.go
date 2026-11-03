@@ -20,10 +20,6 @@ type Query struct {
 	Until  time.Time `json:"until"`
 }
 
-func (q Query) IsEmpty() bool {
-	return q.Text == "" && q.Author == "" && q.Branch == "" && q.Since.IsZero() && q.Until.IsZero()
-}
-
 // Branches caches which commits belong to which branch.
 type Branches struct {
 	mu   sync.Mutex

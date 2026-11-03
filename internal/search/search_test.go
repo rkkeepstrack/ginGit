@@ -19,7 +19,7 @@ func TestSearch(t *testing.T) {
 	r.Write("c", "c")
 	r.Commit("fix typo")
 	ix := history.NewIndex()
-	if _, err := history.Load(context.Background(), r.Path, history.Options{All: true}, ix.Append); err != nil {
+	if _, err := history.Load(context.Background(), r.Path, history.Options{}, ix.Append); err != nil {
 		t.Fatal(err)
 	}
 	br := NewBranches()

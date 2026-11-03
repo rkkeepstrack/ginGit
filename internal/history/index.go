@@ -21,12 +21,6 @@ func (ix *Index) Append(cs []Commit) {
 	}
 }
 
-func (ix *Index) Len() int {
-	ix.mu.RLock()
-	defer ix.mu.RUnlock()
-	return len(ix.commits)
-}
-
 // Position is the row index, 0 being the newest commit.
 func (ix *Index) Position(hash string) (int, bool) {
 	ix.mu.RLock()

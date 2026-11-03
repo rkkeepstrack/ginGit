@@ -8,26 +8,15 @@ import { Toolbar } from './components/shell/Toolbar'
 import { StatusBar } from './components/shell/StatusBar'
 import { Toasts } from './components/shell/Toasts'
 import { Welcome } from './components/shell/Welcome'
-import { api, events } from './lib/api'
+import { events } from './lib/api'
 import { runAction, type Action } from './lib/actions'
 import { actionFor } from './lib/shortcuts'
-import { subscribeRepoEvents, useRepo } from './state/repoStore'
+import { useRepo } from './state/repoStore'
 import { useSelection } from './state/selectionStore'
-import { applyTheme, useUI, watchSystemTheme } from './state/uiStore'
 
 export default function App() {
   const repo = useRepo((s) => s.repo)
-  const theme = useUI((s) => s.theme)
   const hasSelection = useSelection((s) => s.selected.size > 0)
-
-  useEffect(() => {
-    subscribeRepoEvents()
-    watchSystemTheme()
-    void useRepo.getState().loadRecent()
-    void api.initialRepository().then((p) => { if (p) void useRepo.getState().open(p) })
-  }, [])
-
-  useEffect(() => applyTheme(theme), [theme])
 
   useEffect(() => {
     // Native menu accelerators usually swallow the key before the webview
@@ -55,9 +44,9 @@ export default function App() {
       <Toolbar />
       {hasSelection ? (
         <PanelGroup direction="horizontal" autoSaveId="gingit-panels-v2" className="flex-1 min-h-0">
-          <Panel defaultSize={40} minSize={25} className="hairline-r"><CommitList /></Panel>
+          <Panel defaultSize={40} minSize={25}><CommitList /></Panel>
           <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
-          <Panel defaultSize={40} minSize={20} className="hairline-r"><DiffPanel /></Panel>
+          <Panel defaultSize={40} minSize={20}><DiffPanel /></Panel>
           <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
           <Panel defaultSize={20} minSize={12}><ChangesPanel /></Panel>
         </PanelGroup>

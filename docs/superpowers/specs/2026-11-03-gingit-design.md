@@ -317,3 +317,22 @@ Each phase ends with a runnable application.
 
 Anything that writes to a repository, second-parent merge diffs, submodule
 contents, blame, per-file history, remote hosting integrations, Windows builds.
+
+## 13. Revisions after the first day of use (2026-11-03)
+
+- Range mode is gone from the UI and the backend. Every review is the
+  aggregate of the selected commits' own changes. Per-file composability
+  uses blob continuity (each touch starts from the blob the previous one
+  produced), not commit adjacency.
+- Branch, author and date filters are gone; search covers message, author
+  and hash. The toolbar no longer shows the checked-out branch, the graph
+  shows all refs anyway.
+- Columns are not user-resizable. The subject column keeps priority and the
+  author, date and hash columns give way in that order as the panel narrows.
+- With nothing selected the history takes the whole window. With a selection
+  and no file chosen, the diff panel shows every file as a collapsible
+  section (GitHub style); clicking a file opens it on its own.
+- The backend holds one repository at a time. The frontend picks the history
+  load id so no event can arrive before it is recorded.
+- Hints live in a status bar, confirmations in toasts; the native menu bar
+  carries the shortcuts.

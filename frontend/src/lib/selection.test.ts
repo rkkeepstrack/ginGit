@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { applyClick, isContiguous, sortByPosition } from './selection'
-import type { Commit } from './types'
+import { applyClick } from './selection'
 
-const rows = ['e', 'd', 'c', 'b', 'a']
-
-function commit(hash: string, parents: string[]): Commit {
-  return { hash, parents, author: '', authorEmail: '', authorDate: '', commitDate: '', subject: '', row: { lane: 0, color: 0, segments: [], lanes: 1 } }
-}
+const rows = ['e', 'd', 'c', 'b', 'a'].map((hash) => ({ hash }))
 
 describe('applyClick', () => {
   it('plain click selects one and sets the anchor', () => {
@@ -35,32 +30,5 @@ describe('applyClick', () => {
   it('shift+toggle adds the span to the existing selection', () => {
     const r = applyClick(new Set(['e']), 3, 4, rows, { toggle: true, range: true })
     expect([...r.selected].sort()).toEqual(['a', 'b', 'e'])
-  })
-})
-
-describe('contiguity', () => {
-  const byHash = new Map<string, Commit>([
-    ['e', commit('e', ['d'])],
-    ['d', commit('d', ['c'])],
-    ['c', commit('c', ['b', 'x'])],
-    ['b', commit('b', ['a'])],
-    ['a', commit('a', [])],
-    ['x', commit('x', ['a'])],
-  ])
-  const position = new Map(['e', 'd', 'x', 'c', 'b', 'a'].map((h, i) => [h, i]))
-
-  it('sorts newest first by position', () => {
-    expect(sortByPosition(['a', 'e', 'c'], position)).toEqual(['e', 'c', 'a'])
-    expect(sortByPosition(['zz', 'b'], position)).toEqual(['b'])
-  })
-  it('accepts first-parent chains', () => {
-    expect(isContiguous(['e', 'd', 'c'], byHash)).toBe(true)
-    expect(isContiguous(['c', 'b'], byHash)).toBe(true)
-    expect(isContiguous(['c'], byHash)).toBe(true)
-  })
-  it('rejects gaps and second-parent links', () => {
-    expect(isContiguous(['e', 'c'], byHash)).toBe(false)
-    expect(isContiguous(['c', 'x'], byHash)).toBe(false)
-    expect(isContiguous([], byHash)).toBe(false)
   })
 })

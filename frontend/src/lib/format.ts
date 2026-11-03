@@ -24,3 +24,9 @@ export function absoluteDate(iso: string): string {
 export function formatCount(n: number): string {
   return n.toLocaleString()
 }
+
+/** Home becomes ~; long paths keep their tail, which is the part that tells repos apart. */
+export function shortenPath(p: string): string {
+  const home = /^\/(?:Users|home)\/[^/]+/.exec(p)
+  return home ? '~' + p.slice(home[0].length) : p
+}

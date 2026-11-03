@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"bytes"
 	"context"
-	"io"
 	"strings"
 	"time"
 
@@ -27,10 +26,8 @@ type Commit struct {
 	Row  graph.Row `json:"row"`
 }
 
-// Options control which commits are walked.
+// Options control how commits are delivered.
 type Options struct {
-	// All walks every ref (the default view). When false only HEAD's history is shown.
-	All bool
 	// ChunkSize is how many commits are batched per callback.
 	ChunkSize int
 }
@@ -47,11 +44,7 @@ func Load(ctx context.Context, root string, opts Options, emit func([]Commit)) (
 	if opts.ChunkSize <= 0 {
 		opts.ChunkSize = 1000
 	}
-	args := []string{"log", "--topo-order", format}
-	if opts.All {
-		args = append(args, "--all")
-	}
-	stdout, wait, err := gitcmd.Stream(ctx, root, args...)
+	stdout, wait, err := gitcmd.Stream(ctx, root, "log", "--topo-order", "--all", format)
 	if err != nil {
 		return 0, err
 	}
@@ -61,10 +54,11 @@ func Load(ctx context.Context, root string, opts Options, emit func([]Commit)) (
 	total := 0
 	chunk := make([]Commit, 0, opts.ChunkSize)
 	flush := func() {
-		if len(chunk) > 0 {
+		// A cancelled load must not emit; the UI has already moved on.
+		if len(chunk) > 0 && ctx.Err() == nil {
 			emit(chunk)
-			chunk = make([]Commit, 0, opts.ChunkSize)
 		}
+		chunk = make([]Commit, 0, opts.ChunkSize)
 	}
 
 	sc := bufio.NewScanner(stdout)
@@ -90,7 +84,7 @@ func Load(ctx context.Context, root string, opts Options, emit func([]Commit)) (
 	if err := wait(); err != nil {
 		return total, err
 	}
-	if err := sc.Err(); err != nil && err != io.EOF {
+	if err := sc.Err(); err != nil {
 		return total, err
 	}
 	return total, ctx.Err()

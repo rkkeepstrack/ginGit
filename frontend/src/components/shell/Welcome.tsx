@@ -1,6 +1,8 @@
 import { FolderOpen } from 'lucide-react'
 import { useRepo } from '../../state/repoStore'
 import { modKey } from '../../lib/platform'
+import { shortenPath } from '../../lib/format'
+import { pressable } from './pressable'
 import { Logo } from './Logo'
 import { TitleBar } from './TitleBar'
 import { Notice } from './Notice'
@@ -32,9 +34,9 @@ export function Welcome() {
             <li className="menu-title text-[10px]">Recent</li>
             {recent.map((r) => (
               <li key={r.path}>
-                <a onClick={() => void open(r.path)} title={r.path} className="flex flex-col items-start gap-0 py-1">
+                <a onClick={() => void open(r.path)} {...pressable(() => void open(r.path))} title={r.path} className="flex flex-col items-start gap-0 py-1">
                   <span className="font-medium">{r.name}</span>
-                  <span className="block text-[10px] opacity-50 truncate w-full">{r.path.replace(/^\/(?:Users|home)\/[^/]+/, '~')}</span>
+                  <span className="block text-[10px] opacity-50 truncate w-full">{shortenPath(r.path)}</span>
                 </a>
               </li>
             ))}

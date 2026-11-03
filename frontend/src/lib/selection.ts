@@ -1,25 +1,5 @@
 import type { Commit } from './types'
 
-/** Orders hashes newest first by their position in the history. */
-export function sortByPosition(hashes: Iterable<string>, position: Map<string, number>): string[] {
-  return [...hashes]
-    .filter((h) => position.has(h))
-    .sort((a, b) => position.get(a)! - position.get(b)!)
-}
-
-/**
- * A selection is contiguous when, sorted newest first, each commit's first
- * parent is the next selected commit. Only then is a Range diff meaningful.
- */
-export function isContiguous(sorted: string[], byHash: Map<string, Commit>): boolean {
-  if (sorted.length === 0) return false
-  for (let i = 0; i + 1 < sorted.length; i++) {
-    const c = byHash.get(sorted[i])
-    if (!c || c.parents[0] !== sorted[i + 1]) return false
-  }
-  return true
-}
-
 export interface ClickModifiers { toggle: boolean; range: boolean }
 
 /**
@@ -33,15 +13,14 @@ export function applyClick(
   current: Set<string>,
   anchor: number | null,
   index: number,
-  rows: readonly string[],
+  rows: readonly Pick<Commit, 'hash'>[],
   mods: ClickModifiers,
 ): { selected: Set<string>; anchor: number } {
-  const hash = rows[index]
+  const hash = rows[index].hash
   if (mods.range && anchor !== null) {
     const [lo, hi] = anchor < index ? [anchor, index] : [index, anchor]
-    const span = rows.slice(lo, hi + 1)
     const selected = mods.toggle ? new Set(current) : new Set<string>()
-    for (const h of span) selected.add(h)
+    for (const row of rows.slice(lo, hi + 1)) selected.add(row.hash)
     return { selected, anchor }
   }
   if (mods.toggle) {

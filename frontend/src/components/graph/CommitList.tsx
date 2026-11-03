@@ -1,7 +1,6 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { hasMod } from '../../lib/platform'
 import { useRepo } from '../../state/repoStore'
 import { useSearch } from '../../state/searchStore'
 import { useSelection } from '../../state/selectionStore'
@@ -18,7 +17,6 @@ export function CommitList() {
   })))
   const matches = useSearch((s) => s.matches)
   const selected = useSelection((s) => s.selected)
-  const click = useSelection((s) => s.click)
   const moveCursor = useSelection((s) => s.moveCursor)
   const authorW = useMemo(() => authorWidth(commits), [commits])
   const [panelWidth, setPanelWidth] = useState(1200)
@@ -84,6 +82,7 @@ export function CommitList() {
             return (
               <div key={c.hash} style={{ position: 'absolute', top: 0, left: 0, right: 0, transform: `translateY(${item.start}px)` }}>
                 <CommitRow
+                  index={idx}
                   commit={c}
                   prev={commits[idx - 1]}
                   refs={refsByHash.get(c.hash) ?? EMPTY}
@@ -91,7 +90,6 @@ export function CommitList() {
                   selected={selected.has(c.hash)}
                   graphWidth={graphWidth}
                   columns={columns}
-                  onClick={(e) => click(idx, { toggle: hasMod(e), range: e.shiftKey })}
                 />
               </div>
             )

@@ -8,7 +8,7 @@ package main
 
 #import <Cocoa/Cocoa.h>
 
-// With TitleBarHiddenInset the titlebar is transparent over the content. In
+// With a hidden titlebar it is transparent over the content. In
 // fullscreen macOS reveals it on hover and the webview shows through, which
 // flickers. Make it solid for the duration of fullscreen.
 static void installFullscreenTitlebarFix(void) {

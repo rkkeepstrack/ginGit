@@ -5,8 +5,6 @@ export namespace changes {
 	    type: string;
 	    path: string;
 	    oldPath?: string;
-	    oldBlob: string;
-	    newBlob: string;
 	    additions: number;
 	    deletions: number;
 	    binary: boolean;
@@ -21,8 +19,6 @@ export namespace changes {
 	        this.type = source["type"];
 	        this.path = source["path"];
 	        this.oldPath = source["oldPath"];
-	        this.oldBlob = source["oldBlob"];
-	        this.newBlob = source["newBlob"];
 	        this.additions = source["additions"];
 	        this.deletions = source["deletions"];
 	        this.binary = source["binary"];
@@ -73,10 +69,7 @@ export namespace changes {
 		}
 	}
 	export class ChangeSet {
-	    mode: string;
 	    hashes: string[];
-	    contiguous: boolean;
-	    rangeBase?: string;
 	    merges: string[];
 	    files: FileChange[];
 	
@@ -86,10 +79,7 @@ export namespace changes {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.mode = source["mode"];
 	        this.hashes = source["hashes"];
-	        this.contiguous = source["contiguous"];
-	        this.rangeBase = source["rangeBase"];
 	        this.merges = source["merges"];
 	        this.files = this.convertValues(source["files"], FileChange);
 	    }
@@ -144,7 +134,6 @@ export namespace diff {
 	}
 	export class Pair {
 	    commit: string;
-	    subject: string;
 	    type: string;
 	    old: Side;
 	    new: Side;
@@ -156,7 +145,6 @@ export namespace diff {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.commit = source["commit"];
-	        this.subject = source["subject"];
 	        this.type = source["type"];
 	        this.old = this.convertValues(source["old"], Side);
 	        this.new = this.convertValues(source["new"], Side);

@@ -1,21 +1,18 @@
-// The only module that touches the generated Wails bindings.
+// The only module that touches the generated Wails bindings and runtime.
 import * as App from '../../wailsjs/go/main/App'
-import { EventsOn } from '../../wailsjs/runtime/runtime'
-import type { ChangeSet, Commit, DiffResult, Mode, RecentRepo, Ref, RepoInfo, SearchQuery } from './types'
+import { ClipboardSetText, EventsOn, WindowToggleMaximise } from '../../wailsjs/runtime/runtime'
+import type { ChangeSet, Commit, DiffResult, RecentRepo, Ref, RepoInfo } from './types'
 
-export type ErrorKind =
-  | 'not_a_repository' | 'git_not_found' | 'timeout' | 'object_not_found'
-  | 'not_contiguous' | 'cancelled' | 'unknown'
+const kinds = ['not_a_repository', 'git_not_found', 'timeout', 'object_not_found', 'cancelled'] as const
+export type ErrorKind = (typeof kinds)[number] | 'unknown'
 
+/** Go prefixes known failures with "kind: "; everything else is unknown. */
 export class ApiError extends Error {
   kind: ErrorKind
   constructor(message: string) {
     super(message)
     const m = /^([a-z_]+): /.exec(message)
-    this.kind = (m ? m[1] : 'unknown') as ErrorKind
-    if (!['not_a_repository', 'git_not_found', 'timeout', 'object_not_found', 'not_contiguous', 'cancelled'].includes(this.kind)) {
-      this.kind = 'unknown'
-    }
+    this.kind = (kinds as readonly string[]).includes(m?.[1] ?? '') ? (m![1] as ErrorKind) : 'unknown'
   }
   get display(): string {
     return this.message.replace(/^[a-z_]+: /, '')
@@ -30,8 +27,9 @@ async function wrap<T>(p: Promise<T>): Promise<T> {
   }
 }
 
+const zeroTime = '0001-01-01T00:00:00Z'
+
 export const api = {
-  gitVersion: () => wrap(App.GitVersion()),
   initialRepository: () => wrap(App.InitialRepository()),
   titleBarCenter: () => wrap(App.TitleBarCenter()),
   openRepository: (path: string) => wrap(App.OpenRepository(path)) as Promise<RepoInfo>,
@@ -40,13 +38,17 @@ export const api = {
   forgetRepository: (path: string) => wrap(App.ForgetRepository(path)),
   refs: (root: string) => wrap(App.Refs(root)) as Promise<Ref[]>,
   loadHistory: (root: string, loadId: number) => wrap(App.LoadHistory(root, loadId)),
-  cancelHistory: (id: number) => wrap(App.CancelHistory(id)),
-  listChanges: (root: string, hashes: string[], mode: Mode) =>
-    wrap(App.ListChanges(root, hashes, mode)) as unknown as Promise<ChangeSet>,
-  fileDiff: (root: string, hashes: string[], mode: Mode, path: string) =>
-    wrap(App.FileDiff(root, hashes, mode, path)) as unknown as Promise<DiffResult>,
-  searchCommits: (root: string, q: SearchQuery) =>
-    wrap(App.SearchCommits(root, q as never)) as Promise<number[]>,
+  listChanges: (root: string, hashes: string[]) =>
+    wrap(App.ListChanges(root, hashes)) as unknown as Promise<ChangeSet>,
+  fileDiff: (root: string, hashes: string[], path: string) =>
+    wrap(App.FileDiff(root, hashes, path)) as unknown as Promise<DiffResult>,
+  searchCommits: (root: string, text: string) =>
+    wrap(App.SearchCommits(root, { text, author: '', branch: '', since: zeroTime, until: zeroTime } as never)) as Promise<number[]>,
+}
+
+export const runtime = {
+  setClipboard: (text: string) => ClipboardSetText(text),
+  toggleMaximise: () => WindowToggleMaximise(),
 }
 
 export interface HistoryChunk { loadId: number; rows: Commit[] }

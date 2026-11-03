@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 )
 
 func TestValidateHash(t *testing.T) {
@@ -31,11 +32,20 @@ func TestValidatePath(t *testing.T) {
 }
 
 func TestDisallowedSubcommand(t *testing.T) {
-	for _, sub := range []string{"push", "commit", "reset", "checkout", "gc"} {
+	for _, sub := range []string{"push", "commit", "reset", "checkout", "gc", "status"} {
 		_, err := Run(context.Background(), t.TempDir(), sub)
 		if !errors.Is(err, ErrDisallowed) {
 			t.Errorf("%s: want ErrDisallowed, got %v", sub, err)
 		}
+	}
+}
+
+func TestTimeoutIsReportedAsSuch(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond)
+	defer cancel()
+	_, err := Run(ctx, t.TempDir(), "rev-parse", "--show-toplevel")
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("want DeadlineExceeded, got %v", err)
 	}
 }
 

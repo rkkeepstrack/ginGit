@@ -10,7 +10,6 @@ interface UIState {
   fileSort: 'name' | 'type'
   flatFiles: boolean
   setTheme: (t: ThemeChoice) => void
-  cycleTheme: () => void
   setDiffMode: (m: DiffMode) => void
   toggleDiffMode: () => void
   setFileSort: (s: 'name' | 'type') => void
@@ -25,8 +24,6 @@ export const useUI = create<UIState>()(
       fileSort: 'name',
       flatFiles: false,
       setTheme: (theme) => set({ theme }),
-      cycleTheme: () =>
-        set((s) => ({ theme: s.theme === 'system' ? 'pastel' : s.theme === 'pastel' ? 'dim' : 'system' })),
       setDiffMode: (diffMode) => set({ diffMode }),
       toggleDiffMode: () => set((s) => ({ diffMode: s.diffMode === 'split' ? 'unified' : 'split' })),
       setFileSort: (fileSort) => set({ fileSort }),
@@ -36,17 +33,8 @@ export const useUI = create<UIState>()(
   ),
 )
 
-const media = typeof window !== 'undefined' ? window.matchMedia('(prefers-color-scheme: dark)') : null
-
-export function resolvedTheme(choice: ThemeChoice): 'pastel' | 'dim' {
-  if (choice !== 'system') return choice
-  return media?.matches ? 'dim' : 'pastel'
-}
-
+/** daisyUI follows the OS on its own when no data-theme is set. */
 export function applyTheme(choice: ThemeChoice) {
-  document.documentElement.setAttribute('data-theme', resolvedTheme(choice))
-}
-
-export function watchSystemTheme() {
-  media?.addEventListener('change', () => applyTheme(useUI.getState().theme))
+  if (choice === 'system') document.documentElement.removeAttribute('data-theme')
+  else document.documentElement.setAttribute('data-theme', choice)
 }

@@ -1,19 +1,23 @@
 import { memo } from 'react'
 import { absoluteDate, relativeDate, shortHash } from '../../lib/format'
+import { hasMod } from '../../lib/platform'
 import type { Commit, Ref } from '../../lib/types'
-import { LaneCell } from './LaneCell'
-import { RefPills } from './RefPills'
-import type { Columns } from './columns'
 import { conventionalPrefix } from '../../lib/color'
 import { copyText } from '../../lib/clipboard'
 import { hintProps, useHint } from '../../state/hintStore'
+import { useSelection } from '../../state/selectionStore'
+import { LaneCell, ROW_H } from './LaneCell'
+import { RefPills } from './RefPills'
+import type { Columns } from './columns'
 
 async function copyHash(hash: string) {
   const ok = await copyText(hash)
   useHint.getState().flashMessage(ok ? `Copied ${hash.slice(0, 7)} to the clipboard` : 'Clipboard not available')
 }
 
-export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, selected, graphWidth, columns, onClick }: {
+/** One history row. Everything it needs is a stable prop, so memo holds while scrolling. */
+export const CommitRow = memo(function CommitRow({ index, commit, prev, refs, isHead, selected, graphWidth, columns }: {
+  index: number
   commit: Commit
   prev: Commit | undefined
   refs: Ref[]
@@ -21,14 +25,14 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
   selected: boolean
   graphWidth: number
   columns: Columns
-  onClick: (e: React.MouseEvent) => void
 }) {
   const isMerge = commit.parents.length > 1
   const conv = conventionalPrefix(commit.subject)
   return (
     <div
       className={`commit-row flex items-center ${selected ? 'selected' : ''}`}
-      onMouseDown={(e) => { if (e.button === 0) onClick(e) }}
+      style={{ height: ROW_H, lineHeight: `${ROW_H}px` }}
+      onMouseDown={(e) => { if (e.button === 0) useSelection.getState().click(index, { toggle: hasMod(e), range: e.shiftKey }) }}
       data-hash={commit.hash}
     >
       <LaneCell row={commit.row} prev={prev?.row} isMerge={isMerge} isHead={isHead} width={graphWidth} />
@@ -46,16 +50,19 @@ export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, s
           {relativeDate(commit.authorDate)}
         </div>
       )}
-      {columns.hash > 0 && <div className="shrink-0 pr-2" style={{ width: columns.hash }}>
-        <span
-          className="hash-cell mono opacity-50"
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => { e.stopPropagation(); void copyHash(commit.hash) }}
-          {...hintProps(`Click to copy ${commit.hash}`)}
-        >
-          {shortHash(commit.hash)}
-        </span>
-      </div>}
+      {columns.hash > 0 && (
+        <div className="shrink-0 pr-2" style={{ width: columns.hash }}>
+          <button
+            type="button"
+            className="hash-cell mono opacity-50"
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); void copyHash(commit.hash) }}
+            {...hintProps(`Click to copy ${commit.hash}`)}
+          >
+            {shortHash(commit.hash)}
+          </button>
+        </div>
+      )}
     </div>
   )
 })

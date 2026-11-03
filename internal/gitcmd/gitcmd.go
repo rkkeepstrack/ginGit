@@ -19,7 +19,6 @@ import (
 var (
 	ErrGitNotFound    = errors.New("git executable not found")
 	ErrNotARepository = errors.New("not a git repository")
-	ErrTimeout        = errors.New("git command timed out")
 	ErrObjectNotFound = errors.New("git object not found")
 	ErrInvalidArg     = errors.New("invalid argument")
 	ErrDisallowed     = errors.New("git subcommand not allowed")
@@ -34,18 +33,11 @@ var allowed = map[string]bool{
 	"log":          true,
 	"rev-list":     true,
 	"diff-tree":    true,
-	"diff":         true,
 	"cat-file":     true,
-	"show-ref":     true,
 	"for-each-ref": true,
-	"status":       true,
-	"ls-tree":      true,
 }
 
-var (
-	fullHashRe   = regexp.MustCompile(`^[0-9a-f]{40}$`)
-	prefixHashRe = regexp.MustCompile(`^[0-9a-f]{4,40}$`)
-)
+var fullHashRe = regexp.MustCompile(`^[0-9a-f]{40}$`)
 
 // EmptyTree is the hash of the empty tree, used as the parent of root commits.
 const EmptyTree = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
@@ -54,14 +46,6 @@ const EmptyTree = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 func ValidateHash(h string) error {
 	if !fullHashRe.MatchString(h) {
 		return fmt.Errorf("%w: hash %q", ErrInvalidArg, h)
-	}
-	return nil
-}
-
-// ValidateHashPrefix accepts a user-typed abbreviated hash.
-func ValidateHashPrefix(h string) error {
-	if !prefixHashRe.MatchString(h) {
-		return fmt.Errorf("%w: hash prefix %q", ErrInvalidArg, h)
 	}
 	return nil
 }
@@ -100,8 +84,6 @@ func classify(stderr string, err error) error {
 	case strings.Contains(s, "bad object"), strings.Contains(s, "unknown revision"),
 		strings.Contains(s, "does not exist"), strings.Contains(s, "not a valid object name"):
 		return ErrObjectNotFound
-	case errors.Is(err, context.DeadlineExceeded):
-		return ErrTimeout
 	}
 	return err
 }
@@ -122,6 +104,11 @@ func command(ctx context.Context, repoPath string, args []string) (*exec.Cmd, er
 
 // Run executes git and returns stdout. Stderr is attached to the error.
 func Run(ctx context.Context, repoPath string, args ...string) ([]byte, error) {
+	return RunInput(ctx, repoPath, nil, args...)
+}
+
+// RunInput is Run with data on stdin, for `cat-file --batch`.
+func RunInput(ctx context.Context, repoPath string, stdin []byte, args ...string) ([]byte, error) {
 	if _, ok := ctx.Deadline(); !ok {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, DefaultTimeout)
@@ -132,9 +119,16 @@ func Run(ctx context.Context, repoPath string, args ...string) ([]byte, error) {
 		return nil, err
 	}
 	var stdout, stderr bytes.Buffer
+	if stdin != nil {
+		cmd.Stdin = bytes.NewReader(stdin)
+	}
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
+		// A killed process reports "signal: killed"; the context knows why.
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
 		if errors.Is(err, exec.ErrNotFound) {
 			return nil, ErrGitNotFound
 		}
@@ -173,38 +167,4 @@ func Stream(ctx context.Context, repoPath string, args ...string) (io.ReadCloser
 		return nil
 	}
 	return stdout, wait, nil
-}
-
-// Version reports the installed git version, mostly to fail early and clearly.
-func Version(ctx context.Context) (string, error) {
-	cmd := exec.CommandContext(ctx, "git", "--version")
-	out, err := cmd.Output()
-	if err != nil {
-		return "", ErrGitNotFound
-	}
-	return strings.TrimSpace(string(out)), nil
-}
-
-// RunInput is Run with data on stdin, for `cat-file --batch`.
-func RunInput(ctx context.Context, repoPath string, stdin []byte, args ...string) ([]byte, error) {
-	if _, ok := ctx.Deadline(); !ok {
-		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, DefaultTimeout)
-		defer cancel()
-	}
-	cmd, err := command(ctx, repoPath, args)
-	if err != nil {
-		return nil, err
-	}
-	var stdout, stderr bytes.Buffer
-	cmd.Stdin = bytes.NewReader(stdin)
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		if errors.Is(err, exec.ErrNotFound) {
-			return nil, ErrGitNotFound
-		}
-		return nil, &Error{Args: args, Stderr: stderr.String(), Err: classify(stderr.String(), err)}
-	}
-	return stdout.Bytes(), nil
 }

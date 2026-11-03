@@ -40,9 +40,9 @@ export function Toolbar() {
           <RefreshCw {...ICON} className={loading ? 'animate-spin' : ''} />
           {changed && <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-warning ring-2 ring-base-100" />}
         </button>
-        <div className="join bg-base-200/60 rounded-field p-0.5 ml-1">
-          <button className={`btn btn-xs btn-square join-item ${diffMode === 'split' ? 'bg-base-100 shadow-sm brand' : 'btn-ghost opacity-60'}`} onClick={() => setDiffMode('split')} {...hintProps(`Side-by-side diff  ${modKey}⇧D`)}><Columns2 size={15} strokeWidth={1.75} /></button>
-          <button className={`btn btn-xs btn-square join-item ${diffMode === 'unified' ? 'bg-base-100 shadow-sm brand' : 'btn-ghost opacity-60'}`} onClick={() => setDiffMode('unified')} {...hintProps(`Unified diff  ${modKey}⇧D`)}><Rows3 size={15} strokeWidth={1.75} /></button>
+        <div role="tablist" className="tabs tabs-box tabs-xs ml-1 p-0.5">
+          <a role="tab" className={`tab px-1.5 ${diffMode === 'split' ? 'tab-active brand' : 'opacity-60'}`} onClick={() => setDiffMode('split')} {...hintProps(`Side-by-side diff  ${modKey}⇧D`)}><Columns2 size={15} strokeWidth={1.75} /></a>
+          <a role="tab" className={`tab px-1.5 ${diffMode === 'unified' ? 'tab-active brand' : 'opacity-60'}`} onClick={() => setDiffMode('unified')} {...hintProps(`Unified diff  ${modKey}⇧D`)}><Rows3 size={15} strokeWidth={1.75} /></a>
         </div>
         <ThemeToggle />
       </div>

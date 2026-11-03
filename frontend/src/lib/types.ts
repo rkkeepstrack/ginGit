@@ -20,9 +20,6 @@ export interface RepoInfo {
   name: string
   branch: string
   head: string
-  gitDir: string
-  detached: boolean
-  bare: boolean
 }
 
 export interface Ref {
@@ -36,15 +33,12 @@ export interface Ref {
 export interface RecentRepo { path: string; name: string; lastOpen: string }
 
 export type ChangeType = 'added' | 'modified' | 'deleted' | 'renamed'
-export type Mode = 'range' | 'aggregate'
 
 export interface Touch {
   commit: string
   type: ChangeType
   path: string
   oldPath?: string
-  oldBlob: string
-  newBlob: string
   additions: number
   deletions: number
   binary: boolean
@@ -62,10 +56,7 @@ export interface FileChange {
 }
 
 export interface ChangeSet {
-  mode: Mode
   hashes: string[]
-  contiguous: boolean
-  rangeBase?: string
   merges: string[]
   files: FileChange[]
 }
@@ -80,7 +71,7 @@ export interface Side {
   tooLarge: boolean
 }
 
-export interface Pair { commit: string; subject: string; type: ChangeType; old: Side; new: Side }
+export interface Pair { commit: string; type: ChangeType; old: Side; new: Side }
 
 export interface DiffResult {
   path: string
@@ -88,12 +79,4 @@ export interface DiffResult {
   stacked: boolean
   note?: string
   pairs: Pair[]
-}
-
-export interface SearchQuery {
-  text: string
-  author: string
-  branch: string
-  since: string // RFC3339 or zero time
-  until: string
 }

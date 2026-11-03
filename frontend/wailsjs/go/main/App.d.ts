@@ -5,17 +5,13 @@ import {changes} from '../models';
 import {repo} from '../models';
 import {search} from '../models';
 
-export function CancelHistory(arg1:number):Promise<void>;
-
-export function FileDiff(arg1:string,arg2:Array<string>,arg3:string,arg4:string):Promise<diff.Result>;
+export function FileDiff(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
 
 export function ForgetRepository(arg1:string):Promise<void>;
 
-export function GitVersion():Promise<string>;
-
 export function InitialRepository():Promise<string>;
 
-export function ListChanges(arg1:string,arg2:Array<string>,arg3:string):Promise<changes.ChangeSet>;
+export function ListChanges(arg1:string,arg2:Array<string>):Promise<changes.ChangeSet>;
 
 export function LoadHistory(arg1:string,arg2:number):Promise<void>;
 

@@ -138,7 +138,6 @@
 :root {
   --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --row-h: 28px;
 }
 
 html, body, #root {
@@ -163,7 +162,6 @@ body {
 
 /* Wails' own drag hint; the Electron-style app-region does nothing here. */
 .drag-region { --wails-draggable: drag; }
-.no-drag, .no-drag * { --wails-draggable: no-drag; }
 
 .mono { font-family: var(--font-mono); font-size: 12px; font-feature-settings: "liga" 0; }
 .panel-head { height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 8px; font-size: 12px; flex-shrink: 0; white-space: nowrap; }
@@ -177,12 +175,11 @@ body {
 .hairline-r { box-shadow: inset -1px 0 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 
 /* Commit rows */
-.commit-row { height: var(--row-h); line-height: var(--row-h); white-space: nowrap; cursor: default; }
+.commit-row { white-space: nowrap; cursor: default; }
 .commit-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .commit-row.selected { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
 .commit-row.selected:hover { background: color-mix(in oklab, var(--brand) 22%, transparent); }
-.commit-row.dim { opacity: 0.35; }
-.hash-cell { cursor: copy; border-radius: 4px; padding: 0 4px; margin-left: -4px; }
+.hash-cell { cursor: copy; border-radius: 4px; padding: 0 4px; margin-left: -4px; background: none; border: 0; font: inherit; line-height: inherit; }
 .hash-cell:hover { background: color-mix(in oklab, var(--color-base-content) 8%, transparent); opacity: 1; }
 
 .ref-pill {
@@ -233,21 +230,15 @@ body {
 .section-head { cursor: pointer; background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); transition: background 80ms; }
 .section-head:hover { background: var(--color-base-200); }
 .section-head:active { background: color-mix(in oklab, var(--color-base-content) 10%, var(--color-base-200)); }
-.tree-row { cursor: pointer; }
-.tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: default; font-size: 12.5px; }
+.tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: pointer; font-size: 12.5px; }
 .tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .tree-row.active { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
 
-/* Resize handles */
-.resize-handle { position: relative; }
-.resize-handle::after {
-  content: ""; position: absolute; inset: 0 -3px; cursor: col-resize;
-}
+/* Resize handles: the library supplies the hit area, we only color the line. */
 .resize-handle[data-resize-handle-state="hover"], .resize-handle[data-resize-handle-state="drag"] {
   background: var(--brand);
 }
 .brand { color: var(--brand); }
-.cm-host .cm-collapsedLines:hover { color: var(--brand); }
 .input:focus-within, .input:focus { outline-color: color-mix(in oklab, var(--brand) 50%, transparent); border-color: var(--brand); }
 
 /* CodeMirror */
@@ -260,27 +251,25 @@ body {
 .cm-host .cm-scroller { font-family: var(--font-mono); line-height: 1.5; }
 .cm-host .cm-gutters { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); color: color-mix(in oklab, var(--color-base-content) 45%, transparent); border-right: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 .cm-host .cm-content { -webkit-user-select: text; user-select: text; }
-.cm-host .cm-activeLine { background: transparent; }
 .cm-host .cm-changedLine { background: var(--diff-add-bg); }
 .cm-host .cm-changedText { background: var(--diff-add-text); }
 .cm-host .cm-deletedChunk { background: var(--diff-del-bg); }
 .cm-host .cm-deletedText { background: var(--diff-del-text); }
 .cm-host .cm-insertedLine { background: var(--diff-add-bg); }
 .cm-host .cm-insertedLine .cm-changedText { background: var(--diff-add-text); }
-.cm-host .cm-mergeViewEditor:first-child .cm-changedLine { background: var(--diff-del-bg); }
-.cm-host .cm-mergeViewEditor:first-child .cm-changedText { background: var(--diff-del-text); }
+.cm-host .cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
+.cm-host .cm-merge-a .cm-changedText { background: var(--diff-del-text); }
 .cm-host .cm-collapsedLines {
   display: flex; align-items: center; gap: 6px;
   background: var(--diff-collapsed-bg);
   color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
   padding: 3px 8px; font-family: var(--font-ui); font-size: 11px; line-height: 16px; cursor: pointer;
 }
-.cm-host .cm-collapsedLines:hover { color: var(--color-base-content); }
+.cm-host .cm-collapsedLines:hover { color: var(--brand); }
 /* Replace the ⦚ glyphs with lucide's unfold-vertical, drawn through a mask so it takes currentColor. */
 .cm-host .cm-collapsedLines::before {
   content: ""; width: 13px; height: 13px; margin: 0; flex-shrink: 0; background: currentColor;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22v-6'/%3E%3Cpath d='M12 8V2'/%3E%3Cpath d='M4 12H2'/%3E%3Cpath d='M10 12H8'/%3E%3Cpath d='M16 12h-2'/%3E%3Cpath d='M22 12h-2'/%3E%3Cpath d='m15 19-3 3-3-3'/%3E%3Cpath d='m15 5-3-3-3 3'/%3E%3C/svg%3E") center / contain no-repeat;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22v-6'/%3E%3Cpath d='M12 8V2'/%3E%3Cpath d='M4 12H2'/%3E%3Cpath d='M10 12H8'/%3E%3Cpath d='M16 12h-2'/%3E%3Cpath d='M22 12h-2'/%3E%3Cpath d='m15 19-3 3-3-3'/%3E%3Cpath d='m15 5-3-3-3 3'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .cm-host .cm-collapsedLines::after { content: none; }
 /* One-sided files: tinted lines plus the merge view's gutter bar, numbers untouched. */
@@ -290,9 +279,6 @@ body {
 .cm-host.single-added .cm-changedLineGutter { background: var(--diff-add-bar); }
 .cm-host.single-deleted .cm-deletedLineGutter { background: var(--diff-del-bar); }
 .cm-host .cm-mergeSpacer { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); }
-.cm-host .cm-merge-gap { background: var(--color-base-200); }
-.cm-host .cm-deletedChunk .cm-chunkButtons { display: none; }
-.cm-host .cm-chunkButtons { display: none; }
 .cm-host .cm-editor.cm-focused { outline: none; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }

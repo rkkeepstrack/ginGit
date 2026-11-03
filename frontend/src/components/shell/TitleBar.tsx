@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { WindowToggleMaximise } from '../../../wailsjs/runtime/runtime'
-import { api } from '../../lib/api'
+import { api, runtime } from '../../lib/api'
 import { Logo } from './Logo'
 
 let measured: number | null = null
@@ -22,7 +21,7 @@ export function TitleBar() {
     <div
       className="drag-region relative shrink-0 hairline-b text-base-content"
       style={{ height }}
-      onDoubleClick={() => WindowToggleMaximise()}
+      onDoubleClick={() => runtime.toggleMaximise()}
     >
       <div
         className="absolute left-0 right-0 flex items-center justify-center -translate-y-1/2"

@@ -61,21 +61,9 @@ func (l *Layout) Next(hash string, parents []string) Row {
 	}
 	color := l.active[idx].color
 
-	// Any other lane that was also waiting for this commit (a merge into it)
-	// ends here. Collect them so we can draw their edges converging on us.
-	// We do this by scanning after the main lane is settled.
-	before := make([]lane, len(l.active))
-	copy(before, l.active)
-
-	// Build the next row's lane list.
+	// Build the next row's lane list while recording the edges into it.
 	next := make([]lane, 0, len(l.active)+len(parents))
-	type pending struct {
-		from, to, color int
-	}
-	var segs []pending
-
-	// Map from parent hash to the lane index it has in `next` (so a second
-	// lane wanting the same parent merges into it).
+	var segs []Segment
 	nextIndexOf := func(h string) int {
 		for i, ln := range next {
 			if ln.waitingFor == h {
@@ -84,52 +72,40 @@ func (l *Layout) Next(hash string, parents []string) Row {
 		}
 		return -1
 	}
+	continueTo := func(from int, h string, ln lane) {
+		if j := nextIndexOf(h); j >= 0 {
+			segs = append(segs, Segment{From: from, To: j, Color: ln.color})
+			return
+		}
+		next = append(next, lane{waitingFor: h, color: ln.color})
+		segs = append(segs, Segment{From: from, To: len(next) - 1, Color: ln.color})
+	}
 
-	for i, ln := range before {
+	for i, ln := range l.active {
 		switch {
 		case i == idx:
-			// The commit's own lane continues to its first parent, keeping
-			// the color. Extra parents branch off.
-			if len(parents) == 0 {
-				continue // root commit, lane closes
-			}
-			first := parents[0]
-			if j := nextIndexOf(first); j >= 0 {
-				segs = append(segs, pending{i, j, color})
-			} else {
-				next = append(next, lane{waitingFor: first, color: color})
-				segs = append(segs, pending{i, len(next) - 1, color})
+			// Our lane carries on to the first parent, keeping its color.
+			if len(parents) > 0 {
+				continueTo(i, parents[0], lane{color: color})
 			}
 		case ln.waitingFor == hash:
 			// Another lane also wanted this commit: it merges into us and ends.
-			segs = append(segs, pending{i, -1, ln.color})
+			segs = append(segs, Segment{From: i, To: idx, Color: ln.color})
 		default:
-			// Pass-through lane.
-			if j := nextIndexOf(ln.waitingFor); j >= 0 {
-				segs = append(segs, pending{i, j, ln.color})
-			} else {
-				next = append(next, ln)
-				segs = append(segs, pending{i, len(next) - 1, ln.color})
-			}
+			continueTo(i, ln.waitingFor, ln)
 		}
 	}
 	for _, p := range parents[min(1, len(parents)):] {
 		if j := nextIndexOf(p); j >= 0 {
-			segs = append(segs, pending{idx, j, next[j].color})
+			segs = append(segs, Segment{From: idx, To: j, Color: next[j].color})
 		} else {
-			next = append(next, lane{waitingFor: p, color: l.color()})
-			segs = append(segs, pending{idx, len(next) - 1, next[len(next)-1].color})
+			continueTo(idx, p, lane{color: l.color()})
 		}
 	}
 
-	row := Row{Lane: idx, Color: color, Lanes: max(len(before), len(next)), Segments: make([]Segment, 0, len(segs))}
-	for _, s := range segs {
-		if s.to < 0 {
-			// Converging edge: draw it as landing on our lane in this row.
-			row.Segments = append(row.Segments, Segment{From: s.from, To: idx, Color: s.color})
-			continue
-		}
-		row.Segments = append(row.Segments, Segment{From: s.from, To: s.to, Color: s.color})
+	row := Row{Lane: idx, Color: color, Lanes: max(len(l.active), len(next)), Segments: segs}
+	if row.Segments == nil {
+		row.Segments = []Segment{}
 	}
 	l.active = next
 	return row

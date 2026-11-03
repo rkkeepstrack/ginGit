@@ -1,74 +1,42 @@
-import { ChevronDown, ChevronUp, FileDiff, GitCommitHorizontal, LayoutList } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { ApiError, api } from '../../lib/api'
+import { ChevronDown, ChevronUp, FileDiff, LayoutList } from 'lucide-react'
+import { changeMark } from '../../lib/changeType'
+import { categoryFor, iconFor } from '../../lib/fileIcon'
 import { shortHash } from '../../lib/format'
-import type { ChangeType, DiffResult, Pair } from '../../lib/types'
+import { stepFile, useChanges } from '../../state/changesStore'
+import { hintProps } from '../../state/hintStore'
 import { useRepo } from '../../state/repoStore'
-import { useSelection, useSelectionInfo } from '../../state/selectionStore'
+import { useSelectedHashes, useSelection } from '../../state/selectionStore'
 import { useUI } from '../../state/uiStore'
 import { Notice } from '../shell/Notice'
-import { hintProps } from '../../state/hintStore'
-import { useChanges } from '../../state/changesStore'
-import { categoryFor, iconFor } from '../../lib/fileIcon'
 import { AllFilesView } from './AllFilesView'
-import { MergeViewHost } from './MergeViewHost'
-import { SingleSideView } from './SingleSideView'
-
-export const typeLabel: Record<ChangeType, string> = { added: 'Added', modified: '', deleted: 'Deleted', renamed: 'Renamed' }
-
-export function stepFile(delta: number) {
-  const { file, setFile } = useSelection.getState()
-  const paths = useChanges.getState().paths
-  if (paths.length === 0) return
-  const i = file ? paths.indexOf(file) : -1
-  const next = i < 0 ? (delta > 0 ? 0 : paths.length - 1) : Math.max(0, Math.min(paths.length - 1, i + delta))
-  setFile(paths[next])
-}
+import { DiffBody } from './DiffBody'
+import { useFileDiff } from './useFileDiff'
 
 export function DiffPanel() {
-  const repoPath = useRepo((s) => s.repo?.path)
-  const { hashes, mode } = useSelectionInfo()
   const file = useSelection((s) => s.file)
-  const diffMode = useUI((s) => s.diffMode)
-  const [result, setResult] = useState<DiffResult | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  const key = hashes.join(',') + '|' + mode + '|' + file
-  useEffect(() => {
-    if (!repoPath || !file || hashes.length === 0) {
-      setResult(null)
-      setError(null)
-      return
-    }
-    let alive = true
-    setLoading(true)
-    api.fileDiff(repoPath, hashes, mode, file).then(
-      (r) => { if (alive) { setResult(r); setError(null); setLoading(false) } },
-      (e: ApiError) => { if (alive) { setError(e.display); setResult(null); setLoading(false) } },
-    )
-    return () => { alive = false }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repoPath, key])
-
-  const paths = useChanges((s) => s.paths)
   const changeSet = useChanges((s) => s.changeSet)
-  const idx = file ? paths.indexOf(file) : -1
+  const loading = useChanges((s) => s.loading)
+  if (file) return <SingleFile file={file} />
+  if (changeSet && changeSet.files.length > 0) return <AllFilesView key={changeSet.hashes.join(',')} />
+  return (
+    <div className="h-full flex flex-col items-center justify-center gap-2 text-[12.5px] opacity-40 select-none" id="panel-diff">
+      <FileDiff size={28} strokeWidth={1.25} />
+      {loading ? 'Loading…' : 'No file changes'}
+    </div>
+  )
+}
 
-  if (!file) {
-    if (hashes.length > 0 && changeSet && changeSet.files.length > 0) {
-      return <AllFilesView key={key} changeSet={changeSet} paths={paths} hashes={hashes} mode={mode} diffMode={diffMode} />
-    }
-    return (
-      <div className="h-full flex flex-col items-center justify-center gap-2 text-[12.5px] opacity-40 select-none" id="panel-diff">
-        <FileDiff size={28} strokeWidth={1.25} />
-        {hashes.length === 0 ? 'Select commits to review their changes' : 'No file changes'}
-      </div>
-    )
-  }
-
+function SingleFile({ file }: { file: string }) {
+  const repoPath = useRepo((s) => s.repo?.path)
+  const hashes = useSelectedHashes()
+  const diffMode = useUI((s) => s.diffMode)
+  const paths = useChanges((s) => s.paths)
+  const { result, error, loading } = useFileDiff(repoPath, hashes, file)
+  const idx = paths.indexOf(file)
   const segments = file.split('/')
   const FileIcon = iconFor(file)
+  const mark = result && changeMark[result.type]
+
   return (
     <div className="flex flex-col h-full min-h-0" id="panel-diff">
       <div className="panel-head hairline-b">
@@ -78,63 +46,21 @@ export function DiffPanel() {
             <span key={i} className={i === segments.length - 1 ? '' : 'opacity-50'}>{s}{i < segments.length - 1 ? '/' : ''}</span>
           ))}
         </span>
-        {result && typeLabel[result.type] && <span className={`ct-${result.type} text-[11px] font-medium shrink-0`}>{typeLabel[result.type]}</span>}
+        {mark && <span className={`ct-${result.type} text-[11px] font-medium shrink-0`}>{mark.label}</span>}
         {result && !result.stacked && result.pairs[0] && (
           <span className="opacity-50 shrink-0" title="Old commit → new commit">
-            {result.pairs[0].old.missing ? '∅' : blobOrigin(result.pairs[0])} → {shortHash(result.pairs[0].commit)}
+            {result.pairs[0].old.missing ? '∅' : result.pairs[0].old.path !== result.pairs[0].new.path ? result.pairs[0].old.path : 'parent'} → {shortHash(result.pairs[0].commit)}
           </span>
         )}
         <div className="flex-1" />
         <span className="opacity-50 tabular-nums shrink-0">{idx >= 0 ? `${idx + 1} / ${paths.length}` : ''}</span>
-        <button className="btn btn-ghost btn-xs btn-square" onClick={() => useSelection.getState().setFile(null)} {...hintProps('Back to all files')}><LayoutList size={15} strokeWidth={1.75} /></button>
         <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(-1)} disabled={idx <= 0} {...hintProps('Previous file  [')}><ChevronUp size={15} strokeWidth={1.75} /></button>
         <button className="btn btn-ghost btn-xs btn-square" onClick={() => stepFile(1)} disabled={idx < 0 || idx >= paths.length - 1} {...hintProps('Next file  ]')}><ChevronDown size={15} strokeWidth={1.75} /></button>
+        <button className="btn btn-ghost btn-xs btn-square" onClick={() => useSelection.getState().setFile(null)} {...hintProps('Back to all files')}><LayoutList size={15} strokeWidth={1.75} /></button>
       </div>
       {error && <Notice kind="error">{error}</Notice>}
       {loading && !result && <div className="p-4 text-xs opacity-50">Loading…</div>}
-      {result && !result.stacked && <PairView pair={result.pairs[0]} path={file} mode={diffMode} />}
-      {result && result.stacked && (
-        <div className="flex-1 overflow-auto">
-          <Notice kind="warning">{result.note}</Notice>
-          {result.pairs.map((p) => (
-            <div key={p.commit} className="hairline-b">
-              <div className="flex items-center gap-2 px-2 h-8 text-[12px] bg-base-200/60 sticky top-0 z-10">
-                <GitCommitHorizontal size={14} strokeWidth={1.75} className="opacity-50" />
-                <span className="mono opacity-60">{shortHash(p.commit)}</span>
-                <span className="truncate">{p.subject}</span>
-                {typeLabel[p.type] && <span className={`ct-${p.type} text-[11px] font-medium shrink-0`}>{typeLabel[p.type]}</span>}
-              </div>
-              <PairView pair={p} path={file} mode={diffMode} stacked />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function blobOrigin(p: Pair): string {
-  return p.old.path !== p.new.path ? p.old.path : 'parent'
-}
-
-export function PairView({ pair, path, mode, stacked = false }: { pair: Pair; path: string; mode: 'split' | 'unified'; stacked?: boolean }) {
-  const problem = pair.old.binary || pair.new.binary ? 'Binary file, no text diff.'
-    : pair.old.tooLarge || pair.new.tooLarge ? 'File is larger than 2 MB, diff skipped.'
-    : null
-  if (problem) {
-    return <div className={`${stacked ? 'p-3' : 'flex-1 flex items-center justify-center'} text-xs opacity-50`}>{problem}</div>
-  }
-  if (pair.old.missing !== pair.new.missing) {
-    const kind = pair.old.missing ? 'added' : 'deleted'
-    return (
-      <div className={stacked ? '' : 'flex-1 min-h-0'}>
-        <SingleSideView text={pair.old.missing ? pair.new.content : pair.old.content} path={path} kind={kind} stacked={stacked} />
-      </div>
-    )
-  }
-  return (
-    <div className={stacked ? '' : 'flex-1 min-h-0'}>
-      <MergeViewHost oldText={pair.old.content} newText={pair.new.content} path={path} mode={mode} stacked={stacked} />
+      {result && <DiffBody result={result} path={file} mode={diffMode} stacked={false} />}
     </div>
   )
 }

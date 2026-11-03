@@ -75,6 +75,12 @@ function countFiles(nodes: TreeNode[]): number {
 
 export interface FlatRow { node: TreeNode; depth: number }
 
+/** The same files as a flat list, sorted the way the tree sorts its leaves. */
+export function flatRows(files: FileChange[], sort: SortKey): FlatRow[] {
+  const nodes: TreeNode[] = files.map((f) => ({ kind: 'file', name: f.path, path: f.path, change: f }))
+  return sortNodes(nodes, sort).map((node) => ({ node, depth: 0 }))
+}
+
 /** Flattens the tree for virtualization, skipping collapsed directories. */
 export function flatten(nodes: TreeNode[], collapsed: Set<string>, depth = 0, out: FlatRow[] = []): FlatRow[] {
   for (const n of nodes) {

@@ -2,13 +2,22 @@ import { create } from 'zustand'
 import { api, events, ApiError } from '../lib/api'
 import type { Commit, RecentRepo, Ref, RepoInfo } from '../lib/types'
 
+/**
+ * Lookup tables that follow `commits`. They are filled in place as chunks
+ * arrive and rebuilt on every load; subscribe to `commits` for changes, never
+ * to these.
+ */
+const byHash = new Map<string, Commit>()
+const position = new Map<string, number>()
+
+export const commitOf = (hash: string) => byHash.get(hash)
+export const positionOf = (hash: string) => position.get(hash)
+
 interface RepoState {
   repo: RepoInfo | null
   refs: Ref[]
   refsByHash: Map<string, Ref[]>
   commits: Commit[]
-  byHash: Map<string, Commit>
-  position: Map<string, number>
   maxLanes: number
   loading: boolean
   loadId: number
@@ -18,11 +27,12 @@ interface RepoState {
   recent: RecentRepo[]
   gitMissing: boolean
 
+  /** Opens a path, or asks for one with the native dialog. */
   open: (path?: string) => Promise<void>
+  /** Reloads refs and history of the open repository. */
   refresh: () => Promise<void>
   loadRecent: () => Promise<void>
   forget: (path: string) => Promise<void>
-  close: () => void
 }
 
 function indexRefs(refs: Ref[]): Map<string, Ref[]> {
@@ -40,76 +50,74 @@ function indexRefs(refs: Ref[]): Map<string, Ref[]> {
 
 let loadSeq = 0
 
-export const useRepo = create<RepoState>()((set, get) => ({
-  repo: null,
-  refs: [],
-  refsByHash: new Map(),
-  commits: [],
-  byHash: new Map(),
-  position: new Map(),
-  maxLanes: 1,
-  loading: false,
-  loadId: 0,
-  total: null,
-  error: null,
-  changedSinceLoad: false,
-  recent: [],
-  gitMissing: false,
-
-  async open(path) {
+export const useRepo = create<RepoState>()((set, get) => {
+  // Opens (or re-opens) a path and streams its history.
+  const load = async (path: string) => {
     try {
-      const info = path ? await api.openRepository(path) : await api.openRepositoryDialog()
-      set({ repo: info, error: null, commits: [], byHash: new Map(), position: new Map(), maxLanes: 1, total: null, changedSinceLoad: false })
-      await get().refresh()
+      const info = await api.openRepository(path)
+      const refs = await api.refs(info.path)
+      // Record the id before asking Go to stream, so no event can beat it.
+      const loadId = ++loadSeq
+      byHash.clear()
+      position.clear()
+      set({
+        repo: info, refs, refsByHash: indexRefs(refs), commits: [], maxLanes: 1,
+        loading: true, loadId, total: null, error: null, changedSinceLoad: false,
+      })
+      await api.loadHistory(info.path, loadId)
       void get().loadRecent()
     } catch (e) {
       const err = e as ApiError
       if (err.kind === 'cancelled') return
-      if (err.kind === 'git_not_found') set({ gitMissing: true })
-      set({ error: err.display ?? String(e) })
+      set({ error: err.display ?? String(e), loading: false, gitMissing: err.kind === 'git_not_found' })
     }
-  },
+  }
 
-  async refresh() {
-    const repo = get().repo
-    if (!repo) return
-    try {
-      const [info, refs] = await Promise.all([api.openRepository(repo.path), api.refs(repo.path)])
-      // Record the id before asking Go to stream, so no event can beat it.
-      const loadId = ++loadSeq
-      set({
-        repo: info, refs, refsByHash: indexRefs(refs),
-        commits: [], byHash: new Map(), position: new Map(), maxLanes: 1,
-        loading: true, loadId, total: null, error: null, changedSinceLoad: false,
-      })
-      await api.loadHistory(repo.path, loadId)
-    } catch (e) {
-      set({ error: (e as ApiError).display ?? String(e), loading: false })
-    }
-  },
+  return {
+    repo: null,
+    refs: [],
+    refsByHash: new Map(),
+    commits: [],
+    maxLanes: 1,
+    loading: false,
+    loadId: 0,
+    total: null,
+    error: null,
+    changedSinceLoad: false,
+    recent: [],
+    gitMissing: false,
 
-  async loadRecent() {
-    try {
-      set({ recent: await api.recentRepositories() })
-    } catch {
-      /* recent list is a convenience, never an error */
-    }
-  },
+    async open(path) {
+      if (path) return load(path)
+      try {
+        const info = await api.openRepositoryDialog()
+        await load(info.path)
+      } catch (e) {
+        if ((e as ApiError).kind !== 'cancelled') set({ error: (e as ApiError).display ?? String(e) })
+      }
+    },
 
-  async forget(path) {
-    await api.forgetRepository(path)
-    await get().loadRecent()
-  },
+    async refresh() {
+      const repo = get().repo
+      if (repo) await load(repo.path)
+    },
 
-  close() {
-    set({ repo: null, commits: [], byHash: new Map(), position: new Map(), refs: [], refsByHash: new Map(), total: null, loading: false })
-  },
-}))
+    async loadRecent() {
+      try {
+        set({ recent: await api.recentRepositories() })
+      } catch {
+        /* recent list is a convenience, never an error */
+      }
+    },
 
-let subscribed = false
+    async forget(path) {
+      await api.forgetRepository(path)
+      await get().loadRecent()
+    },
+  }
+})
+
 export function subscribeRepoEvents() {
-  if (subscribed) return
-  subscribed = true
   events.onHistoryChunk(({ loadId, rows }) => {
     const s = useRepo.getState()
     if (loadId !== s.loadId) return
@@ -117,8 +125,8 @@ export function subscribeRepoEvents() {
     let maxLanes = s.maxLanes
     for (let i = 0; i < rows.length; i++) {
       const c = rows[i]
-      s.byHash.set(c.hash, c)
-      s.position.set(c.hash, start + i)
+      byHash.set(c.hash, c)
+      position.set(c.hash, start + i)
       if (c.row.lanes > maxLanes) maxLanes = c.row.lanes
     }
     useRepo.setState({ commits: s.commits.concat(rows), maxLanes })
@@ -129,7 +137,7 @@ export function subscribeRepoEvents() {
   })
   events.onHistoryError(({ loadId, message }) => {
     if (loadId !== useRepo.getState().loadId) return
-    useRepo.setState({ loading: false, error: message.replace(/^[a-z_]+: /, '') })
+    useRepo.setState({ loading: false, error: new ApiError(message).display })
   })
   events.onRepoChanged((root) => {
     if (useRepo.getState().repo?.path === root) useRepo.setState({ changedSinceLoad: true })

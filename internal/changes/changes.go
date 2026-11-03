@@ -1,12 +1,9 @@
-// Package changes turns a commit selection into one consolidated file list.
-// It implements the two modes the spec insists on keeping apart: Range (one
-// snapshot diff across a contiguous chain) and Aggregate (the union of each
-// selected commit's own diff).
+// Package changes turns a commit selection into one consolidated file list:
+// the union of each selected commit's own diff against its first parent.
 package changes
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sort"
 	"strconv"
@@ -15,15 +12,6 @@ import (
 
 	"ginGit/internal/gitcmd"
 )
-
-type Mode string
-
-const (
-	Range     Mode = "range"
-	Aggregate Mode = "aggregate"
-)
-
-var ErrNotContiguous = errors.New("selection is not a contiguous first-parent chain")
 
 // Lookup is what we need from the loaded history.
 type Lookup interface {
@@ -37,8 +25,8 @@ type Touch struct {
 	Type      string `json:"type"` // added, modified, deleted, renamed
 	Path      string `json:"path"`
 	OldPath   string `json:"oldPath,omitempty"`
-	OldBlob   string `json:"oldBlob"`
-	NewBlob   string `json:"newBlob"`
+	OldBlob   string `json:"-"`
+	NewBlob   string `json:"-"`
 	Additions int    `json:"additions"`
 	Deletions int    `json:"deletions"`
 	Binary    bool   `json:"binary"`
@@ -59,19 +47,13 @@ type FileChange struct {
 }
 
 type ChangeSet struct {
-	Mode   Mode     `json:"mode"`
-	Hashes []string `json:"hashes"` // newest first
-	// Contiguous reports whether Range mode is possible for this selection.
-	Contiguous bool `json:"contiguous"`
-	// RangeBase is the commit the range is diffed against (oldest^), or the
-	// empty tree for a root commit.
-	RangeBase string       `json:"rangeBase,omitempty"`
-	Merges    []string     `json:"merges"`
-	Files     []FileChange `json:"files"`
+	Hashes []string     `json:"hashes"` // newest first
+	Merges []string     `json:"merges"`
+	Files  []FileChange `json:"files"`
 }
 
-// Sort orders a selection newest first by history position.
-func Sort(lk Lookup, hashes []string) ([]string, error) {
+// newestFirst orders a selection by history position.
+func newestFirst(lk Lookup, hashes []string) ([]string, error) {
 	out := append([]string(nil), hashes...)
 	for _, h := range out {
 		if _, ok := lk.Position(h); !ok {
@@ -86,17 +68,6 @@ func Sort(lk Lookup, hashes []string) ([]string, error) {
 	return out, nil
 }
 
-// IsChain reports whether hashes (newest first) are linked by first parents.
-func IsChain(lk Lookup, hashes []string) bool {
-	for i := 0; i+1 < len(hashes); i++ {
-		p, ok := lk.Parents(hashes[i])
-		if !ok || len(p) == 0 || p[0] != hashes[i+1] {
-			return false
-		}
-	}
-	return len(hashes) > 0
-}
-
 func firstParent(lk Lookup, hash string) string {
 	p, ok := lk.Parents(hash)
 	if !ok || len(p) == 0 {
@@ -106,103 +77,65 @@ func firstParent(lk Lookup, hash string) string {
 }
 
 // Compute builds the change set. hashes may be in any order.
-func Compute(ctx context.Context, root string, lk Lookup, hashes []string, mode Mode) (*ChangeSet, error) {
+func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*ChangeSet, error) {
 	if len(hashes) == 0 {
-		return &ChangeSet{Mode: mode, Hashes: []string{}, Merges: []string{}, Files: []FileChange{}}, nil
+		return &ChangeSet{Hashes: []string{}, Merges: []string{}, Files: []FileChange{}}, nil
 	}
 	for _, h := range hashes {
 		if err := gitcmd.ValidateHash(h); err != nil {
 			return nil, err
 		}
 	}
-	sorted, err := Sort(lk, hashes)
+	sorted, err := newestFirst(lk, hashes)
 	if err != nil {
 		return nil, err
 	}
-	cs := &ChangeSet{Mode: mode, Hashes: sorted, Contiguous: IsChain(lk, sorted), Merges: []string{}}
+	cs := &ChangeSet{Hashes: sorted, Merges: []string{}, Files: []FileChange{}}
 	for _, h := range sorted {
 		if p, _ := lk.Parents(h); len(p) > 1 {
 			cs.Merges = append(cs.Merges, h)
 		}
 	}
-	switch mode {
-	case Range:
-		if !cs.Contiguous {
-			return nil, ErrNotContiguous
-		}
-		oldest := sorted[len(sorted)-1]
-		cs.RangeBase = firstParent(lk, oldest)
-		touches, err := diffTree(ctx, root, cs.RangeBase, sorted[0])
+	// Oldest first so renames can carry earlier touches forward.
+	byPath := map[string]*FileChange{}
+	for i := len(sorted) - 1; i >= 0; i-- {
+		h := sorted[i]
+		touches, err := diffTree(ctx, root, firstParent(lk, h), h)
 		if err != nil {
 			return nil, err
 		}
-		// Range entries are a single pseudo-touch spanning the whole chain.
 		for _, t := range touches {
-			t.Commit = sorted[0]
-			cs.Files = append(cs.Files, FileChange{
-				Path: t.Path, OldPath: t.OldPath, Type: t.Type,
-				Additions: t.Additions, Deletions: t.Deletions, Binary: t.Binary,
-				Touches: []Touch{t}, Composable: true,
-			})
-		}
-	case Aggregate:
-		// Oldest first so renames can carry earlier touches forward.
-		byPath := map[string]*FileChange{}
-		var order []string
-		for i := len(sorted) - 1; i >= 0; i-- {
-			h := sorted[i]
-			touches, err := diffTree(ctx, root, firstParent(lk, h), h)
-			if err != nil {
-				return nil, err
-			}
-			for _, t := range touches {
-				t.Commit = h
-				key := t.Path
-				if t.OldPath != "" && t.OldPath != t.Path {
-					if prev, ok := byPath[t.OldPath]; ok {
-						delete(byPath, t.OldPath)
-						byPath[key] = prev
-						prev.Path = t.Path
-					}
+			t.Commit = h
+			if t.OldPath != "" && t.OldPath != t.Path {
+				if prev, ok := byPath[t.OldPath]; ok {
+					delete(byPath, t.OldPath)
+					byPath[t.Path] = prev
+					prev.Path = t.Path
 				}
-				fc, ok := byPath[key]
-				if !ok {
-					fc = &FileChange{Path: t.Path}
-					byPath[key] = fc
-					order = append(order, key)
-				}
-				if t.OldPath != "" {
-					if fc.OldPath == "" {
-						fc.OldPath = t.OldPath
-					}
-				}
-				fc.Additions += t.Additions
-				fc.Deletions += t.Deletions
-				fc.Binary = fc.Binary || t.Binary
-				fc.Touches = append([]Touch{t}, fc.Touches...) // newest first
 			}
+			fc, ok := byPath[t.Path]
+			if !ok {
+				fc = &FileChange{Path: t.Path}
+				byPath[t.Path] = fc
+			}
+			if t.OldPath != "" && fc.OldPath == "" {
+				fc.OldPath = t.OldPath
+			}
+			fc.Additions += t.Additions
+			fc.Deletions += t.Deletions
+			fc.Binary = fc.Binary || t.Binary
+			fc.Touches = append([]Touch{t}, fc.Touches...) // newest first
 		}
-		// Renames may have moved entries; dedupe order by surviving pointers.
-		seen := map[*FileChange]bool{}
-		for _, fc := range byPath {
-			if seen[fc] {
-				continue
-			}
-			seen[fc] = true
-			fc.Type = combinedType(fc.Touches)
-			if fc.Type != "renamed" {
-				fc.OldPath = ""
-			}
-			fc.Composable = composable(fc.Touches)
-			cs.Files = append(cs.Files, *fc)
+	}
+	for _, fc := range byPath {
+		fc.Type = combinedType(fc.Touches)
+		if fc.Type != "renamed" {
+			fc.OldPath = ""
 		}
-	default:
-		return nil, fmt.Errorf("%w: mode %q", gitcmd.ErrInvalidArg, mode)
+		fc.Composable = composable(fc.Touches)
+		cs.Files = append(cs.Files, *fc)
 	}
 	sort.Slice(cs.Files, func(i, j int) bool { return cs.Files[i].Path < cs.Files[j].Path })
-	if cs.Files == nil {
-		cs.Files = []FileChange{}
-	}
 	return cs, nil
 }
 
@@ -332,10 +265,10 @@ type Cache struct {
 
 func NewCache(max int) *Cache { return &Cache{data: map[string]*ChangeSet{}, max: max} }
 
-func Key(root string, hashes []string, mode Mode) string {
+func Key(hashes []string) string {
 	s := append([]string(nil), hashes...)
 	sort.Strings(s)
-	return root + "|" + string(mode) + "|" + strings.Join(s, ",")
+	return strings.Join(s, ",")
 }
 
 func (c *Cache) Get(k string) (*ChangeSet, bool) {

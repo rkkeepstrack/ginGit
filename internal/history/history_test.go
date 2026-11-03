@@ -20,7 +20,7 @@ func TestLoadStreamsInTopoOrderWithLanes(t *testing.T) {
 	r.Merge("merge", "feature")
 
 	var got []Commit
-	total, err := Load(context.Background(), r.Path, Options{All: true, ChunkSize: 2}, func(c []Commit) {
+	total, err := Load(context.Background(), r.Path, Options{ChunkSize: 2}, func(c []Commit) {
 		got = append(got, c...)
 	})
 	if err != nil {
@@ -54,7 +54,7 @@ func TestLoadCancel(t *testing.T) {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := Load(ctx, r.Path, Options{All: true}, func([]Commit) {})
+	_, err := Load(ctx, r.Path, Options{}, func([]Commit) {})
 	if err == nil {
 		t.Fatal("expected cancellation error")
 	}

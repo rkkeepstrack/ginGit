@@ -7,7 +7,6 @@ package diff
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -15,11 +14,6 @@ import (
 
 	"ginGit/internal/changes"
 	"ginGit/internal/gitcmd"
-)
-
-var (
-	ErrTooLarge = errors.New("file too large to diff")
-	ErrBinary   = errors.New("binary file")
 )
 
 // MaxSide caps each side of a diff.
@@ -39,11 +33,10 @@ type Side struct {
 
 // Pair is one renderable old/new comparison.
 type Pair struct {
-	Commit  string `json:"commit"`  // the commit that produced the new side
-	Subject string `json:"subject"` // its subject, for stacked dividers
-	Type    string `json:"type"`
-	Old     Side   `json:"old"`
-	New     Side   `json:"new"`
+	Commit string `json:"commit"` // the commit that produced the new side
+	Type   string `json:"type"`
+	Old    Side   `json:"old"`
+	New    Side   `json:"new"`
 }
 
 type Result struct {
@@ -56,48 +49,46 @@ type Result struct {
 	Pairs   []Pair `json:"pairs"`
 }
 
-// Subjects resolves commit subjects for stacked dividers.
-type Subjects func(hash string) string
-
 // ForFile builds the diff for one entry of a change set.
-func ForFile(ctx context.Context, root string, fc changes.FileChange, subjects Subjects, cache *Cache) (*Result, error) {
+func ForFile(ctx context.Context, root string, fc changes.FileChange, cache *Cache) (*Result, error) {
 	if len(fc.Touches) == 0 {
 		return nil, fmt.Errorf("%w: no touches for %s", gitcmd.ErrInvalidArg, fc.Path)
 	}
 	res := &Result{Path: fc.Path, Type: fc.Type}
 	if fc.Composable {
+		// Old side of the oldest touch, new side of the newest: one honest patch.
 		newest, oldest := fc.Touches[0], fc.Touches[len(fc.Touches)-1]
-		p, err := pair(ctx, root, oldest.OldBlob, oldest.OldPath, oldest.Path, newest.NewBlob, newest.Path, fc.Type, cache)
+		p, err := pair(ctx, root, cache, oldest, newest)
 		if err != nil {
 			return nil, err
 		}
-		p.Commit, p.Subject = newest.Commit, subjects(newest.Commit)
+		p.Type = fc.Type
 		res.Pairs = []Pair{p}
 		return res, nil
 	}
 	res.Stacked = true
 	res.Note = "Commits outside the selection also changed this file in between, so the selected changes can't be merged into one patch. Each commit's own change is shown below."
 	for _, t := range fc.Touches {
-		p, err := pair(ctx, root, t.OldBlob, t.OldPath, t.Path, t.NewBlob, t.Path, t.Type, cache)
+		p, err := pair(ctx, root, cache, t, t)
 		if err != nil {
 			return nil, err
 		}
-		p.Commit, p.Subject = t.Commit, subjects(t.Commit)
 		res.Pairs = append(res.Pairs, p)
 	}
 	return res, nil
 }
 
-func pair(ctx context.Context, root, oldBlob, oldPath, path, newBlob, newPath, typ string, cache *Cache) (Pair, error) {
-	if oldPath == "" {
-		oldPath = path
-	}
-	blobs, err := fetch(ctx, root, cache, oldBlob, newBlob)
+// pair compares from's old side with to's new side.
+func pair(ctx context.Context, root string, cache *Cache, from, to changes.Touch) (Pair, error) {
+	blobs, err := fetch(ctx, root, cache, from.OldBlob, to.NewBlob)
 	if err != nil {
 		return Pair{}, err
 	}
-	p := Pair{Type: typ, Old: blobs[oldBlob], New: blobs[newBlob]}
-	p.Old.Path, p.New.Path = oldPath, newPath
+	p := Pair{Commit: to.Commit, Type: to.Type, Old: blobs[from.OldBlob], New: blobs[to.NewBlob]}
+	p.Old.Path, p.New.Path = from.OldPath, to.Path
+	if p.Old.Path == "" {
+		p.Old.Path = from.Path
+	}
 	return p, nil
 }
 

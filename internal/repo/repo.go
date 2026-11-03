@@ -7,7 +7,6 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -176,7 +175,6 @@ func (s *RecentStore) Touch(info Info) error {
 			out = append(out, r)
 		}
 	}
-	sort.SliceStable(out, func(i, j int) bool { return out[i].LastOpen.After(out[j].LastOpen) })
 	if len(out) > maxRecent {
 		out = out[:maxRecent]
 	}

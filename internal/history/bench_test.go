@@ -16,7 +16,7 @@ func TestLoadBigRepo(t *testing.T) {
 	start := time.Now()
 	var first time.Duration
 	n := 0
-	total, err := Load(context.Background(), root, Options{All: true, ChunkSize: 1000}, func(c []Commit) {
+	total, err := Load(context.Background(), root, Options{ChunkSize: 1000}, func(c []Commit) {
 		if n == 0 {
 			first = time.Since(start)
 		}
