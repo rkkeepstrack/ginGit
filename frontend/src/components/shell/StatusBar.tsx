@@ -17,7 +17,7 @@ export function StatusBar() {
   const text = flash ?? hint ?? (count > 0 ? `${count} selected · [ ] previous/next file · ${modKey}⇧D switches diff layout · Esc clears` : defaultHint)
   return (
     <div className="h-6 shrink-0 flex items-center gap-3 px-3 text-[11px] hairline-t bg-base-200/40 select-none whitespace-nowrap overflow-hidden">
-      <span className={`truncate ${flash ? 'text-primary font-medium' : 'opacity-60'}`}>{text}</span>
+      <span className={`truncate ${flash ? 'brand font-medium' : 'opacity-60'}`}>{text}</span>
       <div className="flex-1" />
       {repo && (
         <span className="opacity-45 tabular-nums shrink-0">

@@ -5,7 +5,7 @@ import { Logo } from './Logo'
 export function TitleBar() {
   return (
     <div
-      className="drag-region flex items-center justify-center h-[38px] shrink-0 hairline-b text-base-content/70"
+      className="drag-region flex items-center justify-center h-[38px] shrink-0 hairline-b brand"
       onDoubleClick={() => WindowToggleMaximise()}
     >
       <Logo size={22} />

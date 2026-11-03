@@ -14,8 +14,8 @@ export function Welcome() {
     <div className="h-full flex flex-col">
     <TitleBar />
     <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8">
-      <div className="flex items-center gap-4 text-base-content/80">
-        <Logo size={56} />
+      <div className="flex items-center gap-4">
+        <span className="brand"><Logo size={56} /></span>
         <div>
           <div className="text-2xl font-semibold tracking-tight">ginGit</div>
           <div className="text-sm opacity-60">Read-only git history, multi-commit review.</div>

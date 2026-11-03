@@ -7,7 +7,7 @@ export function Logo({ size = 20 }: { size?: number }) {
         <path d="M20.91 40.01h40" strokeWidth={2} />
         <path d="M20.91 120.01h40" strokeWidth={4} />
       </g>
-      <path d="M40.91 80.01l-5.47-2.19-5.78-5.31-9.28-13.71.53-18.79h40l.53 18.79-9.28 13.71-5.78 5.31z" fill="#a5d8ff" />
+      <path d="M40.91 80.01l-5.47-2.19-5.78-5.31-9.28-13.71.53-18.79h40l.53 18.79-9.28 13.71-5.78 5.31z" fill="currentColor" opacity={0.35} />
     </svg>
   )
 }
