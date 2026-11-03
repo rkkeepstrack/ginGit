@@ -48,6 +48,7 @@ func script(t *testing.T) *gittest.Repo {
 
 	r.Checkout("main")
 	r.Write("README.md", "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n")
+	r.Write("CHANGELOG.md", "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n")
 	r.Commit("docs: usage section")
 	r.Rename("src/app.ts", "src/main.ts")
 	r.Write("assets/logo.png", "\x89PNG\r\n\x1a\n\x00\x00binary")
@@ -58,6 +59,7 @@ func script(t *testing.T) *gittest.Repo {
 	r.Write("package.json", "{\n  \"name\": \"demo\",\n  \"version\": \"1.1.0\",\n  \"dependencies\": {\n    \"left-pad\": \"^1.3.0\"\n  }\n}\n")
 	r.Commit("chore(LD-2): depend on left-pad, as one does")
 	r.Remove("assets/logo.png")
+	r.Remove("CHANGELOG.md")
 	r.Commit("chore: logo was a mistake")
 	r.Write("README.md", "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it. Then run it again.\n")
 	r.Commit("docs: more usage")

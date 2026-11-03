@@ -28,9 +28,10 @@ test('a selection shows every file as a collapsible section', async ({ page }) =
   await loaded(page)
   await row(page, 'docs: more usage').click()
   await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(3)
-  // the deleted logo is binary and gets a notice, not an editor
-  await expect(page.locator('.cm-editor')).toHaveCount(2)
+  await expect(page.locator('#panel-diff .section-head')).toHaveCount(4)
+  // the deleted logo is binary and gets a notice; the deleted changelog is full-width red
+  await expect(page.locator('.cm-editor')).toHaveCount(3)
+  await expect(page.locator('.cm-host.single-deleted .cm-editor')).toHaveCount(1)
   await page.waitForTimeout(200)
   await expect(page).toHaveScreenshot('overview-unified.png')
 })
