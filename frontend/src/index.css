@@ -40,6 +40,8 @@
    to, so switching data-theme switches everything at once. */
 [data-theme="pastel"] {
   --brand: #228be6;
+  /* The logo's gin blue, as a wash over the toolbar. */
+  --chrome-bg: color-mix(in oklab, #a5d8ff 38%, var(--color-base-100));
   --lane-0: #228be6;
   --lane-1: #f06595;
   --lane-2: #20c997;
@@ -89,6 +91,7 @@
 
 [data-theme="dim"] {
   --brand: #74c0fc;
+  --chrome-bg: color-mix(in oklab, #a5d8ff 12%, var(--color-base-100));
   --lane-0: #74c0fc;
   --lane-1: #faa2c1;
   --lane-2: #63e6be;
@@ -161,6 +164,13 @@ body {
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "tnum" 1, "cv11" 1;
 }
+
+.logo svg { width: 100%; height: 100%; display: block; }
+[data-theme="dim"] .logo path[stroke="#1e1e1e"] { stroke: var(--color-base-content); }
+
+/* The toolbar is a wash of the logo's blue; no lines above or below it. */
+.chrome { background: var(--chrome-bg); }
+.chrome .input { background: color-mix(in oklab, var(--color-base-100) 70%, transparent); }
 
 /* Wails' own drag hint; the Electron-style app-region does nothing here. */
 .drag-region { --wails-draggable: drag; }

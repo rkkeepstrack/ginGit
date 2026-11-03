@@ -13,7 +13,7 @@
   import ThemeMenu from './ThemeMenu.svelte'
 </script>
 
-<div class="flex items-center gap-1.5 h-11 px-2 hairline-b shrink-0">
+<div class="flex items-center gap-1.5 h-11 px-2 shrink-0 chrome">
   <div class="flex items-center gap-1.5 flex-1 min-w-0">
     <RepoMenu />
     <div class="flex-1"></div>
