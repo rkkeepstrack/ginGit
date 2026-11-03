@@ -7,7 +7,6 @@ import { modKey } from '../../lib/platform'
 import { useRepo } from '../../state/repoStore'
 import { useSearch } from '../../state/searchStore'
 import { useUI } from '../../state/uiStore'
-import { FilterPopover } from './FilterPopover'
 import { RepoMenu } from './RepoMenu'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -53,7 +52,6 @@ export function Toolbar() {
           />
           {text && <button className="btn btn-ghost btn-xs btn-square" onClick={() => setText('')}><X size={13} strokeWidth={1.75} /></button>}
         </label>
-        <FilterPopover />
         <button className="btn btn-ghost btn-sm btn-square relative" onClick={() => void refresh()} disabled={!repo || loading} title={`Refresh history  ${modKey}R`}>
           <RefreshCw {...ICON} className={loading ? 'animate-spin' : ''} />
           {changed && <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-warning ring-2 ring-base-100" title="Repository changed since last load" />}

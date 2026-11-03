@@ -38,7 +38,7 @@ export const api = {
   recentRepositories: () => wrap(App.RecentRepositories()) as Promise<RecentRepo[]>,
   forgetRepository: (path: string) => wrap(App.ForgetRepository(path)),
   refs: (root: string) => wrap(App.Refs(root)) as Promise<Ref[]>,
-  loadHistory: (root: string) => wrap(App.LoadHistory(root)),
+  loadHistory: (root: string, loadId: number) => wrap(App.LoadHistory(root, loadId)),
   cancelHistory: (id: number) => wrap(App.CancelHistory(id)),
   listChanges: (root: string, hashes: string[], mode: Mode) =>
     wrap(App.ListChanges(root, hashes, mode)) as unknown as Promise<ChangeSet>,

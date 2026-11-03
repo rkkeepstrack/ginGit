@@ -38,6 +38,8 @@ function indexRefs(refs: Ref[]): Map<string, Ref[]> {
   return m
 }
 
+let loadSeq = 0
+
 export const useRepo = create<RepoState>()((set, get) => ({
   repo: null,
   refs: [],
@@ -73,12 +75,14 @@ export const useRepo = create<RepoState>()((set, get) => ({
     if (!repo) return
     try {
       const [info, refs] = await Promise.all([api.openRepository(repo.path), api.refs(repo.path)])
-      const loadId = await api.loadHistory(repo.path)
+      // Record the id before asking Go to stream, so no event can beat it.
+      const loadId = ++loadSeq
       set({
         repo: info, refs, refsByHash: indexRefs(refs),
         commits: [], byHash: new Map(), position: new Map(), maxLanes: 1,
         loading: true, loadId, total: null, error: null, changedSinceLoad: false,
       })
+      await api.loadHistory(repo.path, loadId)
     } catch (e) {
       set({ error: (e as ApiError).display ?? String(e), loading: false })
     }

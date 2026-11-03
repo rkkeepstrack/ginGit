@@ -26,8 +26,8 @@ export function ListChanges(arg1, arg2, arg3) {
   return window['go']['main']['App']['ListChanges'](arg1, arg2, arg3);
 }
 
-export function LoadHistory(arg1) {
-  return window['go']['main']['App']['LoadHistory'](arg1);
+export function LoadHistory(arg1, arg2) {
+  return window['go']['main']['App']['LoadHistory'](arg1, arg2);
 }
 
 export function OpenRepository(arg1) {

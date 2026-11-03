@@ -31,7 +31,6 @@ type App struct {
 
 	mu       sync.Mutex
 	sessions map[string]*session
-	loadSeq  int
 }
 
 // session is everything derived from one repository's history.
@@ -216,17 +215,16 @@ type HistoryError struct {
 }
 
 // LoadHistory streams the log of the open repository. Chunks arrive as
-// "history:chunk" events tagged with the returned load id; stale ids are to
-// be ignored by the frontend.
-func (a *App) LoadHistory(root string) (int, error) {
+// "history:chunk" events tagged with the caller's load id. The frontend
+// picks the id so it can record it before the first event can possibly
+// land; a tiny repo finishes before a round trip completes.
+func (a *App) LoadHistory(root string, id int) error {
 	s, err := a.get(root)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	a.mu.Lock()
 	s.reset()
-	a.loadSeq++
-	id := a.loadSeq
 	s.loadID = id
 	ctx, cancel := context.WithCancel(a.ctx)
 	s.cancel = cancel
@@ -255,7 +253,7 @@ func (a *App) LoadHistory(root string) (int, error) {
 		}
 		wrt.EventsEmit(a.ctx, "history:done", HistoryDone{LoadID: id, Total: total})
 	}()
-	return id, nil
+	return nil
 }
 
 func (a *App) CancelHistory(loadID int) {

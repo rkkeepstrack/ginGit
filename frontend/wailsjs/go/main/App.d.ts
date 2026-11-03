@@ -17,7 +17,7 @@ export function InitialRepository():Promise<string>;
 
 export function ListChanges(arg1:string,arg2:Array<string>,arg3:string):Promise<changes.ChangeSet>;
 
-export function LoadHistory(arg1:string):Promise<number>;
+export function LoadHistory(arg1:string,arg2:number):Promise<void>;
 
 export function OpenRepository(arg1:string):Promise<repo.Info>;
 
