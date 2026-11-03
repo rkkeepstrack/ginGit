@@ -58,12 +58,12 @@ export default function App() {
     <div className="h-full flex flex-col">
       <TitleBar />
       <Toolbar />
-      <PanelGroup direction="horizontal" autoSaveId="gingit-panels" className="flex-1 min-h-0">
-        <Panel defaultSize={45} minSize={25} className="hairline-r"><CommitList /></Panel>
+      <PanelGroup direction="horizontal" autoSaveId="gingit-panels-v2" className="flex-1 min-h-0">
+        <Panel defaultSize={40} minSize={25} className="hairline-r"><CommitList /></Panel>
         <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
-        <Panel defaultSize={20} minSize={12} className="hairline-r"><ChangesPanel /></Panel>
+        <Panel defaultSize={40} minSize={20} className="hairline-r"><DiffPanel /></Panel>
         <PanelResizeHandle className="resize-handle w-px bg-base-content/10" />
-        <Panel defaultSize={35} minSize={20}><DiffPanel /></Panel>
+        <Panel defaultSize={20} minSize={12}><ChangesPanel /></Panel>
       </PanelGroup>
     </div>
   )
