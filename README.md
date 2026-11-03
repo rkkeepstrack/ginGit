@@ -1,7 +1,11 @@
 # ginGit
 
 Read-only git history explorer with multi-commit review. Select any number of
-commits, get one consolidated file list, click through the diffs.
+commits, or a whole branch with one click, get one consolidated file list, and
+read every diff as one review.
+
+Site: https://rkkeepstrack.github.io/ginGit/ · Releases: tag `v*` and the
+release workflow builds a universal macOS app and a Linux binary.
 
 Wails v2 + Go backend, Svelte 5 + Tailwind + daisyUI frontend, CodeMirror diffs.
 
