@@ -236,6 +236,10 @@ body {
 .ct-deleted { color: var(--ct-deleted); }
 .ct-renamed { color: var(--ct-renamed); }
 
+/* Placeholder for a diff that is still on its way: faint lines where code will be. */
+.skeleton-lines { display: flex; flex-direction: column; gap: 6px; }
+.skeleton-line { height: 12px; border-radius: 3px; background: color-mix(in oklab, var(--color-base-content) 6%, transparent); }
+
 /* Accordion headers in the all-files review: solid bars with a gap between
    them, so a run of collapsed files reads as separate things. */
 .section { margin-top: 3px; contain: layout paint; content-visibility: auto; contain-intrinsic-size: auto 400px; }

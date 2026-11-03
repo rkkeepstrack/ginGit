@@ -60,12 +60,24 @@
 
   // A long glide is unfollowable and WebKit flings through it anyway: hop to
   // two screens away instantly, then glide the rest so the eye can land.
+  // The glide counts as over when scrolling goes quiet, not on a long timer:
+  // a scroll that never has to move would otherwise hold the editors back.
   function glideTo(el: HTMLDivElement, top: number) {
+    if (Math.abs(top - el.scrollTop) < 2) return
     const hop = height * 2
     if (Math.abs(top - el.scrollTop) > hop) el.scrollTo({ top: top > el.scrollTop ? top - hop : top + hop, behavior: 'instant' })
     gliding.now = true
-    const settle = () => { gliding.now = false; el.removeEventListener('scrollend', settle); clearTimeout(timer) }
-    const timer = setTimeout(settle, 'onscrollend' in el ? 1500 : 700)
+    let quiet: ReturnType<typeof setTimeout> | undefined
+    const settle = () => {
+      gliding.now = false
+      clearTimeout(quiet)
+      clearTimeout(cap)
+      el.removeEventListener('scroll', onScroll)
+      el.removeEventListener('scrollend', settle)
+    }
+    const onScroll = () => { clearTimeout(quiet); quiet = setTimeout(settle, 120) }
+    const cap = setTimeout(settle, 800)
+    el.addEventListener('scroll', onScroll)
     el.addEventListener('scrollend', settle)
     el.scrollTo({ top, behavior: 'smooth' })
   }

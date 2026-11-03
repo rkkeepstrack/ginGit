@@ -29,8 +29,9 @@
     return () => io.disconnect()
   })
   $effect(() => { diff.watch(repo.info?.path, hashes, file.path, near && !collapsed) })
-  // A placeholder roughly the size of the diff keeps later sections from cascading as editors appear.
-  const placeholder = $derived(Math.min(600, 48 + (file.additions + file.deletions + 6) * 18))
+  // A placeholder roughly the size of the diff keeps later sections from
+  // cascading as editors appear; skeleton lines make it read as content on its way.
+  const placeholderLines = $derived(Math.max(3, Math.min(24, file.additions + file.deletions + 4)))
 
   const openSingle = () => setFile(file.path)
 </script>
@@ -64,7 +65,13 @@
   {#if !collapsed}
     <div>
       {#if diff.error}<Notice kind="error">{diff.error}</Notice>{/if}
-      {#if !diff.result && !diff.error}<div class="flex items-center justify-center text-[11.5px] opacity-40" style:height="{placeholder}px">{near ? 'Loading…' : ''}</div>{/if}
+      {#if !diff.result && !diff.error}
+        <div class="skeleton-lines px-3 py-2" aria-busy="true">
+          {#each { length: placeholderLines } as _, i}
+            <div class="skeleton-line" style:width="{[62, 38, 74, 46, 58, 30, 68][i % 7]}%"></div>
+          {/each}
+        </div>
+      {/if}
       {#if diff.result}<DiffBody result={diff.result} path={file.path} mode={ui.diffMode} stacked={true} />{/if}
     </div>
   {/if}
