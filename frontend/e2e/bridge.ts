@@ -46,6 +46,10 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
         const d = (fx.diffs as Record<string, unknown>)[key(hashes) + '|' + path]
         return repoOpen(root) && d ? d : fail(`object_not_found: fixture has no diff for ${path}`)
       },
+      FileDiffs: async (root: string, hashes: string[], paths: string[]) => {
+        if (!repoOpen(root)) return fail('object_not_found: not open')
+        return Object.fromEntries(paths.map((p) => [p, (fx.diffs as Record<string, unknown>)[key(hashes) + '|' + p]]).filter(([, d]) => d))
+      },
       SearchCommits: async (_root: string, q: { text: string }) => {
         const t = q.text.toLowerCase()
         return fx.commits.map((c, i) => (c.subject.toLowerCase().includes(t) || c.hash.startsWith(t) ? i : -1)).filter((i) => i >= 0)

@@ -9,6 +9,8 @@ export function BranchCommits(arg1:string,arg2:string):Promise<Array<string>>;
 
 export function FileDiff(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
 
+export function FileDiffs(arg1:string,arg2:Array<string>,arg3:Array<string>):Promise<Record<string, diff.Result>>;
+
 export function ForgetRepository(arg1:string):Promise<void>;
 
 export function InitialRepository():Promise<string>;

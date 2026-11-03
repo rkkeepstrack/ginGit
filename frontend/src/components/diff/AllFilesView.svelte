@@ -1,9 +1,11 @@
 <script lang="ts">
   import ChevronsDownUp from '@lucide/svelte/icons/chevrons-down-up'
   import ChevronsUpDown from '@lucide/svelte/icons/chevrons-up-down'
-  import type { FileChange } from '../../lib/types'
+  import { ApiError, api } from '../../lib/api'
+  import type { DiffResult, FileChange } from '../../lib/types'
   import { changes } from '../../state/changes.svelte'
   import { hint } from '../../state/hint.svelte'
+  import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
   import FileSection from './FileSection.svelte'
 
@@ -15,6 +17,36 @@
   let collapsed = $state.raw<Set<string>>(new Set())
   let scroller = $state<HTMLDivElement>()
   const allCollapsed = $derived(collapsed.size >= files.length && files.length > 0)
+
+  // Diffs are fetched for all sections that come into reach within the same
+  // frame, in one bridge call and one git round, instead of one per section.
+  let results = $state.raw<Map<string, DiffResult>>(new Map())
+  let errors = $state.raw<Map<string, string>>(new Map())
+  const pending = new Set<string>()
+  const requested = new Set<string>()
+  let flush: ReturnType<typeof setTimeout> | undefined
+
+  function want(path: string) {
+    if (requested.has(path)) return
+    requested.add(path)
+    pending.add(path)
+    clearTimeout(flush)
+    flush = setTimeout(load, 16)
+  }
+
+  async function load() {
+    const paths = [...pending]
+    pending.clear()
+    const root = repo.info?.path
+    if (!root || paths.length === 0) return
+    try {
+      const got = await api.fileDiffs(root, selection.hashes, paths)
+      results = new Map([...results, ...Object.entries(got)])
+    } catch (e) {
+      const message = (e as ApiError).display ?? String(e)
+      errors = new Map([...errors, ...paths.map((p) => [p, message] as const)])
+    }
+  }
 
   const toggle = (path: string) => {
     const n = new Set(collapsed)
@@ -33,7 +65,15 @@
   </div>
   <div bind:this={scroller} class="flex-1 overflow-auto">
     {#each files as f (f.path)}
-      <FileSection file={f} hashes={selection.hashes} collapsed={collapsed.has(f.path)} ontoggle={() => toggle(f.path)} scrollRoot={scroller} />
+      <FileSection
+        file={f}
+        collapsed={collapsed.has(f.path)}
+        result={results.get(f.path) ?? null}
+        error={errors.get(f.path) ?? null}
+        ontoggle={() => toggle(f.path)}
+        onnear={() => want(f.path)}
+        scrollRoot={scroller}
+      />
     {/each}
   </div>
 </div>

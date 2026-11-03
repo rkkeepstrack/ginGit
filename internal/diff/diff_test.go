@@ -104,3 +104,44 @@ func TestBinaryAndTooLarge(t *testing.T) {
 		t.Errorf("too large: %+v %v", big, err)
 	}
 }
+
+func TestAddedThenDeletedStacksBothSides(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("keep", "k")
+	r.Commit("c0")
+	r.Write("tmp.ts", "export const x = 1\n")
+	r.Commit("c1")
+	r.Remove("tmp.ts")
+	r.Commit("c2")
+	ix := history.NewIndex()
+	if _, err := history.Load(context.Background(), r.Path, history.Options{}, ix.Append); err != nil {
+		t.Fatal(err)
+	}
+	cs, err := changes.Compute(context.Background(), r.Path, ix, []string{r.H("c1"), r.H("c2")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := ForFile(context.Background(), r.Path, find(cs, "tmp.ts"), NewCache(1<<20))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !res.Stacked || len(res.Pairs) != 2 {
+		t.Fatalf("want two stacked pairs, got %+v", res)
+	}
+	// newest first: the deletion, then the addition
+	if !res.Pairs[0].New.Missing || res.Pairs[0].Old.Content == "" || !res.Pairs[1].Old.Missing || res.Pairs[1].New.Content == "" {
+		t.Errorf("%+v", res.Pairs)
+	}
+}
+
+func TestForFilesOneRound(t *testing.T) {
+	r, ix := setup(t)
+	cs, _ := changes.Compute(context.Background(), r.Path, ix, []string{r.H("c2"), r.H("c3"), r.H("c4")})
+	out, err := ForFiles(context.Background(), r.Path, cs.Files, NewCache(1<<20))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out) != len(cs.Files) || out["a.txt"] == nil || out["other.txt"] == nil {
+		t.Errorf("%v", out)
+	}
+}

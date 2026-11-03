@@ -44,6 +44,8 @@ export const api = {
     wrap(App.ListChanges(root, hashes)) as unknown as Promise<ChangeSet>,
   fileDiff: (root: string, hashes: string[], path: string) =>
     wrap(App.FileDiff(root, hashes, path)) as unknown as Promise<DiffResult>,
+  fileDiffs: (root: string, hashes: string[], paths: string[]) =>
+    wrap(App.FileDiffs(root, hashes, paths)) as unknown as Promise<Record<string, DiffResult>>,
   searchCommits: (root: string, text: string) =>
     wrap(App.SearchCommits(root, { text, author: '', branch: '', since: zeroTime, until: zeroTime } as never)) as Promise<number[]>,
 }

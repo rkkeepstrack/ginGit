@@ -4,20 +4,26 @@
   import Unlink from '@lucide/svelte/icons/unlink'
   import { changeMark } from '../../lib/changeType'
   import { categoryFor, iconFor } from '../../lib/fileIcon'
-  import type { FileChange } from '../../lib/types'
+  import type { DiffResult, FileChange } from '../../lib/types'
   import { hint } from '../../state/hint.svelte'
-  import { repo } from '../../state/repo.svelte'
   import { setFile } from '../../state/selection.svelte'
   import { ui } from '../../state/ui.svelte'
   import Notice from '../shell/Notice.svelte'
   import DiffBody from './DiffBody.svelte'
-  import { FileDiff } from './fileDiff.svelte'
 
-  let { file, hashes, collapsed, ontoggle, scrollRoot }: { file: FileChange; hashes: string[]; collapsed: boolean; ontoggle: () => void; scrollRoot: HTMLElement | undefined } = $props()
+  let { file, collapsed, result, error, ontoggle, onnear, scrollRoot }: {
+    file: FileChange
+    collapsed: boolean
+    result: DiffResult | null
+    error: string | null
+    ontoggle: () => void
+    /** Called once when the section comes within reach; the parent fetches in batches. */
+    onnear: () => void
+    scrollRoot: HTMLElement | undefined
+  } = $props()
 
   let el = $state<HTMLDivElement>()
   let near = $state(false)
-  const diff = new FileDiff()
   const Icon = $derived(iconFor(file.path))
   const mark = $derived(changeMark[file.type])
 
@@ -28,7 +34,7 @@
     io.observe(el)
     return () => io.disconnect()
   })
-  $effect(() => { diff.watch(repo.info?.path, hashes, file.path, near && !collapsed) })
+  $effect(() => { if (near && !collapsed) onnear() })
   // A placeholder roughly the size of the diff keeps later sections from
   // cascading as editors appear; skeleton lines make it read as content on its way.
   const placeholderLines = $derived(Math.max(3, Math.min(24, file.additions + file.deletions + 4)))
@@ -64,15 +70,15 @@
   </div>
   {#if !collapsed}
     <div>
-      {#if diff.error}<Notice kind="error">{diff.error}</Notice>{/if}
-      {#if !diff.result && !diff.error}
+      {#if error}<Notice kind="error">{error}</Notice>{/if}
+      {#if !result && !error}
         <div class="skeleton-lines px-3 py-2" aria-busy="true">
           {#each { length: placeholderLines } as _, i}
             <div class="skeleton-line" style:width="{[62, 38, 74, 46, 58, 30, 68][i % 7]}%"></div>
           {/each}
         </div>
       {/if}
-      {#if diff.result}<DiffBody result={diff.result} path={file.path} mode={ui.diffMode} stacked={true} />{/if}
+      {#if result}<DiffBody result={result} path={file.path} mode={ui.diffMode} stacked={true} />{/if}
     </div>
   {/if}
 </div>

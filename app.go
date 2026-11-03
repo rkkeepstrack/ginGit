@@ -315,6 +315,35 @@ func (a *App) FileDiff(root string, hashes []string, path string) (*diff.Result,
 	return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
 }
 
+// FileDiffs is FileDiff for several files of the same selection in one call:
+// one bridge round trip and one git round for the whole first screen.
+func (a *App) FileDiffs(root string, hashes []string, paths []string) (map[string]*diff.Result, error) {
+	for _, p := range paths {
+		if err := gitcmd.ValidatePath(p); err != nil {
+			return nil, userError(err)
+		}
+	}
+	cs, err := a.ListChanges(root, hashes)
+	if err != nil {
+		return nil, err
+	}
+	want := map[string]bool{}
+	for _, p := range paths {
+		want[p] = true
+	}
+	var files []changes.FileChange
+	for _, fc := range cs.Files {
+		if want[fc.Path] {
+			files = append(files, fc)
+		}
+	}
+	out, err := diff.ForFiles(a.ctx, root, files, a.blobs)
+	if err != nil {
+		return nil, userError(err)
+	}
+	return out, nil
+}
+
 // --- search ---------------------------------------------------------------
 
 func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {

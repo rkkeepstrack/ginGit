@@ -55,9 +55,16 @@ func ForFile(ctx context.Context, root string, fc changes.FileChange, cache *Cac
 		return nil, fmt.Errorf("%w: no touches for %s", gitcmd.ErrInvalidArg, fc.Path)
 	}
 	res := &Result{Path: fc.Path, Type: fc.Type}
+	newest, oldest := fc.Touches[0], fc.Touches[len(fc.Touches)-1]
+	if fc.Composable && isZero(oldest.OldBlob) && isZero(newest.NewBlob) && len(fc.Touches) > 1 {
+		// Added and deleted again within the selection: the composed patch is
+		// nothing to nothing. Show what came and went instead.
+		res.Stacked = true
+		res.Note = "This file was added and deleted again within the selection, so there is no net change. Each commit's own change is shown below."
+		return stacked(ctx, root, fc, cache, res)
+	}
 	if fc.Composable {
 		// Old side of the oldest touch, new side of the newest: one honest patch.
-		newest, oldest := fc.Touches[0], fc.Touches[len(fc.Touches)-1]
 		p, err := pair(ctx, root, cache, oldest, newest)
 		if err != nil {
 			return nil, err
@@ -68,6 +75,13 @@ func ForFile(ctx context.Context, root string, fc changes.FileChange, cache *Cac
 	}
 	res.Stacked = true
 	res.Note = "Commits outside the selection also changed this file in between, so the selected changes can't be merged into one patch. Each commit's own change is shown below."
+	return stacked(ctx, root, fc, cache, res)
+}
+
+func isZero(blob string) bool { return blob == zeroBlob || blob == "" }
+
+// stacked fills res with one pair per touch, newest first.
+func stacked(ctx context.Context, root string, fc changes.FileChange, cache *Cache, res *Result) (*Result, error) {
 	// All blobs in one round, not two spawns per touch.
 	var wanted []string
 	for _, t := range fc.Touches {
@@ -84,6 +98,29 @@ func ForFile(ctx context.Context, root string, fc changes.FileChange, cache *Cac
 		res.Pairs = append(res.Pairs, p)
 	}
 	return res, nil
+}
+
+// ForFiles is ForFile for a batch: every blob of every file is fetched in
+// one cat-file round, then the results are assembled from the cache.
+func ForFiles(ctx context.Context, root string, files []changes.FileChange, cache *Cache) (map[string]*Result, error) {
+	var wanted []string
+	for _, fc := range files {
+		for _, t := range fc.Touches {
+			wanted = append(wanted, t.OldBlob, t.NewBlob)
+		}
+	}
+	if _, err := fetch(ctx, root, cache, wanted...); err != nil {
+		return nil, err
+	}
+	out := make(map[string]*Result, len(files))
+	for _, fc := range files {
+		res, err := ForFile(ctx, root, fc, cache)
+		if err != nil {
+			return nil, err
+		}
+		out[fc.Path] = res
+	}
+	return out, nil
 }
 
 // pair compares from's old side with to's new side.

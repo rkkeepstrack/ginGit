@@ -10,6 +10,10 @@ export function FileDiff(arg1, arg2, arg3) {
   return window['go']['main']['App']['FileDiff'](arg1, arg2, arg3);
 }
 
+export function FileDiffs(arg1, arg2, arg3) {
+  return window['go']['main']['App']['FileDiffs'](arg1, arg2, arg3);
+}
+
 export function ForgetRepository(arg1) {
   return window['go']['main']['App']['ForgetRepository'](arg1);
 }
