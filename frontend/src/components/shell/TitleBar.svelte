@@ -13,7 +13,8 @@
 <!-- Logo only. It is the window's drag handle, nothing else lives here. -->
 <div class="drag-region relative shrink-0 text-base-content" style:height="{height}px" ondblclick={() => runtime.toggleMaximise()} role="presentation">
   <div class="absolute left-0 right-0 flex items-center justify-center -translate-y-1/2" style:top="{center ?? height / 2}px">
-    <span class="translate-y-[1px]"><Logo size={22} /></span>
+    <!-- The bowl carries the glass's weight; drop it so the bowl, not the box, centres on the wordmark. -->
+    <span class="translate-y-[3px]"><Logo size={22} /></span>
     <span class="ml-2 text-[13px] font-semibold tracking-tight">ginGit</span>
   </div>
 </div>
