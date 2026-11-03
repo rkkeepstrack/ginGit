@@ -1,4 +1,4 @@
-import { Columns2, GitBranch, RefreshCw, Rows3, Search, X } from 'lucide-react'
+import { Columns2, RefreshCw, Rows3, Search, X } from 'lucide-react'
 
 const ICON = { size: 16, strokeWidth: 1.75 } as const
 import { useShallow } from 'zustand/react/shallow'
@@ -23,12 +23,6 @@ export function Toolbar() {
     <div className="flex items-center gap-1.5 h-11 px-2 hairline-b shrink-0">
       <div className="flex items-center gap-1.5 flex-1 min-w-0">
         <RepoMenu />
-        {repo && (
-          <span className="inline-flex items-center gap-1 text-[12px] opacity-70 min-w-0 truncate ml-1" title={repo.detached ? `Detached at ${repo.head}` : repo.branch}>
-            <GitBranch size={13} strokeWidth={1.75} />
-            {repo.detached ? `detached ${repo.head.slice(0, 7)}` : repo.branch}
-          </span>
-        )}
         <div className="flex-1" />
         <label className="input input-sm w-72 flex items-center gap-2 px-2.5 text-[12.5px]">
           {pending ? <span className="loading loading-spinner loading-xs" /> : <Search size={14} strokeWidth={1.75} className="opacity-50" />}
