@@ -6,6 +6,7 @@ import { DiffPanel } from './components/diff/DiffPanel'
 import { TitleBar } from './components/shell/TitleBar'
 import { Toolbar } from './components/shell/Toolbar'
 import { StatusBar } from './components/shell/StatusBar'
+import { Toasts } from './components/shell/Toasts'
 import { Welcome } from './components/shell/Welcome'
 import { api, events } from './lib/api'
 import { runAction, type Action } from './lib/actions'
@@ -38,9 +39,12 @@ export default function App() {
       if (action !== 'escape') e.preventDefault()
       runAction(action, e.target as HTMLElement | null)
     }
+    // No browser context menu; it only offers "Inspect Element" and friends.
+    const onContext = (e: MouseEvent) => e.preventDefault()
     window.addEventListener('keydown', onKey)
+    window.addEventListener('contextmenu', onContext)
     const offMenu = events.onMenu((action) => runAction(action as Action))
-    return () => { window.removeEventListener('keydown', onKey); offMenu() }
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('contextmenu', onContext); offMenu() }
   }, [])
 
   if (!repo) return <Welcome />
@@ -62,6 +66,7 @@ export default function App() {
         <div className="flex-1 min-h-0"><CommitList /></div>
       )}
       <StatusBar />
+      <Toasts />
     </div>
   )
 }

@@ -10,7 +10,7 @@ import { hintProps, useHint } from '../../state/hintStore'
 
 async function copyHash(hash: string) {
   const ok = await copyText(hash)
-  useHint.getState().flashMessage(ok ? `Copied ${hash}` : 'Clipboard not available')
+  useHint.getState().flashMessage(ok ? `Copied ${hash.slice(0, 7)} to the clipboard` : 'Clipboard not available')
 }
 
 export const CommitRow = memo(function CommitRow({ commit, prev, refs, isHead, selected, graphWidth, columns, onClick }: {

@@ -9,7 +9,6 @@ const selectionHint = `[ or ${modKey}↑: previous file · ] or ${modKey}↓: ne
 
 export function StatusBar() {
   const hint = useHint((s) => s.hint)
-  const flash = useHint((s) => s.flash)
   const count = useSelection((s) => s.selected.size)
   const repo = useRepo((s) => s.repo)
   const total = useRepo((s) => s.commits.length)
@@ -17,9 +16,7 @@ export function StatusBar() {
 
   return (
     <div className="h-6 shrink-0 flex items-center gap-3 px-3 text-[11px] hairline-t bg-base-200/40 select-none whitespace-nowrap overflow-hidden">
-      {flash ? (
-        <span className="truncate brand font-medium">{flash}</span>
-      ) : hint ? (
+      {hint ? (
         <span className="truncate opacity-60">{hint}</span>
       ) : (
         <span className="truncate opacity-60">
