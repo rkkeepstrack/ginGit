@@ -80,6 +80,8 @@ section { padding: 48px 0 8px; }
 .shot { margin: 40px 0 0; text-align: center; }
 .shot img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.5); }
 .shot figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
+.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; margin-top: 8px; }
+.shots .shot { margin: 0; }
 
 .features dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px 40px; margin: 0; }
 .features dt { font-weight: 600; margin-bottom: 4px; }
