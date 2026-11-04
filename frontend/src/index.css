@@ -276,8 +276,8 @@ body {
 .image-side.new { box-shadow: inset 3px 0 0 var(--diff-add-bar); }
 .image-frame { display: flex; align-items: center; justify-content: center; padding: 16px; min-height: 80px; }
 .image-frame img {
-  /* Tall phone screenshots get most of the panel's height, not a thumbnail. */
-  max-width: 100%; max-height: 75vh; object-fit: contain;
+  /* Big enough to read a phone screenshot, small enough to see both at once. */
+  max-width: 100%; max-height: 600px; object-fit: contain;
   background: repeating-conic-gradient(color-mix(in oklab, var(--color-base-content) 8%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px;
 }
 .image-side figcaption { padding: 0 16px 10px; text-align: center; font-size: 11px; color: color-mix(in oklab, var(--color-base-content) 55%, transparent); font-variant-numeric: tabular-nums; }
