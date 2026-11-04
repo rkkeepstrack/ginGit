@@ -266,3 +266,32 @@ func (c *Cache) Clear() {
 	c.data = map[string]Side{}
 	c.bytes = 0
 }
+
+// CountMatches counts case-insensitive occurrences of needle in the diff of
+// each file: the new side of every pair, or the old side where the file
+// was deleted. Files without a match are left out.
+func CountMatches(ctx context.Context, root string, files []changes.FileChange, cache *Cache, needle string) (map[string]int, error) {
+	needle = strings.ToLower(needle)
+	if needle == "" {
+		return map[string]int{}, nil
+	}
+	results, err := ForFiles(ctx, root, files, cache)
+	if err != nil {
+		return nil, err
+	}
+	counts := map[string]int{}
+	for path, res := range results {
+		n := 0
+		for _, p := range res.Pairs {
+			side := p.New
+			if side.Missing {
+				side = p.Old
+			}
+			n += strings.Count(strings.ToLower(side.Content), needle)
+		}
+		if n > 0 {
+			counts[path] = n
+		}
+	}
+	return counts, nil
+}

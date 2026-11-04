@@ -29,6 +29,8 @@ export function RecentRepositories():Promise<Array<repo.Recent>>;
 
 export function Refs(arg1:string):Promise<Array<repo.Ref>>;
 
+export function SearchChanges(arg1:string,arg2:Array<string>,arg3:string):Promise<Record<string, number>>;
+
 export function SearchCommits(arg1:string,arg2:search.Query):Promise<Array<number>>;
 
 export function TitleBarCenter():Promise<number>;

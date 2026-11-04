@@ -11,17 +11,23 @@ async function loaded(page: Page) {
 /** Editors mount a frame at a time once their grammar is in; a host is marked when fully built. */
 const ready = (page: Page) => page.locator('.cm-host[data-ready]')
 
+/** Screenshots with the mouse parked on the status bar, so no row wears a hover tint. */
+async function shoot(page: Page, name: string) {
+  await page.mouse.move(640, 710)
+  await expect(page).toHaveScreenshot(name)
+}
+
 test('welcome screen', async ({ page }) => {
   await installBridge(page, { initialRepo: false })
   await page.goto('/')
   await expect(page.getByText('Open repository…')).toBeVisible()
-  await expect(page).toHaveScreenshot('welcome.png')
+  await shoot(page, 'welcome.png')
 })
 
 test('history fills the window when nothing is selected', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
-  await expect(page).toHaveScreenshot('history.png')
+  await shoot(page, 'history.png')
 })
 
 test('a selection shows every file as a collapsible section', async ({ page }) => {
@@ -33,7 +39,7 @@ test('a selection shows every file as a collapsible section', async ({ page }) =
   // the deleted logo is binary and gets a notice; the deleted changelog is full-width red
   await expect(ready(page)).toHaveCount(3)
   await expect(page.locator('.cm-host.single-deleted .cm-editor')).toHaveCount(1)
-  await expect(page).toHaveScreenshot('overview-unified.png')
+  await shoot(page, 'overview-unified.png')
 })
 
 test('a single file side by side', async ({ page }) => {
@@ -43,7 +49,7 @@ test('a single file side by side', async ({ page }) => {
   await page.locator('#panel-files .tree-row', { hasText: 'main.ts' }).click()
   await expect(ready(page)).toHaveCount(1)
   await expect(page.locator('.cm-mergeView')).toBeVisible()
-  await expect(page).toHaveScreenshot('single-split.png')
+  await shoot(page, 'single-split.png')
 })
 
 test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
@@ -54,7 +60,7 @@ test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await page.locator('#panel-files .tree-row', { hasText: 'README.md' }).click()
   await expect(page.locator('#panel-diff .alert-warning')).toBeVisible()
   await expect(ready(page)).toHaveCount(2)
-  await expect(page).toHaveScreenshot('stacked.png')
+  await shoot(page, 'stacked.png')
 })
 
 test('dark theme', async ({ page }) => {
@@ -64,7 +70,7 @@ test('dark theme', async ({ page }) => {
   await expect(page.locator('#panel-diff .section-head')).toHaveCount(2)
   // the added logo is binary; only main.ts gets an editor
   await expect(ready(page)).toHaveCount(1)
-  await expect(page).toHaveScreenshot('dark.png')
+  await shoot(page, 'dark.png')
 })
 
 test('clicking a branch pill selects its own commits', async ({ page }) => {
@@ -83,7 +89,7 @@ test('search narrows the list', async ({ page }) => {
   // no lanes while filtering; a branch badge says where each hit lives
   await expect(page.locator('.commit-row > svg')).toHaveCount(0)
   await expect(page.locator('.ref-pill.branch').first()).toBeVisible()
-  await expect(page).toHaveScreenshot('search.png')
+  await shoot(page, 'search.png')
 })
 
 test('a branch badge in search results reviews the branch and jumps to it', async ({ page }) => {
@@ -96,4 +102,24 @@ test('a branch badge in search results reviews the branch and jumps to it', asyn
   await expect(page.locator('.commit-row.selected')).toHaveCount(2)
   await expect(page.locator('#panel-files')).toContainText('2 commits')
   await expect(page.locator('.commit-row > svg').first()).toBeVisible()
+})
+
+test('find in changes opens the matching files and steps through hits', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'docs: more usage').click()
+  await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
+  await expect(page.locator('#panel-diff .section-head')).toHaveCount(4)
+  await page.keyboard.press('ControlOrMeta+f')
+  await page.locator('#find-input').fill('left-pad')
+  await expect(page.locator('#panel-diff')).toContainText('1 match in 1 file')
+  // only package.json stays open
+  await expect(page.locator('#panel-diff .section-head.open')).toHaveCount(1)
+  await expect(ready(page)).toHaveCount(1)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.cm-findMatch').first()).toBeVisible()
+  await shoot(page, 'find.png')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('#find-input')).toHaveCount(0)
+  await expect(page.locator('#panel-diff .section-head.open')).toHaveCount(4)
 })

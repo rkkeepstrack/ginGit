@@ -50,6 +50,10 @@ export function Refs(arg1) {
   return window['go']['main']['App']['Refs'](arg1);
 }
 
+export function SearchChanges(arg1, arg2, arg3) {
+  return window['go']['main']['App']['SearchChanges'](arg1, arg2, arg3);
+}
+
 export function SearchCommits(arg1, arg2) {
   return window['go']['main']['App']['SearchCommits'](arg1, arg2);
 }

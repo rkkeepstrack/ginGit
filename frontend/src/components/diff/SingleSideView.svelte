@@ -19,7 +19,10 @@
   $effect(() => {
     if (!host) return
     const [t, p, k] = [text, path, kind]
-    return mountEditor(host, p, (el, lang) => new EditorView({ doc: t, extensions: [...readOnlyBase(lang), bar(k)], parent: el }))
+    return mountEditor(host, p, (el, lang) => {
+      const view = new EditorView({ doc: t, extensions: [...readOnlyBase(lang), bar(k)], parent: el })
+      return { destroy: () => view.destroy(), views: [view] }
+    })
   })
 </script>
 

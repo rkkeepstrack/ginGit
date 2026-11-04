@@ -145,3 +145,19 @@ func TestForFilesOneRound(t *testing.T) {
 		t.Errorf("%v", out)
 	}
 }
+
+func TestCountMatches(t *testing.T) {
+	r, ix := setup(t)
+	cs, _ := changes.Compute(context.Background(), r.Path, ix, []string{r.H("c2"), r.H("c3"), r.H("c4")})
+	counts, err := CountMatches(context.Background(), r.Path, cs.Files, NewCache(1<<20), "THREE")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// a.txt's new side has "three" once; other.txt has none and is left out
+	if counts["a.txt"] != 1 || len(counts) != 1 {
+		t.Errorf("%v", counts)
+	}
+	if n, _ := CountMatches(context.Background(), r.Path, cs.Files, NewCache(1<<20), ""); len(n) != 0 {
+		t.Errorf("empty needle must match nothing, got %v", n)
+	}
+}

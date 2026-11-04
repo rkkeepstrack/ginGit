@@ -15,13 +15,15 @@
     return mountEditor(host, p, (el, lang) => {
       const base = readOnlyBase(lang)
       if (m === 'split') {
-        return new MergeView({ a: { doc: a, extensions: base }, b: { doc: b, extensions: base }, parent: el, collapseUnchanged, highlightChanges: true, gutter: true })
+        const mv = new MergeView({ a: { doc: a, extensions: base }, b: { doc: b, extensions: base }, parent: el, collapseUnchanged, highlightChanges: true, gutter: true })
+        return { destroy: () => mv.destroy(), views: [mv.b, mv.a] }
       }
-      return new EditorView({
+      const view = new EditorView({
         doc: b,
         extensions: [...base, unifiedMergeView({ original: a, mergeControls: false, collapseUnchanged, highlightChanges: true, gutter: true })],
         parent: el,
       })
+      return { destroy: () => view.destroy(), views: [view] }
     })
   })
 </script>

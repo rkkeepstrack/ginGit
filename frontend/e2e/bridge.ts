@@ -50,6 +50,19 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
         if (!repoOpen(root)) return fail('object_not_found: not open')
         return Object.fromEntries(paths.map((p) => [p, (fx.diffs as Record<string, unknown>)[key(hashes) + '|' + p]]).filter(([, d]) => d))
       },
+      SearchChanges: async (_root: string, hashes: string[], text: string) => {
+        const needle = text.toLowerCase()
+        const out: Record<string, number> = {}
+        if (!needle) return out
+        for (const [k, d] of Object.entries(fx.diffs as Record<string, { pairs: { old: { content: string; missing: boolean }; new: { content: string; missing: boolean } }[] }>)) {
+          if (!k.startsWith(key(hashes) + '|')) continue
+          const path = k.slice(key(hashes).length + 1)
+          let n = 0
+          for (const p of d.pairs) { const side = p.new.missing ? p.old : p.new; n += side.content.toLowerCase().split(needle).length - 1 }
+          if (n > 0) out[path] = n
+        }
+        return out
+      },
       SearchCommits: async (_root: string, q: { text: string }) => {
         const t = q.text.toLowerCase()
         return fx.commits.map((c, i) => (c.subject.toLowerCase().includes(t) || c.hash.startsWith(t) ? i : -1)).filter((i) => i >= 0)

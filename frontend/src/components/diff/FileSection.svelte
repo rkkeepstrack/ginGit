@@ -6,7 +6,6 @@
   import { categoryFor, iconFor } from '../../lib/fileIcon'
   import type { DiffResult, FileChange } from '../../lib/types'
   import { hint } from '../../state/hint.svelte'
-  import { setFile } from '../../state/selection.svelte'
   import { ui } from '../../state/ui.svelte'
   import Notice from '../shell/Notice.svelte'
   import DiffBody from './DiffBody.svelte'
@@ -39,7 +38,6 @@
   // cascading as editors appear; skeleton lines make it read as content on its way.
   const placeholderLines = $derived(Math.max(3, Math.min(24, file.additions + file.deletions + 4)))
 
-  const openSingle = () => setFile(file.path)
 </script>
 
 <div bind:this={el} class="section">
@@ -47,11 +45,10 @@
     class="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
     class:open={!collapsed}
     onclick={ontoggle}
-    ondblclick={openSingle}
     onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ontoggle() } }}
     role="button"
     tabindex="0"
-    use:hint={'Click to collapse, double-click to open this file on its own'}
+    use:hint={collapsed ? 'Expand' : 'Collapse'}
   >
     {#if collapsed}<ChevronRight size={14} strokeWidth={1.75} class="opacity-50 shrink-0" />{:else}<ChevronDown size={14} strokeWidth={1.75} class="opacity-50 shrink-0" />{/if}
     <Icon size={14} strokeWidth={1.75} class="shrink-0 opacity-80 ft-{categoryFor(file.path)}" />

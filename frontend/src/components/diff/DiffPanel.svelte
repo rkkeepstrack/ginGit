@@ -11,9 +11,11 @@
   import { repo } from '../../state/repo.svelte'
   import { selection, setFile } from '../../state/selection.svelte'
   import { ui } from '../../state/ui.svelte'
+  import { find } from '../../state/find.svelte'
   import Notice from '../shell/Notice.svelte'
   import AllFilesView from './AllFilesView.svelte'
   import DiffBody from './DiffBody.svelte'
+  import FindBar from './FindBar.svelte'
   import { FileDiff } from './fileDiff.svelte'
 
   const diff = new FileDiff()
@@ -46,6 +48,7 @@
       <button class="btn btn-ghost btn-xs btn-square" onclick={() => stepFile(1)} disabled={idx < 0 || idx >= changes.paths.length - 1} use:hint={'Next file  ]'}><ChevronDown size={15} strokeWidth={1.75} /></button>
       <button class="btn btn-ghost btn-xs btn-square" onclick={() => setFile(null)} use:hint={'Back to all files'}><LayoutList size={15} strokeWidth={1.75} /></button>
     </div>
+    {#if find.open}<FindBar />{/if}
     {#if diff.error}<Notice kind="error">{diff.error}</Notice>{/if}
     {#if diff.loading && !diff.result}<div class="p-4 text-xs opacity-50">Loading…</div>{/if}
     {#if diff.result}<DiffBody result={diff.result} path={file} mode={ui.diffMode} stacked={false} />{/if}

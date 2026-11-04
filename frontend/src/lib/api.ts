@@ -46,6 +46,8 @@ export const api = {
     wrap(App.FileDiff(root, hashes, path)) as unknown as Promise<DiffResult>,
   fileDiffs: (root: string, hashes: string[], paths: string[]) =>
     wrap(App.FileDiffs(root, hashes, paths)) as unknown as Promise<Record<string, DiffResult>>,
+  searchChanges: (root: string, hashes: string[], text: string) =>
+    wrap(App.SearchChanges(root, hashes, text)) as Promise<Record<string, number>>,
   searchCommits: (root: string, text: string) =>
     wrap(App.SearchCommits(root, { text, author: '', branch: '', since: zeroTime, until: zeroTime } as never)) as Promise<number[]>,
 }

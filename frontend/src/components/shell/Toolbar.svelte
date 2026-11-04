@@ -22,7 +22,7 @@
       <input
         id="commit-search"
         class="grow"
-        placeholder="Search message, author, hash  {modKey}F"
+        placeholder="Find commit  {modKey}P"
         value={search.text}
         oninput={(e) => setText(e.currentTarget.value)}
         disabled={!repo.info}

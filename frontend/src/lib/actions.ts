@@ -1,11 +1,12 @@
 import { stepFile } from '../state/changes.svelte'
 import { open, refresh } from '../state/repo.svelte'
 import { setText } from '../state/search.svelte'
-import { clear } from '../state/selection.svelte'
+import { clear, selection } from '../state/selection.svelte'
+import { closeFind, find, openFind } from '../state/find.svelte'
 import { ui } from '../state/ui.svelte'
 
 export type Action =
-  | 'open' | 'refresh' | 'search' | 'toggleDiff' | 'escape'
+  | 'open' | 'refresh' | 'search' | 'find' | 'toggleDiff' | 'escape'
   | 'focusGraph' | 'focusFiles' | 'focusDiff' | 'prevFile' | 'nextFile'
   | 'themeLight' | 'themeDark' | 'themeSystem'
 
@@ -25,8 +26,10 @@ export function runAction(action: Action, target: HTMLElement | null = document.
     case 'open': clear(); void open(); break
     case 'refresh': void refresh(); break
     case 'search': focus(anchors.search); break
+    case 'find': if (selection.selected.size > 0) openFind(); break
     case 'toggleDiff': ui.toggleDiffMode(); break
     case 'escape':
+      if (target?.id === 'find-input' || (find.open && !target?.id)) { closeFind(); break }
       if (target?.id === 'commit-search') { setText(''); target.blur() }
       else if (target?.tagName === 'INPUT') target.blur()
       else clear()

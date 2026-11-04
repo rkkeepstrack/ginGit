@@ -8,6 +8,8 @@
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
   import FileSection from './FileSection.svelte'
+  import FindBar from './FindBar.svelte'
+  import { find } from '../../state/find.svelte'
 
   // Every changed file, one collapsible section each, in the files panel's order.
   const files = $derived.by(() => {
@@ -17,6 +19,9 @@
   let collapsed = $state.raw<Set<string>>(new Set())
   let scroller = $state<HTMLDivElement>()
   const allCollapsed = $derived(collapsed.size >= files.length && files.length > 0)
+  // While a find is active, only files with a hit stay open, and they load.
+  const isCollapsed = (path: string) => (find.counts ? !(path in find.counts) : collapsed.has(path))
+  $effect(() => { if (find.counts) for (const path of Object.keys(find.counts)) want(path) })
 
   // Diffs are fetched for all sections that come into reach within the same
   // frame, in one bridge call and one git round, instead of one per section.
@@ -63,11 +68,12 @@
       {#if allCollapsed}<ChevronsUpDown size={15} strokeWidth={1.75} />{:else}<ChevronsDownUp size={15} strokeWidth={1.75} />{/if}
     </button>
   </div>
+  {#if find.open}<FindBar />{/if}
   <div bind:this={scroller} class="flex-1 overflow-auto">
     {#each files as f (f.path)}
       <FileSection
         file={f}
-        collapsed={collapsed.has(f.path)}
+        collapsed={isCollapsed(f.path)}
         result={results.get(f.path) ?? null}
         error={errors.get(f.path) ?? null}
         ontoggle={() => toggle(f.path)}

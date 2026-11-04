@@ -344,6 +344,20 @@ func (a *App) FileDiffs(root string, hashes []string, paths []string) (map[strin
 	return out, nil
 }
 
+// SearchChanges counts, per file of the selection, how often text occurs in
+// its diff. Drives the find bar: which sections to open, how many hits.
+func (a *App) SearchChanges(root string, hashes []string, text string) (map[string]int, error) {
+	cs, err := a.ListChanges(root, hashes)
+	if err != nil {
+		return nil, err
+	}
+	counts, err := diff.CountMatches(a.ctx, root, cs.Files, a.blobs, text)
+	if err != nil {
+		return nil, userError(err)
+	}
+	return counts, nil
+}
+
 // --- search ---------------------------------------------------------------
 
 func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {

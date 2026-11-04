@@ -6,7 +6,7 @@
   import { selection } from '../../state/selection.svelte'
 
   const idleHint = `Click: select · ${modKey}-click: toggle · Shift-click: range`
-  const selectionHint = `[ or ${modKey}↑: previous file · ] or ${modKey}↓: next file · ${modKey}⇧D: diff layout · Esc: clear`
+  const selectionHint = `${modKey}F: find in changes · [ ] or ${modKey}↑↓: previous/next file · ${modKey}⇧D: diff layout · Esc: clear`
   const count = $derived(selection.selected.size)
 </script>
 
