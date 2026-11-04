@@ -63,6 +63,14 @@
           <dd>Lanes are computed once and drawn per row, so a history of 86,000 commits scrolls like a short one. Search filters the list and labels each hit with its branch.</dd>
         </div>
         <div>
+          <dt>Mark what you have read</dt>
+          <dd>A tick on a file says you reviewed this version. When the branch moves on and the file changes again, the tick turns amber and one click shows only what changed since. Marks belong to the branch and only exist for work not on main yet.</dd>
+        </div>
+        <div>
+          <dt>Find in the changes</dt>
+          <dd>⌘F searches the diffs of everything selected. Files with hits open, the rest fold away, and Enter steps through the matches across all of them.</dd>
+        </div>
+        <div>
           <dt>Diffs like an editor</dt>
           <dd>Side by side or unified, syntax highlighting for most languages, unchanged regions folded with a click to unfold. Added and deleted files take the full width.</dd>
         </div>
@@ -79,12 +87,15 @@
         <tbody>
           <tr><th>Open repository</th><td><kbd>⌘</kbd><kbd>O</kbd></td></tr>
           <tr><th>Reload history</th><td><kbd>⌘</kbd><kbd>R</kbd></td></tr>
-          <tr><th>Find commit</th><td><kbd>⌘</kbd><kbd>F</kbd></td></tr>
+          <tr><th>Find commit</th><td><kbd>⌘</kbd><kbd>P</kbd></td></tr>
+          <tr><th>Find in changes</th><td><kbd>⌘</kbd><kbd>F</kbd></td></tr>
+          <tr><th>Mark file as reviewed</th><td><kbd>V</kbd> on its header, or click the circle</td></tr>
           <tr><th>Side by side ⇄ unified</th><td><kbd>⌘</kbd><kbd>⇧</kbd><kbd>D</kbd></td></tr>
           <tr><th>Previous / next file</th><td><kbd>[</kbd> <kbd>]</kbd> or <kbd>⌘</kbd><kbd>↑</kbd> <kbd>⌘</kbd><kbd>↓</kbd></td></tr>
-          <tr><th>Focus commits / diff / files</th><td><kbd>⌘</kbd><kbd>1</kbd> <kbd>⌘</kbd><kbd>2</kbd> <kbd>⌘</kbd><kbd>3</kbd></td></tr>
+          <tr><th>Focus log / review / files</th><td><kbd>⌘</kbd><kbd>1</kbd> <kbd>⌘</kbd><kbd>2</kbd> <kbd>⌘</kbd><kbd>3</kbd></td></tr>
           <tr><th>Clear selection</th><td><kbd>Esc</kbd></td></tr>
           <tr><th>Copy a hash</th><td>click it</td></tr>
+          <tr><th>Jump to a file in the review</th><td>click it in the file tree</td></tr>
         </tbody>
       </table>
       <p class="fine">On Linux, Ctrl stands in for ⌘.</p>
