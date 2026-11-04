@@ -39,6 +39,7 @@ type App struct {
 	changes  *changes.Cache
 	blobs    *diff.Cache
 	branches *search.Branches
+	scopes   map[string]string // newest selected commit → branch it is reviewed under
 }
 
 func NewApp() *App {
@@ -47,6 +48,7 @@ func NewApp() *App {
 		changes:  changes.NewCache(64),
 		blobs:    diff.NewCache(64 << 20),
 		branches: search.NewBranches(),
+		scopes:   map[string]string{},
 	}
 }
 
@@ -75,6 +77,7 @@ func (a *App) dropLocked() {
 	}
 	a.index = history.NewIndex()
 	a.refs = nil
+	a.scopes = map[string]string{}
 	a.changes.Clear()
 	a.blobs.Clear()
 	a.branches.Clear()
@@ -318,13 +321,41 @@ func newestBlob(fc changes.FileChange) string {
 	return fc.Touches[0].NewBlob
 }
 
-// annotate stamps each file with the review state against the stored marks.
-// The change set in the cache stays untouched; marks change independently.
+// reviewScope is the branch a selection is reviewed under: the one git
+// names the newest selected commit after. Marks never leak across branches.
+func (a *App) reviewScope(root string, cs *changes.ChangeSet) string {
+	if len(cs.Hashes) == 0 {
+		return ""
+	}
+	newest := cs.Hashes[0]
+	a.mu.Lock()
+	if name, ok := a.scopes[newest]; ok {
+		a.mu.Unlock()
+		return name
+	}
+	a.mu.Unlock()
+	names, err := repo.NameCommits(a.ctx, root, []string{newest})
+	if err != nil {
+		return ""
+	}
+	name := names[newest]
+	if name == "" {
+		name = "(detached)"
+	}
+	a.mu.Lock()
+	a.scopes[newest] = name
+	a.mu.Unlock()
+	return name
+}
+
+// annotate stamps each file with the review state against the marks made
+// for this branch. The change set in the cache stays untouched; marks change
+// independently.
 func (a *App) annotate(root string, cs *changes.ChangeSet) *changes.ChangeSet {
 	if a.reviewed == nil {
 		return cs
 	}
-	marks, err := a.reviewed.Marks(root)
+	marks, err := a.reviewed.Marks(root, a.reviewScope(root, cs))
 	if err != nil || len(marks) == 0 {
 		return cs
 	}
@@ -364,7 +395,7 @@ func (a *App) MarkReviewed(root string, hashes []string, path string, seen bool)
 		if seen {
 			blob = newestBlob(fc)
 		}
-		return a.reviewed.Set(root, path, blob)
+		return a.reviewed.Set(root, a.reviewScope(root, cs), path, blob)
 	}
 	return fmt.Errorf("object_not_found: %s is not part of the selection", path)
 }

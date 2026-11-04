@@ -1,6 +1,7 @@
 // Package review remembers which file versions the user has looked at. A mark
-// is "I have seen this path at this blob"; it lives in the user's config dir,
-// never in the repository, one file per repository.
+// is "I have seen this path at this blob, while reviewing this branch"; it
+// lives in the user's config dir, never in the repository, one file per
+// repository with the marks grouped by branch.
 package review
 
 import (
@@ -41,48 +42,66 @@ func (s *Store) file(root string) string {
 	return filepath.Join(s.dir, hex.EncodeToString(sum[:])+".json")
 }
 
-func (s *Store) load(root string) (map[string]Mark, error) {
+// marks on disk: branch → path → mark
+type file map[string]map[string]Mark
+
+func (s *Store) load(root string) (file, error) {
 	data, err := os.ReadFile(s.file(root))
 	if errors.Is(err, os.ErrNotExist) {
-		return map[string]Mark{}, nil
+		return file{}, nil
 	}
 	if err != nil {
 		return nil, err
 	}
-	marks := map[string]Mark{}
-	if err := json.Unmarshal(data, &marks); err != nil {
-		return map[string]Mark{}, nil // a corrupt file forgets, it never blocks
+	f := file{}
+	if err := json.Unmarshal(data, &f); err != nil {
+		return file{}, nil // a corrupt file forgets, it never blocks
 	}
-	return marks, nil
+	return f, nil
 }
 
-func (s *Store) save(root string, marks map[string]Mark) error {
-	data, err := json.MarshalIndent(marks, "", " ")
+func (s *Store) save(root string, f file) error {
+	data, err := json.MarshalIndent(f, "", " ")
 	if err != nil {
 		return err
 	}
 	return os.WriteFile(s.file(root), data, 0o644)
 }
 
-// Marks returns every mark for a repository, keyed by path.
-func (s *Store) Marks(root string) (map[string]Mark, error) {
+// Marks returns the marks made while reviewing a branch, keyed by path.
+func (s *Store) Marks(root, branch string) (map[string]Mark, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.load(root)
+	f, err := s.load(root)
+	if err != nil {
+		return nil, err
+	}
+	marks := f[branch]
+	if marks == nil {
+		marks = map[string]Mark{}
+	}
+	return marks, nil
 }
 
-// Set records that path was seen at blob; an empty blob forgets the mark.
-func (s *Store) Set(root, path, blob string) error {
+// Set records that path was seen at blob while reviewing branch; an empty
+// blob forgets the mark.
+func (s *Store) Set(root, branch, path, blob string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	marks, err := s.load(root)
+	f, err := s.load(root)
 	if err != nil {
 		return err
 	}
-	if blob == "" {
-		delete(marks, path)
-	} else {
-		marks[path] = Mark{Blob: blob, At: time.Now()}
+	if f[branch] == nil {
+		f[branch] = map[string]Mark{}
 	}
-	return s.save(root, marks)
+	if blob == "" {
+		delete(f[branch], path)
+		if len(f[branch]) == 0 {
+			delete(f, branch)
+		}
+	} else {
+		f[branch][path] = Mark{Blob: blob, At: time.Now()}
+	}
+	return s.save(root, f)
 }
