@@ -16,6 +16,7 @@ class SelectionStore {
   anchor = $state<number | null>(null)
   /** Row the keyboard cursor sits on; usually the last clicked row. */
   cursor = $state<number | null>(null)
+  /** File picked in the tree: the review scrolls to it. */
   file = $state<string | null>(null)
   /** Bumped when the list should scroll the cursor into a comfortable spot. */
   reveal = $state(0)

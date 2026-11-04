@@ -7,6 +7,7 @@
   import { hint } from '../../state/hint.svelte'
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
+  import { tick } from 'svelte'
   import FileSection from './FileSection.svelte'
   import FindBar from './FindBar.svelte'
   import { find } from '../../state/find.svelte'
@@ -28,6 +29,21 @@
     collapsed = new Set(files.filter((f) => f.review === 'reviewed').map((f) => f.path))
   })
   const fold = (path: string) => { collapsed = new Set([...collapsed, path]) }
+
+  // The file picked in the tree (or with [ and ]): open its section and bring it to the top.
+  let flashed = $state<string | null>(null)
+  $effect(() => {
+    const path = selection.file
+    if (!path || !scroller) return
+    if (collapsed.has(path)) { const n = new Set(collapsed); n.delete(path); collapsed = n }
+    want(path)
+    void tick().then(() => {
+      const el = scroller?.querySelector<HTMLElement>(`[data-path="${CSS.escape(path)}"]`)
+      el?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+      flashed = path
+      setTimeout(() => { if (flashed === path) flashed = null }, 1200)
+    })
+  })
   // While a find is active, only files with a hit stay open, and they load.
   const isCollapsed = (path: string) => (find.counts ? !(path in find.counts) : collapsed.has(path))
   $effect(() => { if (find.counts) for (const path of Object.keys(find.counts)) want(path) })
@@ -84,6 +100,7 @@
       <FileSection
         file={f}
         collapsed={isCollapsed(f.path)}
+        flashed={flashed === f.path}
         result={results.get(f.path) ?? null}
         error={errors.get(f.path) ?? null}
         ontoggle={() => toggle(f.path)}

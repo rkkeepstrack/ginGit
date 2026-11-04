@@ -16,9 +16,11 @@
   import Notice from '../shell/Notice.svelte'
   import DiffBody from './DiffBody.svelte'
 
-  let { file, collapsed, result, error, ontoggle, onnear, onmarked, scrollRoot }: {
+  let { file, collapsed, flashed = false, result, error, ontoggle, onnear, onmarked, scrollRoot }: {
     file: FileChange
     collapsed: boolean
+    /** Briefly true after the file was picked in the tree, to show where it landed. */
+    flashed?: boolean
     result: DiffResult | null
     error: string | null
     ontoggle: () => void
@@ -62,7 +64,7 @@
 
 </script>
 
-<div bind:this={el} class="section">
+<div bind:this={el} class="section" class:flashed data-path={file.path}>
   <div
     class="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
     class:open={!collapsed}

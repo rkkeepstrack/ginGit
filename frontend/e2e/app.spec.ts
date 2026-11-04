@@ -42,13 +42,16 @@ test('a selection shows every file as a collapsible section', async ({ page }) =
   await shoot(page, 'overview-unified.png')
 })
 
-test('a single file side by side', async ({ page }) => {
+test('side by side, and the tree click scrolls to the file', async ({ page }) => {
   await installBridge(page, { diffMode: 'split' })
   await loaded(page)
   await row(page, "Merge branch 'feature/login'").click()
+  await expect(page.locator('#panel-diff .section-head')).toHaveCount(2)
   await page.locator('#panel-files .tree-row', { hasText: 'main.ts' }).click()
-  await expect(ready(page)).toHaveCount(1)
-  await expect(page.locator('.cm-mergeView')).toBeVisible()
+  await expect(page.locator('#panel-files .tree-row.active')).toContainText('main.ts')
+  await expect(page.locator('.section.flashed .section-head')).toContainText('main.ts')
+  await expect(ready(page)).toHaveCount(2)
+  await expect(page.locator('.cm-mergeView').first()).toBeVisible()
   await shoot(page, 'single-split.png')
 })
 
@@ -57,9 +60,9 @@ test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await loaded(page)
   await row(page, 'docs: more usage').click()
   await row(page, 'chore: initial import').click({ modifiers: ['ControlOrMeta'] })
-  await page.locator('#panel-files .tree-row', { hasText: 'README.md' }).click()
   await expect(page.locator('#panel-diff .alert-warning')).toBeVisible()
-  await expect(ready(page)).toHaveCount(2)
+  // README stacks two pairs; app.ts and package.json are plain additions
+  await expect(ready(page)).toHaveCount(4)
   await shoot(page, 'stacked.png')
 })
 
