@@ -11,8 +11,8 @@
   import { search } from '../../state/search.svelte'
   import { moveCursor, selection } from '../../state/selection.svelte'
   import Notice from '../shell/Notice.svelte'
-  import CommitRow from './CommitRow.svelte'
-  import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LaneCell.svelte'
+  import LogRow from './LogRow.svelte'
+  import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LogLanes.svelte'
 
   const EMPTY: never[] = []
 
@@ -90,7 +90,7 @@
   }
 </script>
 
-<div class="flex flex-col h-full min-h-0" id="panel-graph" bind:clientWidth={panelWidth}>
+<div class="flex flex-col h-full min-h-0" id="log" bind:clientWidth={panelWidth}>
   <div class="flex items-center h-8 col-head hairline-b shrink-0 overflow-hidden" style="scrollbar-gutter: stable">
     <div style:width="{graphWidth}px" class="shrink-0"></div>
     <div class="flex-1 pl-1.5">Commit</div>
@@ -118,7 +118,7 @@
         {@const c = repo.commits[idx]}
         {#if c}
           <div class="absolute left-0 right-0" style:top="{(range.start + k) * ROW_H}px">
-            <CommitRow
+            <LogRow
               index={idx}
               commit={c}
               prev={repo.commits[idx - 1]}

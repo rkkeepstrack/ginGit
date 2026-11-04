@@ -191,10 +191,10 @@ body {
 .hairline-r { box-shadow: inset -1px 0 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 
 /* Commit rows */
-.commit-row { white-space: nowrap; cursor: default; }
-.commit-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
-.commit-row.selected { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
-.commit-row.selected:hover { background: color-mix(in oklab, var(--brand) 22%, transparent); }
+.log-row { white-space: nowrap; cursor: default; }
+.log-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
+.log-row.selected { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
+.log-row.selected:hover { background: color-mix(in oklab, var(--brand) 22%, transparent); }
 .hash-cell { cursor: copy; border-radius: 4px; padding: 0 4px; margin-left: -4px; background: none; border: 0; font: inherit; line-height: inherit; }
 .hash-cell:hover { background: color-mix(in oklab, var(--color-base-content) 8%, transparent); opacity: 1; }
 
@@ -249,24 +249,24 @@ body {
 .review-stale { color: var(--review-stale); }
 .review-none { opacity: 0.35; }
 .review-none:hover { opacity: 1; }
-.section-head.reviewed { opacity: 0.6; }
-.section-head.stale { box-shadow: inset 2px 0 0 var(--review-stale); }
+.entry-head.reviewed { opacity: 0.6; }
+.entry-head.stale { box-shadow: inset 2px 0 0 var(--review-stale); }
 
 /* Accordion headers in the all-files review: solid bars with a gap between
    them, so a run of collapsed files reads as separate things. */
-.section { margin-top: 3px; contain: layout paint; content-visibility: auto; contain-intrinsic-size: auto 400px; }
-.section:first-child { margin-top: 0; }
-.section-head {
+.entry { margin-top: 3px; contain: layout paint; content-visibility: auto; contain-intrinsic-size: auto 400px; }
+.entry:first-child { margin-top: 0; }
+.entry-head {
   cursor: pointer;
   background: var(--color-base-200);
   border-top: 1px solid color-mix(in oklab, var(--color-base-content) 8%, transparent);
   border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 8%, transparent);
   transition: background 80ms;
 }
-.section-head:hover { background: color-mix(in oklab, var(--color-base-content) 6%, var(--color-base-200)); }
-.section-head:active { background: color-mix(in oklab, var(--color-base-content) 10%, var(--color-base-200)); }
-.section-head.open { box-shadow: inset 2px 0 0 var(--brand); }
-.section.flashed .section-head { background: color-mix(in oklab, var(--brand) 22%, var(--color-base-200)); transition: background 600ms ease-out 400ms; }
+.entry-head:hover { background: color-mix(in oklab, var(--color-base-content) 6%, var(--color-base-200)); }
+.entry-head:active { background: color-mix(in oklab, var(--color-base-content) 10%, var(--color-base-200)); }
+.entry-head.open { box-shadow: inset 2px 0 0 var(--brand); }
+.entry.flashed .entry-head { background: color-mix(in oklab, var(--brand) 22%, var(--color-base-200)); transition: background 600ms ease-out 400ms; }
 .tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: pointer; font-size: 12.5px; }
 .tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .tree-row.active { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }

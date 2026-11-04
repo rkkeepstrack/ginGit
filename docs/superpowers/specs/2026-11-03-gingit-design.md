@@ -112,12 +112,13 @@ Events: `history:chunk {loadID, rows}`, `history:done {loadID, total}`,
   active mode, derived `isContiguous` (computed from local parent data).
 - `state/uiStore.ts`: theme, panel sizes, diff view mode, filters, column
   widths, persisted to `localStorage`.
-- `components/graph/`: `CommitList` (virtualized), `CommitRow`, `LaneCell`
-  (SVG), `RefPills`.
-- `components/files/`: `ChangeTree`, `ChangeRow`, `FileFilter`, tree builder in
+- `components/log/`: `LogPanel` (virtualized), `LogRow`, `LogLanes`
+  (SVG), `RefPill`, `RefPills`.
+- `components/files/`: `FilesPanel`, `FileRow`, `ReviewMark`, tree builder in
   `lib/fileTree.ts`.
-- `components/diff/`: `DiffPanel`, `MergeViewHost` (CodeMirror wrapper),
-  `StackedDiffs`, `DiffHeader`.
+- `components/review/`: `ReviewPanel` (every changed file, in files order),
+  `ReviewEntry` (one file's collapsible block), `DiffBody`, `PairView`,
+  `MergeViewHost` (CodeMirror wrapper), `SingleSideView`, `FindBar`.
 - `components/shell/`: `Toolbar`, `PanelLayout`, `RepoMenu`, `ThemeToggle`,
   `FilterPopover`.
 - `lib/wails.ts`: typed wrappers over the generated bindings and event
@@ -329,9 +330,9 @@ contents, blame, per-file history, remote hosting integrations, Windows builds.
   shows all refs anyway.
 - Columns are not user-resizable. The subject column keeps priority and the
   author, date and hash columns give way in that order as the panel narrows.
-- With nothing selected the history takes the whole window. With a selection
-  and no file chosen, the diff panel shows every file as a collapsible
-  section (GitHub style); clicking a file opens it on its own.
+- With nothing selected the log takes the whole window. With a selection
+  the review shows every changed file as a collapsible entry (GitHub style);
+  clicking a file in the files panel scrolls the review to its entry.
 - The backend holds one repository at a time. The frontend picks the history
   load id so no event can arrive before it is recorded.
 - Hints live in a status bar, confirmations in toasts; the native menu bar
@@ -340,3 +341,9 @@ contents, blame, per-file history, remote hosting integrations, Windows builds.
   with `$state` fields in `.svelte.ts` modules, lists are virtualized by a
   forty-line helper over fixed row heights, and the three-panel splitter is
   our own. Same CSS, same bridge, same snapshot suite.
+- Vocabulary, used in code and UI alike: the *log* (`LogPanel`, `LogRow`,
+  `LogLanes`) on the left, the *review* (`ReviewPanel`) of *entries*
+  (`ReviewEntry`) in the middle, the *files* panel (`FilesPanel`) on the
+  right; *pills* on refs, *marks* on reviewed files, the *find bar*, the
+  *status bar*, *toasts* and the *welcome* screen. Panel ids are `#log`,
+  `#review` and `#files`.

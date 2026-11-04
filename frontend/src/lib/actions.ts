@@ -7,15 +7,15 @@ import { ui } from '../state/ui.svelte'
 
 export type Action =
   | 'open' | 'refresh' | 'search' | 'find' | 'toggleDiff' | 'escape'
-  | 'focusGraph' | 'focusFiles' | 'focusDiff' | 'prevFile' | 'nextFile'
+  | 'focusLog' | 'focusFiles' | 'focusReview' | 'prevFile' | 'nextFile'
   | 'themeLight' | 'themeDark' | 'themeSystem'
 
 /** DOM anchors the actions need; components set these ids. */
 export const anchors = {
   search: '#commit-search',
-  graph: '#panel-graph [tabindex]',
-  files: '#panel-files input',
-  diff: '#panel-diff .cm-content',
+  log: '#log [tabindex]',
+  files: '#files input',
+  review: '#review .cm-content',
 }
 
 const focus = (selector: string) => (document.querySelector(selector) as HTMLElement | null)?.focus()
@@ -34,9 +34,9 @@ export function runAction(action: Action, target: HTMLElement | null = document.
       else if (target?.tagName === 'INPUT') target.blur()
       else clear()
       break
-    case 'focusGraph': focus(anchors.graph); break
+    case 'focusLog': focus(anchors.log); break
     case 'focusFiles': focus(anchors.files); break
-    case 'focusDiff': focus(anchors.diff); break
+    case 'focusReview': focus(anchors.review); break
     case 'prevFile': stepFile(-1); break
     case 'nextFile': stepFile(1); break
     case 'themeLight': ui.theme = 'pastel'; break

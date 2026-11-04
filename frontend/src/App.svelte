@@ -1,12 +1,14 @@
 <script lang="ts">
+  import FileDiffIcon from '@lucide/svelte/icons/file-diff'
   import { events } from './lib/api'
   import { runAction, type Action } from './lib/actions'
   import { actionFor } from './lib/shortcuts'
+  import { changes } from './state/changes.svelte'
   import { repo } from './state/repo.svelte'
   import { selection } from './state/selection.svelte'
-  import DiffPanel from './components/diff/DiffPanel.svelte'
-  import ChangesPanel from './components/files/ChangesPanel.svelte'
-  import CommitList from './components/graph/CommitList.svelte'
+  import ReviewPanel from './components/review/ReviewPanel.svelte'
+  import FilesPanel from './components/files/FilesPanel.svelte'
+  import LogPanel from './components/log/LogPanel.svelte'
   import PanelLayout from './components/shell/PanelLayout.svelte'
   import StatusBar from './components/shell/StatusBar.svelte'
   import TitleBar from './components/shell/TitleBar.svelte'
@@ -39,9 +41,19 @@
     <Toolbar />
     <!-- One list instance throughout: with nothing selected it simply takes the whole width. -->
     <PanelLayout single={!hasSelection}>
-      {#snippet left()}<CommitList />{/snippet}
-      {#snippet middle()}<DiffPanel />{/snippet}
-      {#snippet right()}<ChangesPanel />{/snippet}
+      {#snippet left()}<LogPanel />{/snippet}
+      {#snippet middle()}
+        {#if changes.changeSet && changes.changeSet.files.length > 0}
+          <!-- Keyed on the selection so the review starts fresh (folds, fetched diffs) per change set. -->
+          {#key changes.changeSet.hashes.join(',')}<ReviewPanel />{/key}
+        {:else}
+          <div class="h-full flex flex-col items-center justify-center gap-2 text-[12.5px] opacity-40 select-none" id="review">
+            <FileDiffIcon size={28} strokeWidth={1.25} />
+            {changes.loading ? 'Loading…' : 'No file changes'}
+          </div>
+        {/if}
+      {/snippet}
+      {#snippet right()}<FilesPanel />{/snippet}
     </PanelLayout>
     <StatusBar />
     <Toasts />

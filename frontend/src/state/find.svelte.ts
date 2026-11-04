@@ -1,6 +1,6 @@
 import { untrack } from 'svelte'
 import { ApiError, api } from '../lib/api'
-import { collectMatches, highlightMatches, revealMatch, type Match } from '../components/diff/editor'
+import { collectMatches, highlightMatches, revealMatch, type Match } from '../components/review/editor'
 import { recoverIfNotOpen, repo } from './repo.svelte'
 import { selection } from './selection.svelte'
 

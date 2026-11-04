@@ -8,11 +8,11 @@
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
   import { tick } from 'svelte'
-  import FileSection from './FileSection.svelte'
+  import ReviewEntry from './ReviewEntry.svelte'
   import FindBar from './FindBar.svelte'
   import { find } from '../../state/find.svelte'
 
-  // Every changed file, one collapsible section each, in the files panel's order.
+  // Every changed file, one collapsible entry each, in the files panel's order.
   const files = $derived.by(() => {
     const byPath = new Map(changes.changeSet?.files.map((f) => [f.path, f]))
     return changes.paths.map((p) => byPath.get(p)).filter((f): f is FileChange => !!f)
@@ -21,7 +21,7 @@
   let scroller = $state<HTMLDivElement>()
   const allCollapsed = $derived(collapsed.size >= files.length && files.length > 0)
   const reviewed = $derived(files.filter((f) => f.review === 'reviewed').length)
-  // Reviewed files start folded; a mark folds its section.
+  // Reviewed files start folded; a mark folds its entry.
   let seeded = false
   $effect(() => {
     if (seeded || files.length === 0) return
@@ -30,7 +30,7 @@
   })
   const fold = (path: string) => { collapsed = new Set([...collapsed, path]) }
 
-  // The file picked in the tree (or with [ and ]): open its section and bring it to the top.
+  // The file picked in the tree (or with [ and ]): open its entry and bring it to the top.
   let flashed = $state<string | null>(null)
   $effect(() => {
     const path = selection.file
@@ -48,8 +48,8 @@
   const isCollapsed = (path: string) => (find.counts ? !(path in find.counts) : collapsed.has(path))
   $effect(() => { if (find.counts) for (const path of Object.keys(find.counts)) want(path) })
 
-  // Diffs are fetched for all sections that come into reach within the same
-  // frame, in one bridge call and one git round, instead of one per section.
+  // Diffs are fetched for all entries that come into reach within the same
+  // frame, in one bridge call and one git round, instead of one per entry.
   let results = $state.raw<Map<string, DiffResult>>(new Map())
   let errors = $state.raw<Map<string, string>>(new Map())
   const pending = new Set<string>()
@@ -85,7 +85,7 @@
   }
 </script>
 
-<div class="flex flex-col h-full min-h-0" id="panel-diff">
+<div class="flex flex-col h-full min-h-0" id="review">
   <div class="panel-head hairline-b">
     <span class="font-medium tabular-nums">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
     {#if reviewed > 0}<span class="opacity-60 tabular-nums">{reviewed} of {files.length} reviewed</span>{/if}
@@ -97,7 +97,7 @@
   {#if find.open}<FindBar />{/if}
   <div bind:this={scroller} class="flex-1 overflow-auto">
     {#each files as f (f.path)}
-      <FileSection
+      <ReviewEntry
         file={f}
         collapsed={isCollapsed(f.path)}
         flashed={flashed === f.path}

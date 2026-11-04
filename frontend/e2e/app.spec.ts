@@ -1,11 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 import { installBridge, labels } from './bridge'
 
-const row = (page: Page, label: string) => page.locator(`.commit-row[data-hash="${labels[label]}"]`)
+const row = (page: Page, label: string) => page.locator(`.log-row[data-hash="${labels[label]}"]`)
 
 async function loaded(page: Page) {
   await page.goto('/')
-  await expect(page.locator('.commit-row').first()).toBeVisible()
+  await expect(page.locator('.log-row').first()).toBeVisible()
 }
 
 /** Editors mount a frame at a time once their grammar is in; a host is marked when fully built. */
@@ -30,12 +30,12 @@ test('history fills the window when nothing is selected', async ({ page }) => {
   await shoot(page, 'history.png')
 })
 
-test('a selection shows every file as a collapsible section', async ({ page }) => {
+test('a selection shows every file as a collapsible entry', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
   await row(page, 'docs: more usage').click()
   await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(4)
+  await expect(page.locator('#review .entry-head')).toHaveCount(4)
   // the deleted logo is binary and gets a notice; the deleted changelog is full-width red
   await expect(ready(page)).toHaveCount(3)
   await expect(page.locator('.cm-host.single-deleted .cm-editor')).toHaveCount(1)
@@ -46,10 +46,10 @@ test('side by side, and the tree click scrolls to the file', async ({ page }) =>
   await installBridge(page, { diffMode: 'split' })
   await loaded(page)
   await row(page, "Merge branch 'feature/login'").click()
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(2)
-  await page.locator('#panel-files .tree-row', { hasText: 'main.ts' }).click()
-  await expect(page.locator('#panel-files .tree-row.active')).toContainText('main.ts')
-  await expect(page.locator('.section.flashed .section-head')).toContainText('main.ts')
+  await expect(page.locator('#review .entry-head')).toHaveCount(2)
+  await page.locator('#files .tree-row', { hasText: 'main.ts' }).click()
+  await expect(page.locator('#files .tree-row.active')).toContainText('main.ts')
+  await expect(page.locator('.entry.flashed .entry-head')).toContainText('main.ts')
   await expect(ready(page)).toHaveCount(2)
   await expect(page.locator('.cm-mergeView').first()).toBeVisible()
   await shoot(page, 'single-split.png')
@@ -60,7 +60,7 @@ test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await loaded(page)
   await row(page, 'docs: more usage').click()
   await row(page, 'chore: initial import').click({ modifiers: ['ControlOrMeta'] })
-  await expect(page.locator('#panel-diff .alert-warning')).toBeVisible()
+  await expect(page.locator('#review .alert-warning')).toBeVisible()
   // README stacks two pairs; app.ts and package.json are plain additions
   await expect(ready(page)).toHaveCount(4)
   await shoot(page, 'stacked.png')
@@ -70,7 +70,7 @@ test('dark theme', async ({ page }) => {
   await installBridge(page, { theme: 'dim' })
   await loaded(page)
   await row(page, 'refactor: app.ts becomes main.ts, logo lands').click()
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(2)
+  await expect(page.locator('#review .entry-head')).toHaveCount(2)
   // the added logo is binary; only main.ts gets an editor
   await expect(ready(page)).toHaveCount(1)
   await shoot(page, 'dark.png')
@@ -80,17 +80,17 @@ test('clicking a branch pill selects its own commits', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
   await page.locator('.ref-pill', { hasText: 'feature/stack-top' }).click()
-  await expect(page.locator('.commit-row.selected')).toHaveCount(1)
-  await expect(page.locator('#panel-files')).toContainText('1 commit')
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  await expect(page.locator('#files')).toContainText('1 commit')
 })
 
 test('search narrows the list', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
   await page.locator('#commit-search').fill('login')
-  await expect(page.locator('.commit-row')).toHaveCount(3)
+  await expect(page.locator('.log-row')).toHaveCount(3)
   // no lanes while filtering; a branch badge says where each hit lives
-  await expect(page.locator('.commit-row > svg')).toHaveCount(0)
+  await expect(page.locator('.log-row > svg')).toHaveCount(0)
   await expect(page.locator('.ref-pill.branch').first()).toBeVisible()
   await shoot(page, 'search.png')
 })
@@ -99,12 +99,12 @@ test('a branch badge in search results reviews the branch and jumps to it', asyn
   await installBridge(page)
   await loaded(page)
   await page.locator('#commit-search').fill('password')
-  await expect(page.locator('.commit-row')).toHaveCount(1)
-  await page.locator('.commit-row .ref-pill.branch', { hasText: 'feature/login' }).click()
+  await expect(page.locator('.log-row')).toHaveCount(1)
+  await page.locator('.log-row .ref-pill.branch', { hasText: 'feature/login' }).click()
   await expect(page.locator('#commit-search')).toHaveValue('')
-  await expect(page.locator('.commit-row.selected')).toHaveCount(2)
-  await expect(page.locator('#panel-files')).toContainText('2 commits')
-  await expect(page.locator('.commit-row > svg').first()).toBeVisible()
+  await expect(page.locator('.log-row.selected')).toHaveCount(2)
+  await expect(page.locator('#files')).toContainText('2 commits')
+  await expect(page.locator('.log-row > svg').first()).toBeVisible()
 })
 
 test('find in changes opens the matching files and steps through hits', async ({ page }) => {
@@ -112,19 +112,19 @@ test('find in changes opens the matching files and steps through hits', async ({
   await loaded(page)
   await row(page, 'docs: more usage').click()
   await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(4)
+  await expect(page.locator('#review .entry-head')).toHaveCount(4)
   await page.keyboard.press('ControlOrMeta+f')
   await page.locator('#find-input').fill('left-pad')
-  await expect(page.locator('#panel-diff')).toContainText('1 match in 1 file')
+  await expect(page.locator('#review')).toContainText('1 match in 1 file')
   // only package.json stays open
-  await expect(page.locator('#panel-diff .section-head.open')).toHaveCount(1)
+  await expect(page.locator('#review .entry-head.open')).toHaveCount(1)
   await expect(ready(page)).toHaveCount(1)
   await page.keyboard.press('Enter')
   await expect(page.locator('.cm-findMatch').first()).toBeVisible()
   await shoot(page, 'find.png')
   await page.keyboard.press('Escape')
   await expect(page.locator('#find-input')).toHaveCount(0)
-  await expect(page.locator('#panel-diff .section-head.open')).toHaveCount(4)
+  await expect(page.locator('#review .entry-head.open')).toHaveCount(4)
 })
 
 test('marking a file as reviewed folds it, and a later change turns the mark stale', async ({ page }) => {
@@ -133,17 +133,17 @@ test('marking a file as reviewed folds it, and a later change turns the mark sta
   // the unmerged stack: both of its commits
   await row(page, 'feat(LD-3): top of the stack').click()
   await row(page, 'feat(LD-3): base of the stack').click({ modifiers: ['ControlOrMeta'] })
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(2)
+  await expect(page.locator('#review .entry-head')).toHaveCount(2)
   // base.ts was reviewed at an older version: stale, open, with a "since" toggle
-  await expect(page.locator('#panel-diff .section-head.stale')).toHaveCount(1)
-  await expect(page.locator('#panel-diff .section-head.stale')).toContainText('base.ts')
-  await expect(page.locator('#panel-diff .section-head.stale .btn', { hasText: 'since' })).toBeVisible()
+  await expect(page.locator('#review .entry-head.stale')).toHaveCount(1)
+  await expect(page.locator('#review .entry-head.stale')).toContainText('base.ts')
+  await expect(page.locator('#review .entry-head.stale .btn', { hasText: 'since' })).toBeVisible()
   // mark top.ts: it folds and the counter appears
-  await page.locator('#panel-diff .section-head', { hasText: 'top.ts' }).locator('.review').click()
-  await expect(page.locator('#panel-diff .section-head.reviewed')).toHaveCount(1)
-  await expect(page.locator('#panel-diff .section-head.reviewed')).not.toHaveClass(/open/)
-  await expect(page.locator('#panel-diff')).toContainText('1 of 2 reviewed')
-  await expect(page.locator('#panel-files .review-reviewed')).toHaveCount(1)
+  await page.locator('#review .entry-head', { hasText: 'top.ts' }).locator('.review').click()
+  await expect(page.locator('#review .entry-head.reviewed')).toHaveCount(1)
+  await expect(page.locator('#review .entry-head.reviewed')).not.toHaveClass(/open/)
+  await expect(page.locator('#review')).toContainText('1 of 2 reviewed')
+  await expect(page.locator('#files .review-reviewed')).toHaveCount(1)
   await expect(ready(page)).toHaveCount(1)
   await shoot(page, 'reviewed.png')
 })
@@ -152,7 +152,7 @@ test('work already on main has no review marks', async ({ page }) => {
   await installBridge(page, { reviewed: { 'README.md': 'some-older-blob' } })
   await loaded(page)
   await row(page, 'docs: more usage').click()
-  await expect(page.locator('#panel-diff .section-head')).toHaveCount(1)
-  await expect(page.locator('#panel-diff .review')).toHaveCount(0)
-  await expect(page.locator('#panel-diff .section-head.stale')).toHaveCount(0)
+  await expect(page.locator('#review .entry-head')).toHaveCount(1)
+  await expect(page.locator('#review .review')).toHaveCount(0)
+  await expect(page.locator('#review .entry-head.stale')).toHaveCount(0)
 })

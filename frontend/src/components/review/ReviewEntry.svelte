@@ -24,7 +24,7 @@
     result: DiffResult | null
     error: string | null
     ontoggle: () => void
-    /** Called once when the section comes within reach; the parent fetches in batches. */
+    /** Called once when the entry comes within reach; the parent fetches in batches. */
     onnear: () => void
     /** Called after a file was marked reviewed, so the parent can fold it. */
     onmarked: () => void
@@ -50,7 +50,7 @@
   const Icon = $derived(iconFor(file.path))
   const typeMark = $derived(changeMark[file.type])
 
-  // Only fetch once the section is within a screen or so of the viewport.
+  // Only fetch once the entry is within a screen or so of the viewport.
   $effect(() => {
     if (!el || near) return
     const io = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) near = true }, { root: scrollRoot, rootMargin: '300px 0px' })
@@ -58,15 +58,15 @@
     return () => io.disconnect()
   })
   $effect(() => { if (near && !collapsed) onnear() })
-  // A placeholder roughly the size of the diff keeps later sections from
+  // A placeholder roughly the size of the diff keeps later entries from
   // cascading as editors appear; skeleton lines make it read as content on its way.
   const placeholderLines = $derived(Math.max(3, Math.min(24, file.additions + file.deletions + 4)))
 
 </script>
 
-<div bind:this={el} class="section" class:flashed data-path={file.path}>
+<div bind:this={el} class="entry" class:flashed data-path={file.path}>
   <div
-    class="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
+    class="entry-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
     class:open={!collapsed}
     class:reviewed={file.review === 'reviewed'}
     class:stale={file.review === 'stale'}

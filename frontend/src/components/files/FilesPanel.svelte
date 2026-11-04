@@ -47,7 +47,7 @@
   }
 </script>
 
-<div class="flex flex-col h-full min-h-0" id="panel-files">
+<div class="flex flex-col h-full min-h-0" id="files">
   <div class="panel-head hairline-b">
     <span class="font-medium tabular-nums shrink-0">{count} {count === 1 ? 'commit' : 'commits'}</span>
     <div class="flex-1"></div>

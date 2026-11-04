@@ -8,7 +8,7 @@
   import { flashMessage, hint } from '../../state/hint.svelte'
   import { repo } from '../../state/repo.svelte'
   import { click } from '../../state/selection.svelte'
-  import LaneCell, { ROW_H } from './LaneCell.svelte'
+  import LogLanes, { ROW_H } from './LogLanes.svelte'
   import RefPill from './RefPill.svelte'
   import RefPills from './RefPills.svelte'
 
@@ -39,7 +39,7 @@
 </script>
 
 <div
-  class="commit-row flex items-center"
+  class="log-row flex items-center"
   class:selected
   style:height="{ROW_H}px"
   style:line-height="{ROW_H}px"
@@ -49,7 +49,7 @@
   tabindex="-1"
 >
   {#if branch === undefined}
-    <LaneCell row={commit.row} prev={prev?.row} {isMerge} {isHead} width={graphWidth} />
+    <LogLanes row={commit.row} prev={prev?.row} {isMerge} {isHead} width={graphWidth} />
   {:else}
     <div class="shrink-0" style:width="{graphWidth}px"></div>
   {/if}

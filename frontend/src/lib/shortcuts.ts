@@ -13,8 +13,8 @@ export function actionFor(e: KeyboardEvent): Action | null {
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'f') return 'find'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'p') return 'search'
   if (mod && e.shiftKey && e.key.toLowerCase() === 'd') return 'toggleDiff'
-  if (mod && e.key === '1') return 'focusGraph'
-  if (mod && e.key === '2') return 'focusDiff'
+  if (mod && e.key === '1') return 'focusLog'
+  if (mod && e.key === '2') return 'focusReview'
   if (mod && e.key === '3') return 'focusFiles'
   if (typing) return null
   if (e.key === '[' || (mod && e.key === 'ArrowUp')) return 'prevFile'
