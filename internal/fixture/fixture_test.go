@@ -110,6 +110,7 @@ func TestGenerate(t *testing.T) {
 	selections = append(selections,
 		[]string{r.H("docs: more usage"), r.H("chore: logo was a mistake"), r.H("chore(LD-2): depend on left-pad, as one does")},
 		[]string{r.H("docs: more usage"), r.H("chore: initial import")}, // README twice with "usage section" in between: stacked diff
+		[]string{r.H("feat(LD-3): top of the stack"), r.H("feat(LD-3): base of the stack")}, // the unmerged stack, for review marks
 	)
 	var tips []history.RefTip
 	for _, ref := range refs {

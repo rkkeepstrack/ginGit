@@ -42,12 +42,18 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
       ListChanges: async (root: string, hashes: string[]) => {
         const cs = (fx.changes as unknown as Record<string, { files: { path: string }[] }>)[key(hashes)]
         if (!repoOpen(root) || !cs) return fail(`object_not_found: fixture has no change set for ${key(hashes)}`)
+        // Reviewable unless the newest selected commit is already on main.
+        const byHash = new Map(fx.commits.map((c) => [c.hash, c]))
+        const pos = new Map(fx.commits.map((c, i) => [c.hash, i]))
+        const newestHash = [...hashes].sort((a, b) => (pos.get(a) ?? 0) - (pos.get(b) ?? 0))[0]
+        const mainTip = fx.refs.find((r) => r.full === 'refs/heads/main')?.hash
+        const onMain = (() => { const stack = mainTip ? [mainTip] : []; const seen = new Set<string>(); while (stack.length) { const h = stack.pop()!; if (seen.has(h)) continue; seen.add(h); if (h === newestHash) return true; stack.push(...(byHash.get(h)?.parents ?? [])) } return false })()
         const files = cs.files.map((f) => {
           const seen = marks[f.path]
           const newest = ((fx as unknown as { newestBlob: Record<string, string> }).newestBlob)[key(hashes) + '|' + f.path]
-          return { ...f, review: seen === undefined ? '' : seen === newest ? 'reviewed' : 'stale' }
+          return { ...f, review: onMain || seen === undefined ? '' : seen === newest ? 'reviewed' : 'stale' }
         })
-        return { ...cs, files }
+        return { ...cs, files, reviewable: !onMain }
       },
       MarkReviewed: async (_root: string, hashes: string[], path: string, seen: boolean) => {
         if (seen) marks[path] = ((fx as unknown as { newestBlob: Record<string, string> }).newestBlob)[key(hashes) + '|' + path]

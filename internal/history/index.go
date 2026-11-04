@@ -59,3 +59,34 @@ func (ix *Index) Each(fn func(i int, c *Commit) bool) {
 		}
 	}
 }
+
+// Reaches reports whether target is an ancestor of (or equal to) from. Topo
+// order lets the walk stop at commits older than the target.
+func (ix *Index) Reaches(from, target string) bool {
+	ix.mu.RLock()
+	defer ix.mu.RUnlock()
+	start, ok := ix.pos[from]
+	tpos, ok2 := ix.pos[target]
+	if !ok || !ok2 {
+		return false
+	}
+	seen := make([]bool, len(ix.commits))
+	stack := []int{start}
+	for len(stack) > 0 {
+		p := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if p == tpos {
+			return true
+		}
+		if p > tpos || seen[p] {
+			continue
+		}
+		seen[p] = true
+		for _, h := range ix.commits[p].Parents {
+			if q, ok := ix.pos[h]; ok {
+				stack = append(stack, q)
+			}
+		}
+	}
+	return false
+}

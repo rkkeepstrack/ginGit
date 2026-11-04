@@ -322,30 +322,50 @@ func newestBlob(fc changes.FileChange) string {
 }
 
 // reviewScope is the branch a selection is reviewed under: the one git
-// names the newest selected commit after. Marks never leak across branches.
+// names the newest selected commit after. It is empty when there is nothing
+// to review: the commit is already on the default branch, so the work is
+// merged and marks would only be noise. Marks never leak across branches.
 func (a *App) reviewScope(root string, cs *changes.ChangeSet) string {
 	if len(cs.Hashes) == 0 {
 		return ""
 	}
 	newest := cs.Hashes[0]
 	a.mu.Lock()
-	if name, ok := a.scopes[newest]; ok {
-		a.mu.Unlock()
+	name, cached := a.scopes[newest]
+	index := a.index
+	a.mu.Unlock()
+	if cached {
 		return name
 	}
-	a.mu.Unlock()
-	names, err := repo.NameCommits(a.ctx, root, []string{newest})
-	if err != nil {
-		return ""
-	}
-	name := names[newest]
-	if name == "" {
-		name = "(detached)"
+	name = ""
+	if tip := a.defaultBranchTip(root); tip == "" || !index.Reaches(tip, newest) {
+		names, err := repo.NameCommits(a.ctx, root, []string{newest})
+		if err == nil {
+			if name = names[newest]; name == "" {
+				name = "(detached)"
+			}
+		}
 	}
 	a.mu.Lock()
 	a.scopes[newest] = name
 	a.mu.Unlock()
 	return name
+}
+
+// defaultBranchTip is main or master, local first, then origin's.
+func (a *App) defaultBranchTip(root string) string {
+	refs, err := a.refsFor(root)
+	if err != nil {
+		return ""
+	}
+	for _, full := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "refs/remotes/origin/master"} {
+		for _, r := range refs {
+			if r.Full == full {
+				return r.Hash
+			}
+		}
+	}
+	return ""
 }
 
 // annotate stamps each file with the review state against the marks made
@@ -355,11 +375,16 @@ func (a *App) annotate(root string, cs *changes.ChangeSet) *changes.ChangeSet {
 	if a.reviewed == nil {
 		return cs
 	}
-	marks, err := a.reviewed.Marks(root, a.reviewScope(root, cs))
-	if err != nil || len(marks) == 0 {
-		return cs
-	}
+	scope := a.reviewScope(root, cs)
 	out := *cs
+	out.Reviewable = scope != ""
+	if scope == "" {
+		return &out
+	}
+	marks, err := a.reviewed.Marks(root, scope)
+	if err != nil || len(marks) == 0 {
+		return &out
+	}
 	out.Files = make([]changes.FileChange, len(cs.Files))
 	copy(out.Files, cs.Files)
 	for i := range out.Files {
@@ -391,11 +416,15 @@ func (a *App) MarkReviewed(root string, hashes []string, path string, seen bool)
 		if fc.Path != path {
 			continue
 		}
+		scope := a.reviewScope(root, cs)
+		if scope == "" {
+			return fmt.Errorf("unknown: this work is already on the default branch, nothing to review")
+		}
 		blob := ""
 		if seen {
 			blob = newestBlob(fc)
 		}
-		return a.reviewed.Set(root, a.reviewScope(root, cs), path, blob)
+		return a.reviewed.Set(root, scope, path, blob)
 	}
 	return fmt.Errorf("object_not_found: %s is not part of the selection", path)
 }

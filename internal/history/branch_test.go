@@ -110,3 +110,28 @@ func TestBranchCommitsStackOnMergedMain(t *testing.T) {
 		}
 	}
 }
+
+func TestReaches(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a", "a")
+	r.Commit("root")
+	r.Branch("feature")
+	r.Write("f", "f")
+	r.Commit("f1")
+	r.Checkout("main")
+	r.Write("m", "m")
+	r.Commit("m1")
+	ix := NewIndex()
+	if _, err := Load(context.Background(), r.Path, Options{}, ix.Append); err != nil {
+		t.Fatal(err)
+	}
+	if !ix.Reaches(r.H("m1"), r.H("root")) || ix.Reaches(r.H("m1"), r.H("f1")) || !ix.Reaches(r.H("f1"), r.H("f1")) {
+		t.Error("reachability wrong")
+	}
+	r.Merge("merge", "feature")
+	ix = NewIndex()
+	Load(context.Background(), r.Path, Options{}, ix.Append)
+	if !ix.Reaches(r.H("merge"), r.H("f1")) {
+		t.Error("merged feature must be reachable from main")
+	}
+}

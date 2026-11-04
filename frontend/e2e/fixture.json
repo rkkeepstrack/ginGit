@@ -332,7 +332,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3": {
    "hashes": [
@@ -382,7 +383,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c": {
    "hashes": [
@@ -458,7 +460,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "6830070971e8696e93c3dfa859832fbb4e800d79": {
    "hashes": [
@@ -476,7 +479,38 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
+  },
+  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72": {
+   "hashes": [
+    "6830070971e8696e93c3dfa859832fbb4e800d79",
+    "c98626eeb63b09321a622056f1adf1694e851e72"
+   ],
+   "merges": [],
+   "files": [
+    {
+     "path": "src/base.ts",
+     "type": "added",
+     "additions": 1,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/top.ts",
+     "type": "added",
+     "additions": 2,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "reviewable": false
   },
   "6d29c096a2b08ead328b4d5cab2e230df301f777": {
    "hashes": [
@@ -494,7 +528,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156": {
    "hashes": [
@@ -523,7 +558,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "6f765b3563185a27af32bf6837fa121f8a9ed441": {
    "hashes": [
@@ -551,7 +587,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "7432c6aa54c6ded53202b8e0b5180f4126f652c3": {
    "hashes": [
@@ -569,7 +606,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": {
    "hashes": [
@@ -608,7 +646,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "7adf6354c6e5a673359abb6ceeddcb25c5372862": {
    "hashes": [
@@ -636,7 +675,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c": {
    "hashes": [
@@ -699,7 +739,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156": {
    "hashes": [
@@ -727,7 +768,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": {
    "hashes": [
@@ -765,7 +807,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "c98626eeb63b09321a622056f1adf1694e851e72": {
    "hashes": [
@@ -783,7 +826,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "d3631e45a9424d66837b732bbb5f3cd84475d30c": {
    "hashes": [
@@ -812,7 +856,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   },
   "dd5a6027936904682e9712844f278de10516346c": {
    "hashes": [
@@ -842,7 +887,8 @@
      "review": "",
      "composable": true
     }
-   ]
+   ],
+   "reviewable": false
   }
  },
  "diffs": {
@@ -1204,6 +1250,64 @@
       "path": "package.json",
       "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.1.0\",\n  \"dependencies\": {\n    \"left-pad\": \"^1.3.0\"\n  }\n}\n",
       "size": 93,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": {
+   "path": "src/base.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "c98626eeb63b09321a622056f1adf1694e851e72",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/base.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
+      "path": "src/base.ts",
+      "content": "export const base = 1\n",
+      "size": 22,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/top.ts": {
+   "path": "src/top.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "6830070971e8696e93c3dfa859832fbb4e800d79",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/top.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+      "path": "src/top.ts",
+      "content": "import { base } from './base'\nexport const top = base + 1\n",
+      "size": 58,
       "missing": false,
       "binary": false,
       "tooLarge": false
@@ -2068,6 +2172,8 @@
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|assets/logo.png": "0000000000000000000000000000000000000000",
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
+  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
   "6830070971e8696e93c3dfa859832fbb4e800d79|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",

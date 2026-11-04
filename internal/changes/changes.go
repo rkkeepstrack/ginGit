@@ -56,6 +56,9 @@ type ChangeSet struct {
 	Hashes []string     `json:"hashes"` // newest first
 	Merges []string     `json:"merges"`
 	Files  []FileChange `json:"files"`
+	// Reviewable says whether review marks apply: the newest selected commit
+	// is not on the default branch yet. Filled in by the app.
+	Reviewable bool `json:"reviewable"`
 }
 
 // newestFirst orders a selection by history position.

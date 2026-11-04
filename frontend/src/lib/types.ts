@@ -52,6 +52,8 @@ export interface ChangeSet {
   hashes: string[]
   merges: string[]
   files: FileChange[]
+  /** Review marks apply: the newest selected commit is not on the default branch yet. */
+  reviewable: boolean
 }
 
 export interface Side {

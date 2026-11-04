@@ -4,7 +4,7 @@
   import History from '@lucide/svelte/icons/history'
   import Unlink from '@lucide/svelte/icons/unlink'
   import ReviewMark from '../files/ReviewMark.svelte'
-  import { markReviewed } from '../../state/changes.svelte'
+  import { changes, markReviewed } from '../../state/changes.svelte'
   import { api } from '../../lib/api'
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
@@ -93,7 +93,7 @@
         <History size={13} strokeWidth={1.75} /> since
       </button>
     {/if}
-    <ReviewMark review={file.review} onmark={mark} />
+    {#if changes.changeSet?.reviewable}<ReviewMark review={file.review} onmark={mark} />{/if}
   </div>
   {#if !collapsed}
     <div>
