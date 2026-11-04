@@ -103,4 +103,26 @@ func TestNameCommits(t *testing.T) {
 	if _, ok := names["4b825dc642cb6eb9a060e54bf8d69288fbee4904"]; ok {
 		t.Error("unreachable object must not be named")
 	}
+	// A colleague's branch that was only fetched is still a branch.
+	r.Write("p", "p")
+	pr := r.Commit("pr1")
+	r.Git("update-ref", "refs/remotes/origin/pr", pr)
+	r.Git("reset", "-q", "--hard", "HEAD~1")
+	names, err = NameCommits(context.Background(), r.Path, []string{pr})
+	if err != nil || names[pr] != "pr" {
+		t.Errorf("remote-only branch: %v %v", names, err)
+	}
+}
+
+func TestDefaultBranchTip(t *testing.T) {
+	refs := []Ref{{Full: "refs/remotes/origin/main", Hash: "o"}, {Full: "refs/heads/master", Hash: "m"}}
+	if got := DefaultBranchTip(refs); got != "m" {
+		t.Errorf("local master beats origin/main, got %q", got)
+	}
+	if got := DefaultBranchTip(refs[:1]); got != "o" {
+		t.Errorf("origin/main as fallback, got %q", got)
+	}
+	if got := DefaultBranchTip(nil); got != "" {
+		t.Errorf("no default branch, got %q", got)
+	}
 }

@@ -3,14 +3,9 @@ package history
 import (
 	"sort"
 	"strings"
-)
 
-// RefTip is what BranchCommits needs to know about a ref.
-type RefTip struct {
-	Full string
-	Hash string
-	Tag  bool
-}
+	"ginGit/internal/repo"
+)
 
 // shortName strips refs/heads/ or refs/remotes/<remote>/ so a branch and its
 // remote-tracking counterparts compare equal.
@@ -41,7 +36,7 @@ func shortName(full string) string {
 // line and is left out, so the base of a stack keeps its commits. Ref's own
 // remote counterparts are left out too, or a lagging origin/x would hide the
 // pushed ones. Returns ok=false when the ref's tip is not in the index yet.
-func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok bool) {
+func (ix *Index) BranchCommits(refs []repo.Ref, ref string) (hashes []string, ok bool) {
 	ix.mu.RLock()
 	defer ix.mu.RUnlock()
 	var tip string
@@ -81,11 +76,11 @@ func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok b
 	}
 	// Everything the ref reaches.
 	reach := make([]bool, len(ix.commits))
-	ix.walk(tipPos, reach)
+	ix.walk(tipPos, reach, len(ix.commits))
 	// Everything that belongs to another branch, from each meeting point down.
 	cut := make([]bool, len(ix.commits))
 	for _, r := range refs {
-		if r.Tag || r.Full == ref || shortName(r.Full) == shortName(ref) {
+		if r.Kind == "tag" || r.Full == ref || shortName(r.Full) == shortName(ref) {
 			continue
 		}
 		p, ok := ix.pos[r.Hash]
@@ -94,7 +89,7 @@ func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok b
 		}
 		for {
 			if reach[p] {
-				ix.walk(p, cut)
+				ix.walk(p, cut, len(ix.commits))
 				break
 			}
 			next, ok := firstParent(p)
@@ -118,13 +113,15 @@ func (ix *Index) BranchCommits(refs []RefTip, ref string) (hashes []string, ok b
 	return hashes, true
 }
 
-// walk marks every commit reachable from p, stopping at ones already marked.
-func (ix *Index) walk(p int, seen []bool) {
+// walk marks every commit reachable from p, stopping at ones already marked
+// and at positions past until: topo order puts parents after children, so
+// nothing beyond can lead back to a commit at until.
+func (ix *Index) walk(p int, seen []bool, until int) {
 	stack := []int{p}
 	for len(stack) > 0 {
 		p := stack[len(stack)-1]
 		stack = stack[:len(stack)-1]
-		if seen[p] {
+		if seen[p] || p > until {
 			continue
 		}
 		seen[p] = true

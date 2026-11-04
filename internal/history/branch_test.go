@@ -6,18 +6,14 @@ import (
 	"testing"
 
 	"ginGit/internal/gittest"
+	"ginGit/internal/repo"
 )
 
-func tips(r *gittest.Repo, t *testing.T) []RefTip {
+func tips(r *gittest.Repo, t *testing.T) []repo.Ref {
 	t.Helper()
-	out := r.Git("for-each-ref", "--format=%(refname) %(objectname)", "refs/heads", "refs/remotes", "refs/tags")
-	var refs []RefTip
-	for _, line := range strings.Split(out, "\n") {
-		if line == "" {
-			continue
-		}
-		f := strings.Fields(line)
-		refs = append(refs, RefTip{Full: f[0], Hash: f[1], Tag: strings.HasPrefix(f[0], "refs/tags/")})
+	refs, err := repo.Refs(context.Background(), r.Path)
+	if err != nil {
+		t.Fatal(err)
 	}
 	return refs
 }

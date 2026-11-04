@@ -11,13 +11,8 @@ import (
 	"sync"
 
 	"ginGit/internal/gitcmd"
+	"ginGit/internal/history"
 )
-
-// Lookup is what we need from the loaded history.
-type Lookup interface {
-	Parents(hash string) ([]string, bool)
-	Position(hash string) (int, bool)
-}
 
 // Touch is one commit's change to one file.
 type Touch struct {
@@ -39,10 +34,10 @@ type FileChange struct {
 	Additions  int     `json:"additions"`
 	Deletions  int     `json:"deletions"`
 	Binary     bool    `json:"binary"`
-	Touches    []Touch `json:"-"` // newest first; FileDiff reads them, the UI only needs the count
+	Touches    []Touch `json:"-"` // newest first; the diffs read them, the UI only needs the count
 	TouchCount int     `json:"touchCount"`
 	// Review is "", "reviewed" or "stale": whether the user has seen the newest
-	// version of this file, or an older one. Filled in by the app, not here.
+	// version of this file, or an older one. Stamped by review.Annotate.
 	Review string `json:"review"`
 	// ReviewedBlob is the version the user saw, when Review is "stale".
 	ReviewedBlob string `json:"-"`
@@ -57,28 +52,28 @@ type ChangeSet struct {
 	Merges []string     `json:"merges"`
 	Files  []FileChange `json:"files"`
 	// Reviewable says whether review marks apply: the newest selected commit
-	// is not on the default branch yet. Filled in by the app.
+	// is not on the default branch yet. Stamped by review.Annotate.
 	Reviewable bool `json:"reviewable"`
 }
 
 // newestFirst orders a selection by history position.
-func newestFirst(lk Lookup, hashes []string) ([]string, error) {
+func newestFirst(ix *history.Index, hashes []string) ([]string, error) {
 	out := append([]string(nil), hashes...)
 	for _, h := range out {
-		if _, ok := lk.Position(h); !ok {
+		if _, ok := ix.Position(h); !ok {
 			return nil, fmt.Errorf("%w: %s", gitcmd.ErrObjectNotFound, h)
 		}
 	}
 	sort.SliceStable(out, func(i, j int) bool {
-		pi, _ := lk.Position(out[i])
-		pj, _ := lk.Position(out[j])
+		pi, _ := ix.Position(out[i])
+		pj, _ := ix.Position(out[j])
 		return pi < pj
 	})
 	return out, nil
 }
 
 // Compute builds the change set. hashes may be in any order.
-func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*ChangeSet, error) {
+func Compute(ctx context.Context, root string, ix *history.Index, hashes []string) (*ChangeSet, error) {
 	if len(hashes) == 0 {
 		return &ChangeSet{Hashes: []string{}, Merges: []string{}, Files: []FileChange{}}, nil
 	}
@@ -87,13 +82,13 @@ func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*Cha
 			return nil, err
 		}
 	}
-	sorted, err := newestFirst(lk, hashes)
+	sorted, err := newestFirst(ix, hashes)
 	if err != nil {
 		return nil, err
 	}
 	cs := &ChangeSet{Hashes: sorted, Merges: []string{}, Files: []FileChange{}}
 	for _, h := range sorted {
-		if p, _ := lk.Parents(h); len(p) > 1 {
+		if p, _ := ix.Parents(h); len(p) > 1 {
 			cs.Merges = append(cs.Merges, h)
 		}
 	}
@@ -174,8 +169,10 @@ func combinedType(touches []Touch) string {
 // Each commit's record starts with RS, then its hash, then the same raw and
 // numstat entries diff-tree would print.
 func diffAll(ctx context.Context, root string, hashes []string) (map[string][]Touch, error) {
-	args := []string{"log", "--no-walk=unsorted", "-m", "--first-parent", "--root", "-M", "--raw", "--numstat", "--no-abbrev", "-z", "--format=%x1e%H%x00"}
-	out, err := gitcmd.Run(ctx, root, append(append(args, hashes...), "--")...)
+	// Hashes go on stdin: a shift-click over a big repository selects more
+	// than the command line holds.
+	out, err := gitcmd.RunInput(ctx, root, []byte(strings.Join(hashes, "\n")+"\n"),
+		"log", "--stdin", "--no-walk=unsorted", "-m", "--first-parent", "--root", "-M", "--raw", "--numstat", "--no-abbrev", "-z", "--format=%x1e%H%x00", "--")
 	if err != nil {
 		return nil, err
 	}
@@ -311,4 +308,23 @@ func (c *Cache) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.data = map[string]*ChangeSet{}
+}
+
+// File is the change for one path of the selection.
+func (cs *ChangeSet) File(path string) (FileChange, bool) {
+	for _, fc := range cs.Files {
+		if fc.Path == path {
+			return fc, true
+		}
+	}
+	return FileChange{}, false
+}
+
+// NewestBlob is the version of a file the review shows; a deletion is the
+// zero blob, which is still a version the user can mark as seen.
+func NewestBlob(fc FileChange) string {
+	if len(fc.Touches) == 0 {
+		return ""
+	}
+	return fc.Touches[0].NewBlob
 }

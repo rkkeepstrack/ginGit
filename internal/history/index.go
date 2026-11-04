@@ -39,16 +39,6 @@ func (ix *Index) Parents(hash string) ([]string, bool) {
 	return ix.commits[p].Parents, true
 }
 
-func (ix *Index) Get(hash string) (Commit, bool) {
-	ix.mu.RLock()
-	defer ix.mu.RUnlock()
-	p, ok := ix.pos[hash]
-	if !ok {
-		return Commit{}, false
-	}
-	return ix.commits[p], true
-}
-
 // Each calls fn for every commit in order until fn returns false.
 func (ix *Index) Each(fn func(i int, c *Commit) bool) {
 	ix.mu.RLock()
@@ -60,8 +50,7 @@ func (ix *Index) Each(fn func(i int, c *Commit) bool) {
 	}
 }
 
-// Reaches reports whether target is an ancestor of (or equal to) from. Topo
-// order lets the walk stop at commits older than the target.
+// Reaches reports whether target is an ancestor of (or equal to) from.
 func (ix *Index) Reaches(from, target string) bool {
 	ix.mu.RLock()
 	defer ix.mu.RUnlock()
@@ -71,22 +60,6 @@ func (ix *Index) Reaches(from, target string) bool {
 		return false
 	}
 	seen := make([]bool, len(ix.commits))
-	stack := []int{start}
-	for len(stack) > 0 {
-		p := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-		if p == tpos {
-			return true
-		}
-		if p > tpos || seen[p] {
-			continue
-		}
-		seen[p] = true
-		for _, h := range ix.commits[p].Parents {
-			if q, ok := ix.pos[h]; ok {
-				stack = append(stack, q)
-			}
-		}
-	}
-	return false
+	ix.walk(start, seen, tpos)
+	return seen[tpos]
 }

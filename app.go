@@ -30,25 +30,22 @@ type App struct {
 	recent   *repo.RecentStore
 	reviewed *review.Store
 
-	mu       sync.Mutex
-	root     string
-	refs     []repo.Ref // as last listed for the frontend
-	index    *history.Index
-	cancel   context.CancelFunc // stops the running history load
-	watcher  *fsnotify.Watcher
-	changes  *changes.Cache
-	blobs    *diff.Cache
-	branches *search.Branches
-	scopes   map[string]string // newest selected commit → branch it is reviewed under
+	mu      sync.Mutex
+	root    string
+	index   *history.Index
+	cancel  context.CancelFunc // stops the running history load
+	watcher *fsnotify.Watcher
+	changes *changes.Cache
+	blobs   *diff.Cache       // content-addressed, so it outlives reloads
+	scopes  map[string]string // newest selected commit → branch it is reviewed under
 }
 
 func NewApp() *App {
 	return &App{
-		index:    history.NewIndex(),
-		changes:  changes.NewCache(64),
-		blobs:    diff.NewCache(64 << 20),
-		branches: search.NewBranches(),
-		scopes:   map[string]string{},
+		index:   history.NewIndex(),
+		changes: changes.NewCache(64),
+		blobs:   diff.NewCache(64 << 20),
+		scopes:  map[string]string{},
 	}
 }
 
@@ -67,6 +64,9 @@ func (a *App) shutdown(context.Context) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	a.dropLocked()
+	if a.watcher != nil {
+		a.watcher.Close()
+	}
 }
 
 // dropLocked stops everything tied to the current history.
@@ -76,11 +76,8 @@ func (a *App) dropLocked() {
 		a.cancel = nil
 	}
 	a.index = history.NewIndex()
-	a.refs = nil
 	a.scopes = map[string]string{}
 	a.changes.Clear()
-	a.blobs.Clear()
-	a.branches.Clear()
 }
 
 // open checks root is the open repository and returns the current index.
@@ -187,11 +184,6 @@ func (a *App) Refs(root string) ([]repo.Ref, error) {
 	if refs == nil {
 		refs = []repo.Ref{}
 	}
-	a.mu.Lock()
-	if root == a.root {
-		a.refs = refs
-	}
-	a.mu.Unlock()
 	return refs, nil
 }
 
@@ -201,30 +193,15 @@ func (a *App) BranchCommits(root string, ref string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	refs, err := a.refsFor(root)
+	refs, err := repo.Refs(a.ctx, root)
 	if err != nil {
 		return nil, userError(err)
 	}
-	tips := make([]history.RefTip, len(refs))
-	for i, r := range refs {
-		tips[i] = history.RefTip{Full: r.Full, Hash: r.Hash, Tag: r.Kind == "tag"}
-	}
-	hashes, ok := index.BranchCommits(tips, ref)
+	hashes, ok := index.BranchCommits(refs, ref)
 	if !ok {
 		return nil, fmt.Errorf("object_not_found: %s is not in the loaded history yet", ref)
 	}
 	return hashes, nil
-}
-
-// refsFor returns the refs as last listed for the frontend, or lists them.
-func (a *App) refsFor(root string) ([]repo.Ref, error) {
-	a.mu.Lock()
-	refs := a.refs
-	a.mu.Unlock()
-	if refs != nil {
-		return refs, nil
-	}
-	return repo.Refs(a.ctx, root)
 }
 
 // --- history --------------------------------------------------------------
@@ -312,19 +289,10 @@ func (a *App) changeSet(root string, hashes []string) (*changes.ChangeSet, error
 	return cs, nil
 }
 
-// newestBlob is the version of a file the review shows; a deletion is the
-// zero blob, which is still a version the user can mark as seen.
-func newestBlob(fc changes.FileChange) string {
-	if len(fc.Touches) == 0 {
-		return ""
-	}
-	return fc.Touches[0].NewBlob
-}
-
 // reviewScope is the branch a selection is reviewed under: the one git
 // names the newest selected commit after. It is empty when there is nothing
 // to review: the commit is already on the default branch, so the work is
-// merged and marks would only be noise. Marks never leak across branches.
+// merged and marks would only be noise, or no branch names it at all.
 func (a *App) reviewScope(root string, cs *changes.ChangeSet) string {
 	if len(cs.Hashes) == 0 {
 		return ""
@@ -338,12 +306,10 @@ func (a *App) reviewScope(root string, cs *changes.ChangeSet) string {
 		return name
 	}
 	name = ""
-	if tip := a.defaultBranchTip(root); tip == "" || !index.Reaches(tip, newest) {
-		names, err := repo.NameCommits(a.ctx, root, []string{newest})
-		if err == nil {
-			if name = names[newest]; name == "" {
-				name = "(detached)"
-			}
+	refs, err := repo.Refs(a.ctx, root)
+	if tip := repo.DefaultBranchTip(refs); err == nil && (tip == "" || !index.Reaches(tip, newest)) {
+		if names, err := repo.NameCommits(a.ctx, root, []string{newest}); err == nil {
+			name = names[newest]
 		}
 	}
 	a.mu.Lock()
@@ -352,54 +318,17 @@ func (a *App) reviewScope(root string, cs *changes.ChangeSet) string {
 	return name
 }
 
-// defaultBranchTip is main or master, local first, then origin's.
-func (a *App) defaultBranchTip(root string) string {
-	refs, err := a.refsFor(root)
-	if err != nil {
-		return ""
-	}
-	for _, full := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "refs/remotes/origin/master"} {
-		for _, r := range refs {
-			if r.Full == full {
-				return r.Hash
-			}
-		}
-	}
-	return ""
-}
-
-// annotate stamps each file with the review state against the marks made
-// for this branch. The change set in the cache stays untouched; marks change
-// independently.
+// annotate stamps the review state onto a copy of the cached change set.
 func (a *App) annotate(root string, cs *changes.ChangeSet) *changes.ChangeSet {
 	if a.reviewed == nil {
 		return cs
 	}
 	scope := a.reviewScope(root, cs)
-	out := *cs
-	out.Reviewable = scope != ""
-	if scope == "" {
-		return &out
+	var marks map[string]review.Mark
+	if scope != "" {
+		marks, _ = a.reviewed.Marks(root, scope)
 	}
-	marks, err := a.reviewed.Marks(root, scope)
-	if err != nil || len(marks) == 0 {
-		return &out
-	}
-	out.Files = make([]changes.FileChange, len(cs.Files))
-	copy(out.Files, cs.Files)
-	for i := range out.Files {
-		m, ok := marks[out.Files[i].Path]
-		if !ok {
-			continue
-		}
-		if m.Blob == newestBlob(out.Files[i]) {
-			out.Files[i].Review = "reviewed"
-		} else {
-			out.Files[i].Review = "stale"
-			out.Files[i].ReviewedBlob = m.Blob
-		}
-	}
-	return &out
+	return review.Annotate(cs, scope, marks)
 }
 
 // MarkReviewed records that the user has seen a file as the selection shows
@@ -412,20 +341,22 @@ func (a *App) MarkReviewed(root string, hashes []string, path string, seen bool)
 	if err != nil {
 		return err
 	}
-	for _, fc := range cs.Files {
-		if fc.Path != path {
-			continue
-		}
-		scope := a.reviewScope(root, cs)
-		if scope == "" {
-			return fmt.Errorf("unknown: this work is already on the default branch, nothing to review")
-		}
-		blob := ""
-		if seen {
-			blob = newestBlob(fc)
-		}
-		return a.reviewed.Set(root, scope, path, blob)
+	fc, ok := cs.File(path)
+	if !ok {
+		return notInSelection(path)
 	}
+	scope := a.reviewScope(root, cs)
+	if scope == "" {
+		return fmt.Errorf("unknown: this work is already on the default branch, nothing to review")
+	}
+	blob := ""
+	if seen {
+		blob = changes.NewestBlob(fc)
+	}
+	return a.reviewed.Set(root, scope, path, blob)
+}
+
+func notInSelection(path string) error {
 	return fmt.Errorf("object_not_found: %s is not part of the selection", path)
 }
 
@@ -436,50 +367,23 @@ func (a *App) FileDiffSince(root string, hashes []string, path string) (*diff.Re
 	if err != nil {
 		return nil, err
 	}
-	for _, fc := range cs.Files {
-		if fc.Path != path {
-			continue
-		}
-		if fc.Review != "stale" {
-			return nil, fmt.Errorf("object_not_found: %s has no reviewed version to compare with", path)
-		}
-		res, err := diff.Since(a.ctx, root, fc, fc.ReviewedBlob, a.blobs)
-		if err != nil {
-			return nil, userError(err)
-		}
-		return res, nil
+	fc, ok := cs.File(path)
+	if !ok {
+		return nil, notInSelection(path)
 	}
-	return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
-}
-
-func (a *App) FileDiff(root string, hashes []string, path string) (*diff.Result, error) {
-	if err := gitcmd.ValidatePath(path); err != nil {
+	if fc.Review != "stale" {
+		return nil, fmt.Errorf("object_not_found: %s has no reviewed version to compare with", path)
+	}
+	res, err := diff.Since(a.ctx, root, fc, fc.ReviewedBlob, a.blobs)
+	if err != nil {
 		return nil, userError(err)
 	}
-	cs, err := a.ListChanges(root, hashes)
-	if err != nil {
-		return nil, err
-	}
-	for _, fc := range cs.Files {
-		if fc.Path == path {
-			res, err := diff.ForFile(a.ctx, root, fc, a.blobs)
-			if err != nil {
-				return nil, userError(err)
-			}
-			return res, nil
-		}
-	}
-	return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
+	return res, nil
 }
 
-// FileDiffs is FileDiff for several files of the same selection in one call:
+// FileDiffs is the diffs of several files of the same selection in one call:
 // one bridge round trip and one git round for the whole first screen.
 func (a *App) FileDiffs(root string, hashes []string, paths []string) (map[string]*diff.Result, error) {
-	for _, p := range paths {
-		if err := gitcmd.ValidatePath(p); err != nil {
-			return nil, userError(err)
-		}
-	}
 	cs, err := a.ListChanges(root, hashes)
 	if err != nil {
 		return nil, err
@@ -517,16 +421,12 @@ func (a *App) SearchChanges(root string, hashes []string, text string) (map[stri
 
 // --- search ---------------------------------------------------------------
 
-func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {
+func (a *App) SearchCommits(root string, text string) ([]int, error) {
 	index, err := a.open(root)
 	if err != nil {
 		return nil, err
 	}
-	hits, err := search.Run(a.ctx, root, index, a.branches, q)
-	if err != nil {
-		return nil, userError(err)
-	}
-	return hits, nil
+	return search.Run(index, text), nil
 }
 
 // NameCommits labels commits with the branch that describes them best, for

@@ -6,10 +6,6 @@ export function BranchCommits(arg1, arg2) {
   return window['go']['main']['App']['BranchCommits'](arg1, arg2);
 }
 
-export function FileDiff(arg1, arg2, arg3) {
-  return window['go']['main']['App']['FileDiff'](arg1, arg2, arg3);
-}
-
 export function FileDiffSince(arg1, arg2, arg3) {
   return window['go']['main']['App']['FileDiffSince'](arg1, arg2, arg3);
 }

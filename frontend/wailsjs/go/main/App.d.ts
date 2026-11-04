@@ -3,11 +3,8 @@
 import {diff} from '../models';
 import {changes} from '../models';
 import {repo} from '../models';
-import {search} from '../models';
 
 export function BranchCommits(arg1:string,arg2:string):Promise<Array<string>>;
-
-export function FileDiff(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
 
 export function FileDiffSince(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
 
@@ -35,6 +32,6 @@ export function Refs(arg1:string):Promise<Array<repo.Ref>>;
 
 export function SearchChanges(arg1:string,arg2:Array<string>,arg3:string):Promise<Record<string, number>>;
 
-export function SearchCommits(arg1:string,arg2:search.Query):Promise<Array<number>>;
+export function SearchCommits(arg1:string,arg2:string):Promise<Array<number>>;
 
 export function TitleBarCenter():Promise<number>;

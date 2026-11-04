@@ -18,19 +18,6 @@ func TestValidateHash(t *testing.T) {
 	}
 }
 
-func TestValidatePath(t *testing.T) {
-	for _, ok := range []string{"a.go", "dir/sub/file.ts", "weird name.txt", "not-dash/..dots"} {
-		if err := ValidatePath(ok); err != nil {
-			t.Errorf("%q: unexpected %v", ok, err)
-		}
-	}
-	for _, bad := range []string{"", "-rf", "--output=x", "/etc/passwd", "../x", "a/../../b", ".."} {
-		if err := ValidatePath(bad); !errors.Is(err, ErrInvalidArg) {
-			t.Errorf("%q: want ErrInvalidArg, got %v", bad, err)
-		}
-	}
-}
-
 func TestDisallowedSubcommand(t *testing.T) {
 	for _, sub := range []string{"push", "commit", "reset", "checkout", "gc", "status"} {
 		_, err := Run(context.Background(), t.TempDir(), sub)

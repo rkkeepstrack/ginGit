@@ -27,8 +27,6 @@ async function wrap<T>(p: Promise<T>): Promise<T> {
   }
 }
 
-const zeroTime = '0001-01-01T00:00:00Z'
-
 export const api = {
   initialRepository: () => wrap(App.InitialRepository()),
   titleBarCenter: () => wrap(App.TitleBarCenter()),
@@ -49,8 +47,7 @@ export const api = {
     wrap(App.FileDiffSince(root, hashes, path)) as unknown as Promise<DiffResult>,
   searchChanges: (root: string, hashes: string[], text: string) =>
     wrap(App.SearchChanges(root, hashes, text)) as Promise<Record<string, number>>,
-  searchCommits: (root: string, text: string) =>
-    wrap(App.SearchCommits(root, { text, author: '', branch: '', since: zeroTime, until: zeroTime } as never)) as Promise<number[]>,
+  searchCommits: (root: string, text: string) => wrap(App.SearchCommits(root, text)) as Promise<number[]>,
 }
 
 export const runtime = {

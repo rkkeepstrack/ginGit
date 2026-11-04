@@ -59,8 +59,7 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
         if (seen) marks[path] = ((fx as unknown as { newestBlob: Record<string, string> }).newestBlob)[key(hashes) + '|' + path]
         else delete marks[path]
       },
-      FileDiffSince: async (root: string, hashes: string[], path: string) => App.FileDiff(root, hashes, path),
-      FileDiff: async (root: string, hashes: string[], path: string) => {
+      FileDiffSince: async (root: string, hashes: string[], path: string) => {
         const d = (fx.diffs as Record<string, unknown>)[key(hashes) + '|' + path]
         return repoOpen(root) && d ? d : fail(`object_not_found: fixture has no diff for ${path}`)
       },
@@ -81,8 +80,8 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
         }
         return out
       },
-      SearchCommits: async (_root: string, q: { text: string }) => {
-        const t = q.text.toLowerCase()
+      SearchCommits: async (_root: string, text: string) => {
+        const t = text.toLowerCase()
         return fx.commits.map((c, i) => (c.subject.toLowerCase().includes(t) || c.hash.startsWith(t) ? i : -1)).filter((i) => i >= 0)
       },
       BranchCommits: async (_root: string, ref: string) => (fx.branches as Record<string, string[]>)[ref] ?? [],

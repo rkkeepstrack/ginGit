@@ -33,8 +33,6 @@ const DefaultTimeout = 2 * time.Minute
 var allowed = map[string]bool{
 	"rev-parse":    true,
 	"log":          true,
-	"rev-list":     true,
-	"diff-tree":    true,
 	"cat-file":     true,
 	"for-each-ref": true,
 	"name-rev":     true,
@@ -42,26 +40,10 @@ var allowed = map[string]bool{
 
 var fullHashRe = regexp.MustCompile(`^[0-9a-f]{40}$`)
 
-// EmptyTree is the hash of the empty tree, used as the parent of root commits.
-const EmptyTree = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
-
 // ValidateHash accepts only a full 40-character lowercase hex hash.
 func ValidateHash(h string) error {
 	if !fullHashRe.MatchString(h) {
 		return fmt.Errorf("%w: hash %q", ErrInvalidArg, h)
-	}
-	return nil
-}
-
-// ValidatePath rejects anything git could mistake for an option or that
-// escapes the repository. Paths are always passed after "--" too; this is
-// belt and braces.
-func ValidatePath(p string) error {
-	if p == "" || strings.HasPrefix(p, "-") || strings.Contains(p, "\x00") {
-		return fmt.Errorf("%w: path %q", ErrInvalidArg, p)
-	}
-	if strings.HasPrefix(p, "/") || strings.HasPrefix(p, "../") || strings.Contains(p, "/../") || p == ".." {
-		return fmt.Errorf("%w: path %q", ErrInvalidArg, p)
 	}
 	return nil
 }

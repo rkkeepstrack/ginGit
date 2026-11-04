@@ -219,7 +219,7 @@ func NameCommits(ctx context.Context, root string, hashes []string) (map[string]
 		}
 	}
 	out, err := gitcmd.RunInput(ctx, root, []byte(strings.Join(hashes, "\n")+"\n"),
-		"name-rev", "--name-only", "--refs=refs/heads/*", "--annotate-stdin")
+		"name-rev", "--name-only", "--refs=refs/heads/*", "--refs=refs/remotes/*", "--annotate-stdin")
 	if err != nil {
 		return nil, err
 	}
@@ -233,11 +233,30 @@ func NameCommits(ctx context.Context, root string, hashes []string) (map[string]
 		if name == "" || name == hashes[i] || name == "undefined" {
 			continue
 		}
-		// "main~3^2" → "main"
+		// "main~3^2" → "main"; "remotes/origin/x" → "x", a branch and its
+		// remote-tracking counterpart are the same branch.
 		if cut := strings.IndexAny(name, "~^"); cut >= 0 {
 			name = name[:cut]
+		}
+		if rest, ok := strings.CutPrefix(name, "remotes/"); ok {
+			if _, short, ok := strings.Cut(rest, "/"); ok {
+				name = short
+			}
 		}
 		names[hashes[i]] = name
 	}
 	return names, nil
+}
+
+// DefaultBranchTip is the hash of main or master, local first, then origin's;
+// empty when the repository has neither.
+func DefaultBranchTip(refs []Ref) string {
+	for _, full := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "refs/remotes/origin/master"} {
+		for _, r := range refs {
+			if r.Full == full {
+				return r.Hash
+			}
+		}
+	}
+	return ""
 }
