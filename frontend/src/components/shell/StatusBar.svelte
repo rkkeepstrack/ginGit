@@ -1,12 +1,12 @@
 <script lang="ts">
   import { formatCount } from '../../lib/format'
-  import { modKey } from '../../lib/platform'
+  import { keys } from '../../lib/platform'
   import { hints } from '../../state/hint.svelte'
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
 
-  const idleHint = `Click: select · ${modKey}-click: toggle · Shift-click: range`
-  const selectionHint = `${modKey}F: find in changes · [ ] or ${modKey}↑↓: previous/next file · ${modKey}⇧D: diff layout · Esc: clear`
+  const idleHint = `Click: select · ${keys('mod')}-click: toggle · Shift-click: range`
+  const selectionHint = `${keys('mod', 'F')}: find in changes · [ ] or ${keys('mod', '↑')} ${keys('mod', '↓')}: previous/next file · ${keys('mod', 'shift', 'D')}: diff layout · Esc: clear`
   const count = $derived(selection.hashes.length)
 </script>
 

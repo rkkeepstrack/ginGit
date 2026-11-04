@@ -4,7 +4,7 @@
   import Search from '@lucide/svelte/icons/search'
   import X from '@lucide/svelte/icons/x'
   import { plural } from '../../lib/format'
-  import { modKey } from '../../lib/platform'
+  import { keys } from '../../lib/platform'
   import { closeFind, find, setQuery, step } from '../../state/find.svelte'
   import { hint } from '../../state/hint.svelte'
 
@@ -23,11 +23,11 @@
 <div class="flex items-center gap-2 px-2 h-9 hairline-b shrink-0 bg-base-200/50 text-[12px]">
   <label class="input input-xs w-72 flex items-center gap-2 px-2">
     <Search size={13} strokeWidth={1.75} class="opacity-50" />
-    <input id="find-input" class="grow" placeholder="Find in changes  {modKey}F" value={find.query} oninput={(e) => setQuery(e.currentTarget.value)} onkeydown={onKey} />
+    <input id="find-input" class="grow" placeholder="Find in changes  {keys('mod', 'F')}" value={find.query} oninput={(e) => setQuery(e.currentTarget.value)} onkeydown={onKey} />
   </label>
   <span class="opacity-60 tabular-nums whitespace-nowrap">{summary}</span>
   <div class="flex-1"></div>
-  <button class="btn btn-ghost btn-xs btn-square" onclick={() => step(-1)} disabled={find.total === 0} use:hint={'Previous match  ⇧Enter'}><ChevronUp size={14} strokeWidth={1.75} /></button>
+  <button class="btn btn-ghost btn-xs btn-square" onclick={() => step(-1)} disabled={find.total === 0} use:hint={`Previous match  ${keys('shift', 'Enter')}`}><ChevronUp size={14} strokeWidth={1.75} /></button>
   <button class="btn btn-ghost btn-xs btn-square" onclick={() => step(1)} disabled={find.total === 0} use:hint={'Next match  Enter'}><ChevronDown size={14} strokeWidth={1.75} /></button>
   <button class="btn btn-ghost btn-xs btn-square" onclick={closeFind} use:hint={'Close  Esc'}><X size={14} strokeWidth={1.75} /></button>
 </div>
