@@ -1,8 +1,8 @@
 import { expect, test, type Page } from '@playwright/test'
 import { installBridge, labels } from './bridge'
 
-// Screenshots for the site, light and dark, written to e2e/site-shots and
-// copied to site/img by `make site-shots`. Not compared to anything.
+// Screenshots for the site, light and dark, at 1x and 2x, written to
+// e2e/site-shots and encoded into site/img by `make site-shots`. Not compared to anything.
 const row = (page: Page, label: string) => page.locator(`.log-row[data-hash="${labels[label]}"]`)
 const ready = (page: Page) => page.locator('.cm-host[data-ready]')
 
@@ -11,9 +11,11 @@ async function loaded(page: Page) {
   await expect(page.locator('.log-row').first()).toBeVisible()
 }
 
+// The mouse rests on the status bar, so nothing wears a hover tint.
 async function shoot(page: Page, name: string) {
-  await page.mouse.move(640, 710)
-  await page.screenshot({ path: `e2e/site-shots/${name}.png` })
+  await page.mouse.move(600, page.viewportSize()!.height - 10)
+  const density = test.info().project.name === '2x' ? '@2x' : ''
+  await page.screenshot({ path: `e2e/site-shots/${name}${density}.png` })
 }
 
 for (const [suffix, theme] of [['light', 'pastel'], ['dark', 'dim']] as const) {
@@ -46,7 +48,7 @@ for (const [suffix, theme] of [['light', 'pastel'], ['dark', 'dim']] as const) {
     await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
     await expect(page.locator('#review .entry-head')).toHaveCount(4)
     await page.keyboard.press('ControlOrMeta+f')
-    await page.locator('#find-input').fill('left-pad')
+    await page.locator('#find-input').fill('left')
     await expect(page.locator('#review')).toContainText('1 match in 1 file')
     await expect(ready(page)).toHaveCount(1)
     await page.keyboard.press('Enter')

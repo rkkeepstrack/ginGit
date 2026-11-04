@@ -78,10 +78,14 @@ section { padding: 48px 0 8px; }
 .fine { font-size: 13px; color: var(--muted); }
 
 .slider { padding: 40px 0 0; }
-.slides { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; outline: none; }
+/* The strip reaches 24px past the column on each side, padded back in: room for the
+   shadow, which a scroll container would otherwise clip. */
+.slides { display: flex; gap: 48px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 24px; scrollbar-width: none; outline: none; padding: 0 24px 16px; margin: 0 -24px -16px; }
 .slides::-webkit-scrollbar { display: none; }
 .shot { flex: 0 0 100%; margin: 0; text-align: center; scroll-snap-align: start; }
-.shot img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.5); }
+/* The hairline is an inset outline: a border would shrink the image by 2px and resample
+   every pixel, a shadow ring would be clipped by the scrolling strip. */
+.shot img { display: block; width: 100%; height: auto; border-radius: 8px; outline: 1px solid var(--line); outline-offset: -1px; box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.5); }
 .shot figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
 .slider-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
 .dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: var(--line); cursor: pointer; }

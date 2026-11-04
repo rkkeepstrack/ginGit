@@ -38,6 +38,11 @@ snapshots-update:
 	$(SNAPSHOT_RUN) --update-snapshots=all"
 
 # The site's screenshots, light and dark, from the same fixture and container.
+# WebP at the rendered size, never resized: 1x lossless, 2x lossy (the eye can't tell at
+# that density, the file size can). Needs cwebp (brew install webp).
 site-shots:
 	$(SNAPSHOT_RUN) --config playwright.site.ts"
-	cp frontend/e2e/site-shots/*.png site/img/
+	for f in frontend/e2e/site-shots/*.png; do \
+		case "$$f" in *@2x.png) q="-q 80 -m 6 -sharp_yuv";; *) q="-lossless -z 9";; esac; \
+		cwebp -quiet $$q "$$f" -o site/img/$$(basename "$$f" .png).webp; \
+	done

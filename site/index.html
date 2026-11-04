@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ginGit</title>
   <meta name="description" content="A read-only git history explorer for reviewing many commits at once. Pick commits, see every file they touched, read the diffs.">
-  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="#"><img src="img/logo.svg" alt="" width="18" height="25"> ginGit</a>
+    <a class="brand" href="#"><picture><source srcset="img/logo-dark.svg" media="(prefers-color-scheme: dark)"><img src="img/logo.svg" data-light="img/logo.svg" data-dark="img/logo-dark.svg" alt="" width="18" height="25"></picture> ginGit</a>
     <nav>
       <a href="#features">Features</a>
       <a href="#shortcuts">Shortcuts</a>
@@ -24,7 +24,7 @@
 
   <main>
     <section class="hero">
-      <img class="hero-logo" src="img/logo.svg" alt="" width="58" height="80">
+      <picture><source srcset="img/logo-dark.svg" media="(prefers-color-scheme: dark)"><img class="hero-logo" src="img/logo.svg" data-light="img/logo.svg" data-dark="img/logo-dark.svg" alt="" width="58" height="80"></picture>
       <h1>ginGit</h1>
       <p class="tagline">Read-only git history, multi-commit review.</p>
       <p class="lede">Pick any commits in the graph, or a whole branch with one click, and read every change they made as one review. No staging, no pushing, nothing it can break.</p>
@@ -39,24 +39,24 @@
       <div class="slides" id="slides" tabindex="0">
         <figure class="shot">
           <picture>
-            <source srcset="img/review-dark.png" media="(prefers-color-scheme: dark)">
-            <img src="img/review-light.png" data-light="img/review-light.png" data-dark="img/review-dark.png" alt="ginGit with three commits selected: the commit graph on the left, a collapsible review of every changed file in the middle, the file tree on the right" width="1280" height="720">
+            <source srcset="img/review-dark.webp 1x, img/review-dark@2x.webp 2x" media="(prefers-color-scheme: dark)">
+            <img src="img/review-light.webp" srcset="img/review-light.webp 1x, img/review-light@2x.webp 2x" data-light="img/review-light.webp" data-dark="img/review-dark.webp" alt="ginGit with three commits selected: the commit graph on the left, a collapsible review of every changed file in the middle, the file tree on the right" width="992" height="620">
           </picture>
-          <figcaption>Three commits selected. Every file they touched, as one review.</figcaption>
+          <figcaption>See all selected commits in an aggregated view.</figcaption>
         </figure>
         <figure class="shot">
           <picture>
-            <source srcset="img/marks-dark.png" media="(prefers-color-scheme: dark)">
-            <img src="img/marks-light.png" data-light="img/marks-light.png" data-dark="img/marks-dark.png" alt="Two files of a branch under review: one marked as reviewed, one marked stale with a button to show only what changed since" width="1280" height="720" loading="lazy">
+            <source srcset="img/marks-dark.webp 1x, img/marks-dark@2x.webp 2x" media="(prefers-color-scheme: dark)">
+            <img src="img/marks-light.webp" srcset="img/marks-light.webp 1x, img/marks-light@2x.webp 2x" data-light="img/marks-light.webp" data-dark="img/marks-dark.webp" alt="Two files of a branch under review: one marked as reviewed, one marked stale with a toggle to show only what changed since" width="992" height="620" loading="lazy">
           </picture>
-          <figcaption>Review marks. The amber one changed since you read it; "since" shows just that.</figcaption>
+          <figcaption>Mark reviewed files and review only what really changed after a new commit.</figcaption>
         </figure>
         <figure class="shot">
           <picture>
-            <source srcset="img/find-dark.png" media="(prefers-color-scheme: dark)">
-            <img src="img/find-light.png" data-light="img/find-light.png" data-dark="img/find-dark.png" alt="The find bar open over the review, with the one file containing the search text expanded and the match highlighted" width="1280" height="720" loading="lazy">
+            <source srcset="img/find-dark.webp 1x, img/find-dark@2x.webp 2x" media="(prefers-color-scheme: dark)">
+            <img src="img/find-light.webp" srcset="img/find-light.webp 1x, img/find-light@2x.webp 2x" data-light="img/find-light.webp" data-dark="img/find-dark.webp" alt="The find bar open over the review, with the one file containing the search text expanded and the match highlighted" width="992" height="620" loading="lazy">
           </picture>
-          <figcaption>Find in changes. Files with hits open, the rest fold away.</figcaption>
+          <figcaption>Search &amp; find in files, commits or changes.</figcaption>
         </figure>
       </div>
       <div class="slider-nav">
