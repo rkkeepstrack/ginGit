@@ -7,7 +7,7 @@
 
   const idleHint = `Click: select · ${modKey}-click: toggle · Shift-click: range`
   const selectionHint = `${modKey}F: find in changes · [ ] or ${modKey}↑↓: previous/next file · ${modKey}⇧D: diff layout · Esc: clear`
-  const count = $derived(selection.selected.size)
+  const count = $derived(selection.hashes.length)
 </script>
 
 <div class="h-6 shrink-0 flex items-center gap-3 px-3 text-[11px] hairline-t bg-base-200/40 select-none whitespace-nowrap overflow-hidden">

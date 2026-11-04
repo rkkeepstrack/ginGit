@@ -1,7 +1,6 @@
 <script lang="ts">
   import FileDiffIcon from '@lucide/svelte/icons/file-diff'
-  import { events } from './lib/api'
-  import { runAction, type Action } from './lib/actions'
+  import { runAction } from './actions'
   import { actionFor } from './lib/shortcuts'
   import { changes } from './state/changes.svelte'
   import { repo } from './state/repo.svelte'
@@ -16,7 +15,7 @@
   import Toolbar from './components/shell/Toolbar.svelte'
   import Welcome from './components/shell/Welcome.svelte'
 
-  const hasSelection = $derived(selection.selected.size > 0)
+  const hasSelection = $derived(selection.hashes.length > 0)
 
   // Native menu accelerators usually swallow the key before the webview
   // sees it; the keydown path covers the browser dev tab and anything the
@@ -27,7 +26,6 @@
     if (action !== 'escape') e.preventDefault()
     runAction(action, e.target as HTMLElement | null)
   }
-  $effect(() => events.onMenu((action) => runAction(action as Action)))
 </script>
 
 <!-- No browser context menu; it only offers "Inspect Element" and friends. -->

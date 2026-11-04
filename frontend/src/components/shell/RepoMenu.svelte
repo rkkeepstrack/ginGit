@@ -2,14 +2,14 @@
   import ChevronDown from '@lucide/svelte/icons/chevron-down'
   import FolderOpen from '@lucide/svelte/icons/folder-open'
   import X from '@lucide/svelte/icons/x'
+  import { closeDropdown } from '../../lib/dom'
   import { shortenPath } from '../../lib/format'
+  import { hint } from '../../state/hint.svelte'
   import { forget, open, repo } from '../../state/repo.svelte'
-  import { clear } from '../../state/selection.svelte'
 
   const pick = (path?: string) => {
-    clear()
     void open(path)
-    ;(document.activeElement as HTMLElement | null)?.blur()
+    closeDropdown()
   }
 </script>
 
@@ -23,7 +23,7 @@
     {#if repo.recent.length > 0}<li class="menu-title text-[10px] pt-2">Recent</li>{/if}
     {#each repo.recent as r (r.path)}
       <li>
-        <button class="grid-cols-[minmax(0,1fr)_auto] items-center gap-2" class:active={r.path === repo.info?.path} onclick={() => pick(r.path)} title={r.path}>
+        <button class="grid-cols-[minmax(0,1fr)_auto] items-center gap-2" onclick={() => pick(r.path)} title={r.path}>
           <span class="flex-1 min-w-0 overflow-hidden text-left">
             <span class="block font-medium truncate">{r.name}</span>
             <span class="block text-[10px] opacity-50 truncate">{shortenPath(r.path)}</span>
@@ -34,7 +34,7 @@
             class="btn btn-ghost btn-xs btn-square opacity-40 hover:opacity-100"
             onclick={(e) => { e.stopPropagation(); void forget(r.path) }}
             onkeydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); void forget(r.path) } }}
-            title="Remove from recent"
+            use:hint={'Remove from recent'}
           >
             <X size={13} strokeWidth={1.75} />
           </span>

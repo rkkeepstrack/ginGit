@@ -1,6 +1,11 @@
 import { hasMod } from './platform'
 
-import type { Action } from './actions'
+import type { Action } from '../actions'
+
+/** Enter or Space on a focused role=button, the way a real button activates. */
+export const activate = (fn: () => void) => (e: KeyboardEvent) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() }
+}
 
 /** Maps a keydown to an app action, or null. Text inputs keep their keys. */
 export function actionFor(e: KeyboardEvent): Action | null {

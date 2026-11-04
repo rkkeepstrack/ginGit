@@ -31,7 +31,7 @@
     </label>
     <button class="btn btn-ghost btn-sm btn-square relative" onclick={() => void refresh()} disabled={!repo.info || repo.loading} use:hint={`Reload history  ${modKey}R`}>
       <RefreshCw size={16} strokeWidth={1.75} class={repo.loading ? 'animate-spin' : ''} />
-      {#if repo.changedSinceLoad}<span class="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-warning ring-2 ring-base-100"></span>{/if}
+      {#if repo.changedSinceLoad}<span class="status status-warning absolute top-0.5 right-0.5 ring-2 ring-base-100"></span>{/if}
     </button>
     <div role="tablist" class="tabs tabs-box tabs-xs ml-1 p-0.5">
       <button role="tab" class="tab px-1.5" class:tab-active={ui.diffMode === 'split'} class:brand={ui.diffMode === 'split'} class:opacity-60={ui.diffMode !== 'split'} onclick={() => (ui.diffMode = 'split')} use:hint={`Side-by-side diff  ${modKey}⇧D`}><Columns2 size={15} strokeWidth={1.75} /></button>

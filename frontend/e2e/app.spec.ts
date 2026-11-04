@@ -49,7 +49,7 @@ test('side by side, and the tree click scrolls to the file', async ({ page }) =>
   await expect(page.locator('#review .entry-head')).toHaveCount(2)
   await page.locator('#files .tree-row', { hasText: 'main.ts' }).click()
   await expect(page.locator('#files .tree-row.active')).toContainText('main.ts')
-  await expect(page.locator('.entry.flashed .entry-head')).toContainText('main.ts')
+  await expect(page.locator('.entry.current .entry-head')).toContainText('main.ts')
   await expect(ready(page)).toHaveCount(2)
   await expect(page.locator('.cm-mergeView').first()).toBeVisible()
   await shoot(page, 'single-split.png')

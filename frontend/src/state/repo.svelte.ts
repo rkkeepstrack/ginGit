@@ -1,5 +1,6 @@
 import { api, events, ApiError } from '../lib/api'
 import type { Commit, RecentRepo, Ref, RepoInfo } from '../lib/types'
+import { clear } from './selection.svelte'
 
 /**
  * Lookup tables that follow `commits`. They are filled in place as chunks
@@ -19,7 +20,6 @@ class RepoStore {
   maxLanes = $state(1)
   loading = $state(false)
   loadId = $state(0)
-  total = $state<number | null>(null)
   error = $state<string | null>(null)
   changedSinceLoad = $state(false)
   recent = $state.raw<RecentRepo[]>([])
@@ -43,8 +43,9 @@ function indexRefs(refs: Ref[]): Map<string, Ref[]> {
 
 let loadSeq = 0
 
-/** Opens (or re-opens) a path and streams its history. */
+/** Opens (or re-opens) a path and streams its history. A refresh keeps the selection, a switch drops it. */
 async function load(path: string) {
+  if (path !== repo.info?.path) clear()
   try {
     const info = await api.openRepository(path)
     const refs = await api.refs(info.path)
@@ -59,7 +60,6 @@ async function load(path: string) {
     repo.maxLanes = 1
     repo.loading = true
     repo.loadId = loadId
-    repo.total = null
     repo.error = null
     repo.changedSinceLoad = false
     await api.loadHistory(info.path, loadId)
@@ -67,7 +67,7 @@ async function load(path: string) {
   } catch (e) {
     const err = e as ApiError
     if (err.kind === 'cancelled') return
-    repo.error = err.display ?? String(e)
+    repo.error = err.display
     repo.loading = false
     repo.gitMissing = err.kind === 'git_not_found'
   }
@@ -80,7 +80,7 @@ export async function open(path?: string) {
     const info = await api.openRepositoryDialog()
     await load(info.path)
   } catch (e) {
-    if ((e as ApiError).kind !== 'cancelled') repo.error = (e as ApiError).display ?? String(e)
+    if ((e as ApiError).kind !== 'cancelled') repo.error = (e as ApiError).display
   }
 }
 
@@ -131,10 +131,9 @@ export function subscribeRepoEvents() {
     repo.commits = repo.commits.concat(rows)
     repo.maxLanes = maxLanes
   })
-  events.onHistoryDone(({ loadId, total }) => {
+  events.onHistoryDone(({ loadId }) => {
     if (loadId !== repo.loadId) return
     repo.loading = false
-    repo.total = total
   })
   events.onHistoryError(({ loadId, message }) => {
     if (loadId !== repo.loadId) return

@@ -58,18 +58,19 @@ export function setText(text: string) {
   schedule()
 }
 
-// Matches are row indices into the history: a reload invalidates them, and the
-// search re-runs once the new history has arrived.
+// Matches are row indices into the history: a load in progress invalidates
+// them (and any answer still in flight), and the search re-runs once the new
+// history has arrived.
 $effect.root(() => {
-  let lastLoad = 0
   $effect(() => {
-    const id = repo.loadId
-    if (id !== lastLoad) { lastLoad = id; untrack(() => { search.matches = null; search.names = {} }) }
-  })
-  let wasLoading = false
-  $effect(() => {
+    void repo.loadId
     const loading = repo.loading
-    if (wasLoading && !loading) untrack(schedule)
-    wasLoading = loading
+    untrack(() => {
+      generation++
+      search.matches = null
+      search.names = {}
+      search.pending = false
+      if (!loading) schedule()
+    })
   })
 })

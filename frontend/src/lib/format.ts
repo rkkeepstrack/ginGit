@@ -25,6 +25,11 @@ export function formatCount(n: number): string {
   return n.toLocaleString()
 }
 
+/** "1 file", "2 files"; an irregular plural is passed in. */
+export function plural(n: number, word: string, pluralForm = word + 's'): string {
+  return `${n} ${n === 1 ? word : pluralForm}`
+}
+
 /** Home becomes ~; long paths keep their tail, which is the part that tells repos apart. */
 export function shortenPath(p: string): string {
   const home = /^\/(?:Users|home)\/[^/]+/.exec(p)

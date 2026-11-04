@@ -19,10 +19,7 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
     const repoOpen = (root: string) => root === fx.repo.path
     const marks: Record<string, string> = { ...(opts.reviewed ?? {}) }
 
-    localStorage.setItem('gingit-ui', JSON.stringify({
-      state: { theme: opts.theme ?? 'pastel', diffMode: opts.diffMode ?? 'unified', fileSort: 'name', flatFiles: false },
-      version: 3,
-    }))
+    localStorage.setItem('gingit-ui', JSON.stringify({ theme: opts.theme ?? 'pastel', diffMode: opts.diffMode ?? 'unified', fileSort: 'name', flatFiles: false }))
 
     const App = {
       InitialRepository: async () => (opts.initialRepo === false ? '' : fx.repo.path),

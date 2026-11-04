@@ -25,9 +25,12 @@
   --color-base-content: #1f2430;
 }
 
+/* Same geometry as pastel; dim's own would turn the pills into rounded boxes in the dark. */
 @plugin "daisyui/theme" {
   name: "dim";
   prefersdark: true;
+  --radius-field: 2rem;
+  --border: 2px;
   --color-primary: #74c0fc;
   --color-primary-content: #0b1a2a;
   --color-secondary: #b197fc;
@@ -51,10 +54,8 @@
   --lane-6: #e64980;
   --lane-7: #74b816;
   --diff-add-bg: #d3f9d8;
-  --diff-add-gutter: #b2f2bb;
   --diff-add-text: #c0eec8;
   --diff-del-bg: #ffe3e3;
-  --diff-del-gutter: #ffc9c9;
   --diff-del-text: #ffb8b8;
   --diff-collapsed-bg: #f1f3f5;
   --diff-add-bar: #2b2;
@@ -62,7 +63,6 @@
   --review-ok: #2f9e44;
   --review-stale: #e8a000;
   --ct-added: #2f9e44;
-  --ct-modified: #1b5fd1;
   --ct-deleted: #c92a2a;
   --ct-renamed: #7048e8;
   --kind-feat: #2f9e44;
@@ -103,10 +103,8 @@
   --lane-6: #f783ac;
   --lane-7: #c0eb75;
   --diff-add-bg: #1f3a2a;
-  --diff-add-gutter: #2b5a3b;
   --diff-add-text: #2f6b45;
   --diff-del-bg: #44262b;
-  --diff-del-gutter: #6b3139;
   --diff-del-text: #7e3a44;
   --diff-collapsed-bg: #2a2e37;
   --diff-add-bar: #8f8;
@@ -114,7 +112,6 @@
   --review-ok: #69db7c;
   --review-stale: #ffd43b;
   --ct-added: #69db7c;
-  --ct-modified: #74c0fc;
   --ct-deleted: #ff8787;
   --ct-renamed: #b197fc;
   --kind-feat: #69db7c;
@@ -188,7 +185,6 @@ body {
 /* Hairline dividers instead of borders everywhere. */
 .hairline-b { box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 .hairline-t { box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
-.hairline-r { box-shadow: inset -1px 0 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 
 /* Commit rows */
 .log-row { white-space: nowrap; cursor: default; }
@@ -233,10 +229,10 @@ body {
 .ft-media { color: var(--ft-media); }
 .ft-lock { color: var(--ft-lock); }
 
-/* Change-type letters: a quiet colored glyph, no box. */
+/* Change-type marks: a quiet colored letter or word, no box. */
 .ct { display: inline-flex; width: 14px; height: 16px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center; font-family: var(--font-ui); flex-shrink: 0; }
+.ct-label { font-size: 11px; font-weight: 500; flex-shrink: 0; }
 .ct-added { color: var(--ct-added); }
-.ct-modified { color: var(--ct-modified); }
 .ct-deleted { color: var(--ct-deleted); }
 .ct-renamed { color: var(--ct-renamed); }
 
@@ -266,7 +262,7 @@ body {
 .entry-head:hover { background: color-mix(in oklab, var(--color-base-content) 6%, var(--color-base-200)); }
 .entry-head:active { background: color-mix(in oklab, var(--color-base-content) 10%, var(--color-base-200)); }
 .entry-head.open { box-shadow: inset 2px 0 0 var(--brand); }
-.entry.flashed .entry-head { background: color-mix(in oklab, var(--brand) 22%, var(--color-base-200)); transition: background 600ms ease-out 400ms; }
+.entry.current .entry-head { background: color-mix(in oklab, var(--brand) 22%, var(--color-base-200)); }
 .tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: pointer; font-size: 12.5px; }
 .tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .tree-row.active { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
@@ -283,12 +279,9 @@ body {
 .input:focus-within, .input:focus { outline: none; border-color: var(--brand); box-shadow: none; }
 
 /* CodeMirror */
-.cm-host { height: 100%; contain: layout paint; }
-.cm-host .cm-mergeView { height: 100%; }
-.cm-host .cm-mergeViewEditors { height: 100%; }
+.cm-host { contain: layout paint; }
 .cm-host .cm-mergeViewEditor { overflow: hidden; }
-.cm-host .cm-editor { height: 100%; font-size: 12px; background: var(--color-base-100); color: var(--color-base-content); }
-.cm-host.stacked .cm-editor { height: auto; }
+.cm-host .cm-editor { font-size: 12px; background: var(--color-base-100); color: var(--color-base-content); }
 .cm-host .cm-scroller { font-family: var(--font-mono); line-height: 1.5; }
 .cm-host .cm-gutters { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); color: color-mix(in oklab, var(--color-base-content) 45%, transparent); border-right: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 .cm-host .cm-content { -webkit-user-select: text; user-select: text; }
@@ -296,6 +289,7 @@ body {
 .cm-host .cm-changedText { background: var(--diff-add-text); }
 .cm-host .cm-deletedChunk { background: var(--diff-del-bg); }
 .cm-host .cm-deletedText { background: var(--diff-del-text); }
+/* The unified view marks inserted lines with its own class, not changedLine. */
 .cm-host .cm-insertedLine { background: var(--diff-add-bg); }
 .cm-host .cm-insertedLine .cm-changedText { background: var(--diff-add-text); }
 .cm-host .cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
@@ -320,13 +314,13 @@ body {
 .cm-host.single-added .cm-changedLineGutter { background: var(--diff-add-bar); }
 .cm-host.single-deleted .cm-deletedLineGutter { background: var(--diff-del-bar); }
 .cm-host .cm-findMatch { background: color-mix(in oklab, var(--brand) 35%, transparent); border-radius: 2px; }
-.cm-host .cm-selectionBackground, .cm-host .cm-editor .cm-selectionBackground { background: color-mix(in oklab, var(--brand) 30%, transparent) !important; }
+.cm-host .cm-selectionBackground { background: color-mix(in oklab, var(--brand) 30%, transparent) !important; }
 .cm-host .cm-mergeSpacer { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); }
 .cm-host .cm-editor.cm-focused { outline: none; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-base-content) 18%, transparent); border-radius: 6px; border: 2px solid transparent; background-clip: padding-box; }
-::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-base-content) 30%, transparent); background-clip: padding-box; border: 2px solid transparent; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-base-content) 30%, transparent); }
 ::-webkit-scrollbar-track { background: transparent; }
 
 .stat-add { color: var(--ct-added); }

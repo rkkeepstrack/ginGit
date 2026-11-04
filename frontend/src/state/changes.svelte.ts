@@ -1,6 +1,7 @@
 import { untrack } from 'svelte'
 import { ApiError, api } from '../lib/api'
 import type { ChangeSet } from '../lib/types'
+import { files } from './files.svelte'
 import { recoverIfNotOpen, repo } from './repo.svelte'
 import { selection, setFile } from './selection.svelte'
 
@@ -13,8 +14,6 @@ class ChangesStore {
   changeSet = $state.raw<ChangeSet | null>(null)
   loading = $state(false)
   error = $state<string | null>(null)
-  /** File order as the files panel shows it; it drives prev/next navigation. */
-  paths = $state.raw<string[]>([])
 }
 
 export const changes = new ChangesStore()
@@ -71,7 +70,7 @@ export async function markReviewed(path: string, seen: boolean) {
 /** Moves the open file forward or back through the files panel's order. */
 export function stepFile(delta: number) {
   const { file } = selection
-  const { paths } = changes
+  const paths = files.visible.map((f) => f.path)
   if (paths.length === 0) return
   const i = file ? paths.indexOf(file) : -1
   const next = i < 0 ? (delta > 0 ? 0 : paths.length - 1) : Math.max(0, Math.min(paths.length - 1, i + delta))

@@ -1,11 +1,12 @@
 import { api } from '../lib/api'
+import { plural } from '../lib/format'
 import { applyClick, type ClickModifiers } from '../lib/selection'
 import type { Ref } from '../lib/types'
 import { positionOf, repo } from './repo.svelte'
 import { setText } from './search.svelte'
 
 /** Selected hashes newest first. Only commits present in the loaded history count. */
-export function sortedSelection(selected: Set<string>): string[] {
+function sortedSelection(selected: Set<string>): string[] {
   return [...selected]
     .filter((h) => positionOf(h) !== undefined)
     .sort((a, b) => positionOf(a)! - positionOf(b)!)
@@ -34,12 +35,14 @@ export function click(index: number, mods: ClickModifiers) {
   selection.file = null
 }
 
-/** visible lists the commit indices currently shown (search may hide some). */
-export function moveCursor(delta: number, extend: boolean, visible: readonly number[]) {
-  if (visible.length === 0) return
-  const pos = selection.cursor === null ? -1 : visible.indexOf(selection.cursor)
-  const next = Math.max(0, Math.min(visible.length - 1, pos + delta))
-  click(visible[next], { toggle: false, range: extend })
+/** visible lists the commit indices a search left on screen; null means all of them. */
+export function moveCursor(delta: number, extend: boolean, visible: readonly number[] | null) {
+  const count = visible ? visible.length : repo.commits.length
+  if (count === 0) return
+  const cursor = selection.cursor
+  const pos = cursor === null ? -1 : visible ? visible.indexOf(cursor) : cursor
+  const next = Math.max(0, Math.min(count - 1, pos + delta))
+  click(visible ? visible[next] : next, { toggle: false, range: extend })
 }
 
 export function clear() {
@@ -78,5 +81,5 @@ export async function selectBranch(ref: Ref, opts: { reveal?: boolean } = {}): P
   // effect must see the full history, not the hits, when the cursor moves.
   setText('')
   selectMany(hashes, opts)
-  return `Selected ${hashes.length} ${hashes.length === 1 ? 'commit' : 'commits'} on ${ref.name}`
+  return `Selected ${plural(hashes.length, 'commit')} on ${ref.name}`
 }

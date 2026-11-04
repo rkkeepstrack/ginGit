@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Ref } from '../../lib/types'
+  import { hint } from '../../state/hint.svelte'
   import RefPill from './RefPill.svelte'
 
   const MAX = 3
@@ -13,6 +14,6 @@
 {#if refs.length > 0}
   <span class="inline-flex items-center gap-1 mr-2 align-middle">
     {#each shown as r (r.full)}<RefPill {r} />{/each}
-    {#if rest > 0}<span class="ref-pill remote" title={refs.slice(MAX).map((r) => r.name).join('\n')}>+{rest}</span>{/if}
+    {#if rest > 0}<span class="ref-pill remote" use:hint={refs.slice(MAX).map((r) => r.name).join(', ')}>+{rest}</span>{/if}
   </span>
 {/if}

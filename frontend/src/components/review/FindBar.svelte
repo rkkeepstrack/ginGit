@@ -3,6 +3,7 @@
   import ChevronUp from '@lucide/svelte/icons/chevron-up'
   import Search from '@lucide/svelte/icons/search'
   import X from '@lucide/svelte/icons/x'
+  import { plural } from '../../lib/format'
   import { modKey } from '../../lib/platform'
   import { closeFind, find, setQuery, step } from '../../state/find.svelte'
   import { hint } from '../../state/hint.svelte'
@@ -15,7 +16,7 @@
     find.pending ? 'searching…'
       : !find.query.trim() ? ''
       : find.total === 0 ? 'no matches'
-      : `${find.total} ${find.total === 1 ? 'match' : 'matches'} in ${find.files} ${find.files === 1 ? 'file' : 'files'}${find.index >= 0 ? ` · ${find.index + 1} of ${find.matches.length} on screen` : ''}`,
+      : `${plural(find.total, 'match', 'matches')} in ${plural(find.files, 'file')}${find.index >= 0 ? ` · ${find.index + 1} of ${find.matches.length} on screen` : ''}`,
   )
 </script>
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { abbreviatePath, shortenPath } from './format'
+import { abbreviatePath, plural, shortenPath } from './format'
 
 describe('paths', () => {
   it('shortens home and keeps short paths whole', () => {
@@ -14,4 +14,10 @@ describe('paths', () => {
     expect(out.endsWith('bigrepo.git')).toBe(true)
     expect(out).toContain('…')
   })
+})
+
+it('plural', () => {
+  expect(plural(1, 'file')).toBe('1 file')
+  expect(plural(0, 'file')).toBe('0 files')
+  expect(plural(2, 'match', 'matches')).toBe('2 matches')
 })

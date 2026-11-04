@@ -53,17 +53,10 @@ const category = new Map<Icon, FileCategory>([
   [FileImage, 'media'], [Film, 'media'], [AudioLines, 'media'], [FileArchive, 'media'], [FileLock, 'lock'],
 ])
 
-/** Picks a lucide glyph for a path. Always returns something. */
-export function iconFor(path: string): Icon {
+/** A lucide glyph for a path and the category it is tinted by. Always returns something. */
+export function fileIcon(path: string): { Icon: Icon; category: FileCategory } {
   const name = (path.split('/').pop() ?? path).toLowerCase()
-  if (byName[name]) return byName[name]
-  if (name.endsWith('.lock')) return FileLock
   const dot = name.lastIndexOf('.')
-  const ext = dot >= 0 ? name.slice(dot + 1) : ''
-  return byExt[ext] ?? FileText
-}
-
-/** The category of a path's icon, for tinting. */
-export function categoryFor(path: string): FileCategory {
-  return category.get(iconFor(path)) ?? 'text'
+  const Icon = byName[name] ?? (name.endsWith('.lock') ? FileLock : byExt[dot >= 0 ? name.slice(dot + 1) : ''] ?? FileText)
+  return { Icon, category: category.get(Icon) ?? 'text' }
 }

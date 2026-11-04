@@ -2,7 +2,7 @@
   import { EditorView, GutterMarker, gutter } from '@codemirror/view'
   import { mountEditor, readOnlyBase } from './editor'
 
-  let { text, path, kind, stacked = false }: { text: string; path: string; kind: 'added' | 'deleted'; stacked?: boolean } = $props()
+  let { text, path, kind }: { text: string; path: string; kind: 'added' | 'deleted' } = $props()
   let host = $state<HTMLDivElement>()
 
   // Same 3px bar the merge view draws next to changed lines.
@@ -26,4 +26,4 @@
   })
 </script>
 
-<div bind:this={host} class="cm-host single-{kind}" class:stacked></div>
+<div bind:this={host} class="cm-host single-{kind}"></div>

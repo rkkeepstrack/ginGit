@@ -9,18 +9,20 @@
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
   import { changeMark } from '../../lib/changeType'
-  import { categoryFor, iconFor } from '../../lib/fileIcon'
+  import { fileIcon } from '../../lib/fileIcon'
+  import { activate } from '../../lib/shortcuts'
   import type { DiffResult, FileChange } from '../../lib/types'
   import { hint } from '../../state/hint.svelte'
   import { ui } from '../../state/ui.svelte'
   import Notice from '../shell/Notice.svelte'
+  import Stats from '../files/Stats.svelte'
   import DiffBody from './DiffBody.svelte'
 
-  let { file, collapsed, flashed = false, result, error, ontoggle, onnear, onmarked, scrollRoot }: {
+  let { file, collapsed, current = false, result, error, ontoggle, onnear, onmarked, scrollRoot }: {
     file: FileChange
     collapsed: boolean
-    /** Briefly true after the file was picked in the tree, to show where it landed. */
-    flashed?: boolean
+    /** The file picked in the tree; its header stays tinted so the eye finds it. */
+    current?: boolean
     result: DiffResult | null
     error: string | null
     ontoggle: () => void
@@ -41,14 +43,16 @@
   let sinceResult = $state.raw<DiffResult | null>(null)
   $effect(() => {
     if (!since || file.review !== 'stale' || !repo.info) { sinceResult = null; return }
-    const root = repo.info.path
-    api.fileDiffSince(root, selection.hashes, file.path).then((r) => { sinceResult = r }, () => { since = false })
+    let stale = false
+    api.fileDiffSince(repo.info.path, selection.hashes, file.path).then((r) => { if (!stale) sinceResult = r }, () => { if (!stale) since = false })
+    return () => { stale = true }
   })
 
   let el = $state<HTMLDivElement>()
   let near = $state(false)
-  const Icon = $derived(iconFor(file.path))
+  const { Icon, category } = $derived(fileIcon(file.path))
   const typeMark = $derived(changeMark[file.type])
+  const onKey = activate(() => ontoggle())
 
   // Only fetch once the entry is within a screen or so of the viewport.
   $effect(() => {
@@ -64,20 +68,20 @@
 
 </script>
 
-<div bind:this={el} class="entry" class:flashed data-path={file.path}>
+<div bind:this={el} class="entry" class:current data-path={file.path}>
   <div
     class="entry-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
     class:open={!collapsed}
     class:reviewed={file.review === 'reviewed'}
     class:stale={file.review === 'stale'}
     onclick={ontoggle}
-    onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ontoggle() } else if (e.key === 'v') { e.preventDefault(); void mark(file.review !== 'reviewed') } }}
+    onkeydown={(e) => { if (e.key === 'v') { e.preventDefault(); void mark(file.review !== 'reviewed') } else onKey(e) }}
     role="button"
     tabindex="0"
     use:hint={collapsed ? 'Expand' : 'Collapse'}
   >
     {#if collapsed}<ChevronRight size={14} strokeWidth={1.75} class="opacity-50 shrink-0" />{:else}<ChevronDown size={14} strokeWidth={1.75} class="opacity-50 shrink-0" />{/if}
-    <Icon size={14} strokeWidth={1.75} class="shrink-0 opacity-80 ft-{categoryFor(file.path)}" />
+    <Icon size={14} strokeWidth={1.75} class="shrink-0 opacity-80 ft-{category}" />
     <span class="truncate select-text fn-{file.type}" title={file.path}>
       {#if file.oldPath}<span class="opacity-50">{file.oldPath} → </span>{/if}{file.path}
     </span>
@@ -87,9 +91,9 @@
     {#if file.binary}
       <span class="opacity-40 text-[10.5px]">binary</span>
     {:else}
-      <span class="text-[11px] tabular-nums shrink-0"><span class="stat-add">+{file.additions}</span> <span class="stat-del">−{file.deletions}</span></span>
+      <Stats additions={file.additions} deletions={file.deletions} />
     {/if}
-    {#if typeMark}<span class="ct-{file.type} text-[11px] font-medium shrink-0">{typeMark.label}</span>{/if}
+    {#if typeMark}<span class="ct-label ct-{file.type}">{typeMark.label}</span>{/if}
     {#if file.review === 'stale'}
       <button type="button" class="btn btn-ghost btn-xs" class:btn-active={since} onmousedown={(e) => e.stopPropagation()} onclick={(e) => { e.stopPropagation(); since = !since }} use:hint={since ? 'Show the whole diff' : 'Show only what changed since you reviewed it'}>
         <History size={13} strokeWidth={1.75} /> since
@@ -107,10 +111,8 @@
           {/each}
         </div>
       {/if}
-      {#if since && sinceResult}
-        <DiffBody result={sinceResult} path={file.path} mode={ui.diffMode} stacked={true} />
-      {:else if result}
-        <DiffBody result={result} path={file.path} mode={ui.diffMode} stacked={true} />
+      {#if (since && sinceResult) || result}
+        <DiffBody result={(since && sinceResult) || result!} path={file.path} mode={ui.diffMode} />
       {/if}
     </div>
   {/if}

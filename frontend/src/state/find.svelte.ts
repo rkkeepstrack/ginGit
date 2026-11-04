@@ -1,6 +1,6 @@
 import { untrack } from 'svelte'
 import { ApiError, api } from '../lib/api'
-import { collectMatches, highlightMatches, revealMatch, type Match } from '../components/review/editor'
+import { collectMatches, highlightMatches, revealMatch, type Match } from './editors'
 import { recoverIfNotOpen, repo } from './repo.svelte'
 import { selection } from './selection.svelte'
 
@@ -50,11 +50,6 @@ async function run() {
     if (!recoverIfNotOpen(e as ApiError)) find.counts = {}
     find.pending = false
   }
-}
-
-export function openFind() {
-  find.open = true
-  queueMicrotask(() => (document.getElementById('find-input') as HTMLInputElement | null)?.select())
 }
 
 export function closeFind() {

@@ -17,10 +17,7 @@ function restore(): Persisted {
   try {
     const raw = localStorage.getItem(KEY)
     if (!raw) return defaults
-    const parsed = JSON.parse(raw)
-    // Older builds stored a zustand envelope; tolerate both shapes.
-    const state = parsed.state ?? parsed
-    return { ...defaults, ...state }
+    return { ...defaults, ...JSON.parse(raw) }
   } catch {
     return defaults
   }

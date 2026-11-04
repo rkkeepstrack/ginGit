@@ -1,48 +1,34 @@
 <script lang="ts">
   import ChevronsDownUp from '@lucide/svelte/icons/chevrons-down-up'
   import ChevronsUpDown from '@lucide/svelte/icons/chevrons-up-down'
+  import { tick, untrack } from 'svelte'
   import { ApiError, api } from '../../lib/api'
-  import type { DiffResult, FileChange } from '../../lib/types'
-  import { changes } from '../../state/changes.svelte'
+  import { plural } from '../../lib/format'
+  import type { DiffResult } from '../../lib/types'
+  import { files } from '../../state/files.svelte'
+  import { find } from '../../state/find.svelte'
   import { hint } from '../../state/hint.svelte'
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
-  import { tick } from 'svelte'
-  import ReviewEntry from './ReviewEntry.svelte'
   import FindBar from './FindBar.svelte'
-  import { find } from '../../state/find.svelte'
+  import ReviewEntry from './ReviewEntry.svelte'
 
   // Every changed file, one collapsible entry each, in the files panel's order.
-  const files = $derived.by(() => {
-    const byPath = new Map(changes.changeSet?.files.map((f) => [f.path, f]))
-    return changes.paths.map((p) => byPath.get(p)).filter((f): f is FileChange => !!f)
-  })
-  let collapsed = $state.raw<Set<string>>(new Set())
-  let scroller = $state<HTMLDivElement>()
-  const allCollapsed = $derived(collapsed.size >= files.length && files.length > 0)
-  const reviewed = $derived(files.filter((f) => f.review === 'reviewed').length)
+  const entries = $derived(files.visible)
   // Reviewed files start folded; a mark folds its entry.
-  let seeded = false
-  $effect(() => {
-    if (seeded || files.length === 0) return
-    seeded = true
-    collapsed = new Set(files.filter((f) => f.review === 'reviewed').map((f) => f.path))
-  })
+  let collapsed = $state.raw<Set<string>>(new Set(untrack(() => files.visible.filter((f) => f.review === 'reviewed').map((f) => f.path))))
+  let scroller = $state<HTMLDivElement>()
+  const allCollapsed = $derived(collapsed.size >= entries.length && entries.length > 0)
+  const reviewed = $derived(entries.filter((f) => f.review === 'reviewed').length)
   const fold = (path: string) => { collapsed = new Set([...collapsed, path]) }
 
   // The file picked in the tree (or with [ and ]): open its entry and bring it to the top.
-  let flashed = $state<string | null>(null)
   $effect(() => {
     const path = selection.file
     if (!path || !scroller) return
     if (collapsed.has(path)) { const n = new Set(collapsed); n.delete(path); collapsed = n }
     want(path)
-    void tick().then(() => {
-      const el = scroller?.querySelector<HTMLElement>(`[data-path="${CSS.escape(path)}"]`)
-      el?.scrollIntoView({ block: 'start', behavior: 'smooth' })
-      flashed = path
-      setTimeout(() => { if (flashed === path) flashed = null }, 1200)
-    })
+    void tick().then(() => scroller?.querySelector(`[data-path="${CSS.escape(path)}"]`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }))
   })
   // While a find is active, only files with a hit stay open, and they load.
   const isCollapsed = (path: string) => (find.counts ? !(path in find.counts) : collapsed.has(path))
@@ -73,7 +59,7 @@
       const got = await api.fileDiffs(root, selection.hashes, paths)
       results = new Map([...results, ...Object.entries(got)])
     } catch (e) {
-      const message = (e as ApiError).display ?? String(e)
+      const message = (e as ApiError).display
       errors = new Map([...errors, ...paths.map((p) => [p, message] as const)])
     }
   }
@@ -87,20 +73,20 @@
 
 <div class="flex flex-col h-full min-h-0" id="review">
   <div class="panel-head hairline-b">
-    <span class="font-medium tabular-nums">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
-    {#if reviewed > 0}<span class="opacity-60 tabular-nums">{reviewed} of {files.length} reviewed</span>{/if}
+    <span class="font-medium tabular-nums">{plural(entries.length, 'file')}</span>
+    {#if reviewed > 0}<span class="opacity-60 tabular-nums">{reviewed} of {entries.length} reviewed</span>{/if}
     <div class="flex-1"></div>
-    <button class="btn btn-ghost btn-xs btn-square" onclick={() => (collapsed = allCollapsed ? new Set() : new Set(files.map((f) => f.path)))} use:hint={allCollapsed ? 'Expand all files' : 'Collapse all files'}>
+    <button class="btn btn-ghost btn-xs btn-square" onclick={() => (collapsed = allCollapsed ? new Set() : new Set(entries.map((f) => f.path)))} use:hint={allCollapsed ? 'Expand all files' : 'Collapse all files'}>
       {#if allCollapsed}<ChevronsUpDown size={15} strokeWidth={1.75} />{:else}<ChevronsDownUp size={15} strokeWidth={1.75} />{/if}
     </button>
   </div>
   {#if find.open}<FindBar />{/if}
   <div bind:this={scroller} class="flex-1 overflow-auto">
-    {#each files as f (f.path)}
+    {#each entries as f (f.path)}
       <ReviewEntry
         file={f}
         collapsed={isCollapsed(f.path)}
-        flashed={flashed === f.path}
+        current={selection.file === f.path}
         result={results.get(f.path) ?? null}
         error={errors.get(f.path) ?? null}
         ontoggle={() => toggle(f.path)}

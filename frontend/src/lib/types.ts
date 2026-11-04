@@ -1,5 +1,5 @@
 // Plain types mirroring the Go JSON. The generated wailsjs classes are
-// awkward to use in React state, so everything downstream uses these.
+// awkward to hold in stores, so everything downstream uses these.
 
 export interface Segment { from: number; to: number; color: number }
 export interface Row { lane: number; color: number; segments: Segment[]; lanes: number }

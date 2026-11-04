@@ -4,7 +4,7 @@
   import type { DiffMode } from '../../state/ui.svelte'
   import { mountEditor, readOnlyBase } from './editor'
 
-  let { oldText, newText, path, mode, stacked = false }: { oldText: string; newText: string; path: string; mode: DiffMode; stacked?: boolean } = $props()
+  let { oldText, newText, path, mode }: { oldText: string; newText: string; path: string; mode: DiffMode } = $props()
   let host = $state<HTMLDivElement>()
   const collapseUnchanged = { margin: 3, minSize: 4 }
 
@@ -28,4 +28,4 @@
   })
 </script>
 
-<div bind:this={host} class="cm-host" class:stacked></div>
+<div bind:this={host} class="cm-host"></div>

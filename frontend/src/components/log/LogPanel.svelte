@@ -1,12 +1,8 @@
-<script lang="ts" module>
-  /** True while a jump glides; editor mounting waits for it. */
-  export const gliding = $state({ now: false })
-</script>
-
 <script lang="ts">
   import { untrack } from 'svelte'
   import { authorWidth, fitColumns } from '../../lib/columns'
   import { scrollTopFor, visibleRange } from '../../lib/virtual'
+  import { gliding } from '../../state/gliding.svelte'
   import { repo } from '../../state/repo.svelte'
   import { search } from '../../state/search.svelte'
   import { moveCursor, selection } from '../../state/selection.svelte'
@@ -85,8 +81,7 @@
   function onKeyDown(e: KeyboardEvent) {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
     e.preventDefault()
-    const all = search.matches ? visible : repo.commits.map((_, i) => i)
-    moveCursor(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, all)
+    moveCursor(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
   }
 </script>
 
