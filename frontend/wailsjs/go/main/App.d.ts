@@ -9,6 +9,8 @@ export function BranchCommits(arg1:string,arg2:string):Promise<Array<string>>;
 
 export function FileDiff(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
 
+export function FileDiffSince(arg1:string,arg2:Array<string>,arg3:string):Promise<diff.Result>;
+
 export function FileDiffs(arg1:string,arg2:Array<string>,arg3:Array<string>):Promise<Record<string, diff.Result>>;
 
 export function ForgetRepository(arg1:string):Promise<void>;
@@ -18,6 +20,8 @@ export function InitialRepository():Promise<string>;
 export function ListChanges(arg1:string,arg2:Array<string>):Promise<changes.ChangeSet>;
 
 export function LoadHistory(arg1:string,arg2:number):Promise<void>;
+
+export function MarkReviewed(arg1:string,arg2:Array<string>,arg3:string,arg4:boolean):Promise<void>;
 
 export function NameCommits(arg1:string,arg2:Array<string>):Promise<Record<string, string>>;
 

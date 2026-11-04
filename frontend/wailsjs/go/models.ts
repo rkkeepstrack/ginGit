@@ -8,6 +8,7 @@ export namespace changes {
 	    deletions: number;
 	    binary: boolean;
 	    touchCount: number;
+	    review: string;
 	    composable: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -23,6 +24,7 @@ export namespace changes {
 	        this.deletions = source["deletions"];
 	        this.binary = source["binary"];
 	        this.touchCount = source["touchCount"];
+	        this.review = source["review"];
 	        this.composable = source["composable"];
 	    }
 	}

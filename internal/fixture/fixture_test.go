@@ -26,7 +26,9 @@ type Fixture struct {
 	Diffs    map[string]*diff.Result       `json:"diffs"`   // key: changes.Key + "|" + path
 	Branches map[string][]string           `json:"branches"`
 	Names    map[string]string             `json:"names"`
-	Labels   map[string]string             `json:"labels"` // label -> hash, so tests can pick commits by name
+	// NewestBlob lets the mock bridge tell a reviewed version from a stale one.
+	NewestBlob map[string]string `json:"newestBlob"` // key: changes.Key + "|" + path
+	Labels     map[string]string `json:"labels"`     // label -> hash, so tests can pick commits by name
 }
 
 // script builds a history with everything the UI renders differently:
@@ -92,7 +94,7 @@ func TestGenerate(t *testing.T) {
 		t.Fatal(err)
 	}
 	ix := history.NewIndex()
-	fx := Fixture{Repo: info, Refs: refs, Changes: map[string]*changes.ChangeSet{}, Diffs: map[string]*diff.Result{}, Branches: map[string][]string{}, Labels: r.Hashes}
+	fx := Fixture{Repo: info, Refs: refs, Changes: map[string]*changes.ChangeSet{}, Diffs: map[string]*diff.Result{}, Branches: map[string][]string{}, Labels: r.Hashes, NewestBlob: map[string]string{}}
 	if _, err := history.Load(ctx, r.Path, history.Options{ChunkSize: 1000}, func(cs []history.Commit) {
 		ix.Append(cs)
 		fx.Commits = append(fx.Commits, cs...)
@@ -144,6 +146,7 @@ func TestGenerate(t *testing.T) {
 				t.Fatal(err)
 			}
 			fx.Diffs[key+"|"+fc.Path] = res
+			fx.NewestBlob[key+"|"+fc.Path] = fc.Touches[0].NewBlob
 		}
 	}
 	data, err := json.MarshalIndent(fx, "", " ")

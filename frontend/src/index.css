@@ -59,6 +59,8 @@
   --diff-collapsed-bg: #f1f3f5;
   --diff-add-bar: #2b2;
   --diff-del-bar: #e43;
+  --review-ok: #2f9e44;
+  --review-stale: #e8a000;
   --ct-added: #2f9e44;
   --ct-modified: #1b5fd1;
   --ct-deleted: #c92a2a;
@@ -109,6 +111,8 @@
   --diff-collapsed-bg: #2a2e37;
   --diff-add-bar: #8f8;
   --diff-del-bar: #fa9;
+  --review-ok: #69db7c;
+  --review-stale: #ffd43b;
   --ct-added: #69db7c;
   --ct-modified: #74c0fc;
   --ct-deleted: #ff8787;
@@ -239,6 +243,14 @@ body {
 /* Placeholder for a diff that is still on its way: faint lines where code will be. */
 .skeleton-lines { display: flex; flex-direction: column; gap: 6px; }
 .skeleton-line { height: 12px; border-radius: 3px; background: color-mix(in oklab, var(--color-base-content) 6%, transparent); }
+
+/* Review marks: seen (green), seen an older version (amber), untouched (faint). */
+.review-reviewed { color: var(--review-ok); }
+.review-stale { color: var(--review-stale); }
+.review-none { opacity: 0.35; }
+.review-none:hover { opacity: 1; }
+.section-head.reviewed { opacity: 0.6; }
+.section-head.stale { box-shadow: inset 2px 0 0 var(--review-stale); }
 
 /* Accordion headers in the all-files review: solid bars with a gap between
    them, so a run of collapsed files reads as separate things. */

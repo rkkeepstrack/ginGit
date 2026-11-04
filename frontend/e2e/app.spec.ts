@@ -123,3 +123,23 @@ test('find in changes opens the matching files and steps through hits', async ({
   await expect(page.locator('#find-input')).toHaveCount(0)
   await expect(page.locator('#panel-diff .section-head.open')).toHaveCount(4)
 })
+
+test('marking a file as reviewed folds it, and a later change turns the mark stale', async ({ page }) => {
+  await installBridge(page, { reviewed: { 'README.md': 'some-older-blob' } })
+  await loaded(page)
+  await row(page, 'docs: more usage').click()
+  await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
+  await expect(page.locator('#panel-diff .section-head')).toHaveCount(4)
+  // README was reviewed at an older version: stale, open, with a "since" toggle
+  await expect(page.locator('#panel-diff .section-head.stale')).toHaveCount(1)
+  await expect(page.locator('#panel-diff .section-head.stale')).toContainText('README.md')
+  await expect(page.locator('#panel-diff .section-head.stale .btn', { hasText: 'since' })).toBeVisible()
+  // mark package.json: it folds and the counter appears
+  await page.locator('#panel-diff .section-head', { hasText: 'package.json' }).locator('.review').click()
+  await expect(page.locator('#panel-diff .section-head.reviewed')).toHaveCount(1)
+  await expect(page.locator('#panel-diff .section-head.reviewed')).not.toHaveClass(/open/)
+  await expect(page.locator('#panel-diff')).toContainText('1 of 4 reviewed')
+  await expect(page.locator('#panel-files .review-reviewed')).toHaveCount(1)
+  await expect(ready(page)).toHaveCount(2)
+  await shoot(page, 'reviewed.png')
+})

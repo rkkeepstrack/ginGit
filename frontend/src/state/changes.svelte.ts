@@ -60,6 +60,14 @@ $effect.root(() => {
   })
 })
 
+/** Records (or forgets) that the user has seen a file as shown, then refreshes the review states. */
+export async function markReviewed(path: string, seen: boolean) {
+  const root = repo.info?.path
+  if (!root) return
+  await api.markReviewed(root, selection.hashes, path, seen)
+  fetchChanges(root, selection.hashes)
+}
+
 /** Moves the open file forward or back through the files panel's order. */
 export function stepFile(delta: number) {
   const { file } = selection

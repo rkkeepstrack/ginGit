@@ -1,7 +1,13 @@
 <script lang="ts">
   import ChevronDown from '@lucide/svelte/icons/chevron-down'
   import ChevronRight from '@lucide/svelte/icons/chevron-right'
+  import History from '@lucide/svelte/icons/history'
   import Unlink from '@lucide/svelte/icons/unlink'
+  import ReviewMark from '../files/ReviewMark.svelte'
+  import { markReviewed } from '../../state/changes.svelte'
+  import { api } from '../../lib/api'
+  import { repo } from '../../state/repo.svelte'
+  import { selection } from '../../state/selection.svelte'
   import { changeMark } from '../../lib/changeType'
   import { categoryFor, iconFor } from '../../lib/fileIcon'
   import type { DiffResult, FileChange } from '../../lib/types'
@@ -10,7 +16,7 @@
   import Notice from '../shell/Notice.svelte'
   import DiffBody from './DiffBody.svelte'
 
-  let { file, collapsed, result, error, ontoggle, onnear, scrollRoot }: {
+  let { file, collapsed, result, error, ontoggle, onnear, onmarked, scrollRoot }: {
     file: FileChange
     collapsed: boolean
     result: DiffResult | null
@@ -18,13 +24,29 @@
     ontoggle: () => void
     /** Called once when the section comes within reach; the parent fetches in batches. */
     onnear: () => void
+    /** Called after a file was marked reviewed, so the parent can fold it. */
+    onmarked: () => void
     scrollRoot: HTMLElement | undefined
   } = $props()
+
+  async function mark(seen: boolean) {
+    await markReviewed(file.path, seen)
+    if (seen) onmarked()
+  }
+
+  // For a stale file: the change since the reviewed version instead of the whole diff.
+  let since = $state(false)
+  let sinceResult = $state.raw<DiffResult | null>(null)
+  $effect(() => {
+    if (!since || file.review !== 'stale' || !repo.info) { sinceResult = null; return }
+    const root = repo.info.path
+    api.fileDiffSince(root, selection.hashes, file.path).then((r) => { sinceResult = r }, () => { since = false })
+  })
 
   let el = $state<HTMLDivElement>()
   let near = $state(false)
   const Icon = $derived(iconFor(file.path))
-  const mark = $derived(changeMark[file.type])
+  const typeMark = $derived(changeMark[file.type])
 
   // Only fetch once the section is within a screen or so of the viewport.
   $effect(() => {
@@ -44,8 +66,10 @@
   <div
     class="section-head flex items-center gap-2 px-2 h-9 text-[12px] sticky top-0 z-10 select-none"
     class:open={!collapsed}
+    class:reviewed={file.review === 'reviewed'}
+    class:stale={file.review === 'stale'}
     onclick={ontoggle}
-    onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ontoggle() } }}
+    onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ontoggle() } else if (e.key === 'v') { e.preventDefault(); void mark(file.review !== 'reviewed') } }}
     role="button"
     tabindex="0"
     use:hint={collapsed ? 'Expand' : 'Collapse'}
@@ -63,7 +87,13 @@
     {:else}
       <span class="text-[11px] tabular-nums shrink-0"><span class="stat-add">+{file.additions}</span> <span class="stat-del">−{file.deletions}</span></span>
     {/if}
-    {#if mark}<span class="ct-{file.type} text-[11px] font-medium shrink-0">{mark.label}</span>{/if}
+    {#if typeMark}<span class="ct-{file.type} text-[11px] font-medium shrink-0">{typeMark.label}</span>{/if}
+    {#if file.review === 'stale'}
+      <button type="button" class="btn btn-ghost btn-xs" class:btn-active={since} onmousedown={(e) => e.stopPropagation()} onclick={(e) => { e.stopPropagation(); since = !since }} use:hint={since ? 'Show the whole diff' : 'Show only what changed since you reviewed it'}>
+        <History size={13} strokeWidth={1.75} /> since
+      </button>
+    {/if}
+    <ReviewMark review={file.review} onmark={mark} />
   </div>
   {#if !collapsed}
     <div>
@@ -75,7 +105,11 @@
           {/each}
         </div>
       {/if}
-      {#if result}<DiffBody result={result} path={file.path} mode={ui.diffMode} stacked={true} />{/if}
+      {#if since && sinceResult}
+        <DiffBody result={sinceResult} path={file.path} mode={ui.diffMode} stacked={true} />
+      {:else if result}
+        <DiffBody result={result} path={file.path} mode={ui.diffMode} stacked={true} />
+      {/if}
     </div>
   {/if}
 </div>

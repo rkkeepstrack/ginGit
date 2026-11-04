@@ -19,6 +19,15 @@
   let collapsed = $state.raw<Set<string>>(new Set())
   let scroller = $state<HTMLDivElement>()
   const allCollapsed = $derived(collapsed.size >= files.length && files.length > 0)
+  const reviewed = $derived(files.filter((f) => f.review === 'reviewed').length)
+  // Reviewed files start folded; a mark folds its section.
+  let seeded = false
+  $effect(() => {
+    if (seeded || files.length === 0) return
+    seeded = true
+    collapsed = new Set(files.filter((f) => f.review === 'reviewed').map((f) => f.path))
+  })
+  const fold = (path: string) => { collapsed = new Set([...collapsed, path]) }
   // While a find is active, only files with a hit stay open, and they load.
   const isCollapsed = (path: string) => (find.counts ? !(path in find.counts) : collapsed.has(path))
   $effect(() => { if (find.counts) for (const path of Object.keys(find.counts)) want(path) })
@@ -63,6 +72,7 @@
 <div class="flex flex-col h-full min-h-0" id="panel-diff">
   <div class="panel-head hairline-b">
     <span class="font-medium tabular-nums">{files.length} {files.length === 1 ? 'file' : 'files'}</span>
+    {#if reviewed > 0}<span class="opacity-60 tabular-nums">{reviewed} of {files.length} reviewed</span>{/if}
     <div class="flex-1"></div>
     <button class="btn btn-ghost btn-xs btn-square" onclick={() => (collapsed = allCollapsed ? new Set() : new Set(files.map((f) => f.path)))} use:hint={allCollapsed ? 'Expand all files' : 'Collapse all files'}>
       {#if allCollapsed}<ChevronsUpDown size={15} strokeWidth={1.75} />{:else}<ChevronsDownUp size={15} strokeWidth={1.75} />{/if}
@@ -78,6 +88,7 @@
         error={errors.get(f.path) ?? null}
         ontoggle={() => toggle(f.path)}
         onnear={() => want(f.path)}
+        onmarked={() => fold(f.path)}
         scrollRoot={scroller}
       />
     {/each}

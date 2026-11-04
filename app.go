@@ -19,14 +19,16 @@ import (
 	"ginGit/internal/gitcmd"
 	"ginGit/internal/history"
 	"ginGit/internal/repo"
+	"ginGit/internal/review"
 	"ginGit/internal/search"
 )
 
 // App is the Wails-bound facade. It holds the one open repository and what
 // was derived from its history; opening another repository replaces all of it.
 type App struct {
-	ctx    context.Context
-	recent *repo.RecentStore
+	ctx      context.Context
+	recent   *repo.RecentStore
+	reviewed *review.Store
 
 	mu       sync.Mutex
 	root     string
@@ -53,6 +55,9 @@ func (a *App) startup(ctx context.Context) {
 	fixFullscreenTitlebar()
 	if rs, err := repo.NewRecentStore(); err == nil {
 		a.recent = rs
+	}
+	if rv, err := review.NewStore(); err == nil {
+		a.reviewed = rv
 	}
 }
 
@@ -279,6 +284,15 @@ func (a *App) LoadHistory(root string, id int) error {
 // --- changes and diffs ----------------------------------------------------
 
 func (a *App) ListChanges(root string, hashes []string) (*changes.ChangeSet, error) {
+	cs, err := a.changeSet(root, hashes)
+	if err != nil {
+		return nil, err
+	}
+	return a.annotate(root, cs), nil
+}
+
+// changeSet is the cached, un-annotated change set.
+func (a *App) changeSet(root string, hashes []string) (*changes.ChangeSet, error) {
 	index, err := a.open(root)
 	if err != nil {
 		return nil, err
@@ -293,6 +307,89 @@ func (a *App) ListChanges(root string, hashes []string) (*changes.ChangeSet, err
 	}
 	a.changes.Put(key, cs)
 	return cs, nil
+}
+
+// newestBlob is the version of a file the review shows; a deletion is the
+// zero blob, which is still a version the user can mark as seen.
+func newestBlob(fc changes.FileChange) string {
+	if len(fc.Touches) == 0 {
+		return ""
+	}
+	return fc.Touches[0].NewBlob
+}
+
+// annotate stamps each file with the review state against the stored marks.
+// The change set in the cache stays untouched; marks change independently.
+func (a *App) annotate(root string, cs *changes.ChangeSet) *changes.ChangeSet {
+	if a.reviewed == nil {
+		return cs
+	}
+	marks, err := a.reviewed.Marks(root)
+	if err != nil || len(marks) == 0 {
+		return cs
+	}
+	out := *cs
+	out.Files = make([]changes.FileChange, len(cs.Files))
+	copy(out.Files, cs.Files)
+	for i := range out.Files {
+		m, ok := marks[out.Files[i].Path]
+		if !ok {
+			continue
+		}
+		if m.Blob == newestBlob(out.Files[i]) {
+			out.Files[i].Review = "reviewed"
+		} else {
+			out.Files[i].Review = "stale"
+			out.Files[i].ReviewedBlob = m.Blob
+		}
+	}
+	return &out
+}
+
+// MarkReviewed records that the user has seen a file as the selection shows
+// it, or forgets that. The next ListChanges reflects it.
+func (a *App) MarkReviewed(root string, hashes []string, path string, seen bool) error {
+	if a.reviewed == nil {
+		return fmt.Errorf("unknown: no config directory for review marks")
+	}
+	cs, err := a.changeSet(root, hashes)
+	if err != nil {
+		return err
+	}
+	for _, fc := range cs.Files {
+		if fc.Path != path {
+			continue
+		}
+		blob := ""
+		if seen {
+			blob = newestBlob(fc)
+		}
+		return a.reviewed.Set(root, path, blob)
+	}
+	return fmt.Errorf("object_not_found: %s is not part of the selection", path)
+}
+
+// FileDiffSince is the change between the version the user reviewed and the
+// one the selection shows now: what to look at again.
+func (a *App) FileDiffSince(root string, hashes []string, path string) (*diff.Result, error) {
+	cs, err := a.ListChanges(root, hashes)
+	if err != nil {
+		return nil, err
+	}
+	for _, fc := range cs.Files {
+		if fc.Path != path {
+			continue
+		}
+		if fc.Review != "stale" {
+			return nil, fmt.Errorf("object_not_found: %s has no reviewed version to compare with", path)
+		}
+		res, err := diff.Since(a.ctx, root, fc, fc.ReviewedBlob, a.blobs)
+		if err != nil {
+			return nil, userError(err)
+		}
+		return res, nil
+	}
+	return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
 }
 
 func (a *App) FileDiff(root string, hashes []string, path string) (*diff.Result, error) {

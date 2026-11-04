@@ -44,6 +44,8 @@ export interface FileChange {
   /** How many selected commits changed it. */
   touchCount: number
   composable: boolean
+  /** Whether the user has seen this version ("reviewed"), an older one ("stale"), or none (""). */
+  review: '' | 'reviewed' | 'stale'
 }
 
 export interface ChangeSet {

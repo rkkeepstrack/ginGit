@@ -3,7 +3,7 @@ import { buildTree, filterFiles, flatten, visibleFilePaths } from './fileTree'
 import type { FileChange } from './types'
 
 function fc(path: string, type: FileChange['type'] = 'modified'): FileChange {
-  return { path, type, additions: 1, deletions: 0, binary: false, touchCount: 1, composable: true }
+  return { path, type, additions: 1, deletions: 0, binary: false, touchCount: 1, composable: true, review: '' }
 }
 
 describe('buildTree', () => {

@@ -329,6 +329,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -348,6 +349,7 @@
      "deletions": 6,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -357,6 +359,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -366,6 +369,7 @@
      "deletions": 0,
      "binary": true,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -375,6 +379,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -399,6 +404,7 @@
      "deletions": 6,
      "binary": false,
      "touchCount": 2,
+     "review": "",
      "composable": true
     },
     {
@@ -408,6 +414,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 2,
+     "review": "",
      "composable": true
     },
     {
@@ -417,6 +424,7 @@
      "deletions": 0,
      "binary": true,
      "touchCount": 2,
+     "review": "",
      "composable": true
     },
     {
@@ -426,6 +434,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -435,6 +444,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -445,6 +455,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 2,
+     "review": "",
      "composable": true
     }
    ]
@@ -462,6 +473,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -479,6 +491,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -497,6 +510,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -506,6 +520,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 2,
+     "review": "",
      "composable": true
     }
    ]
@@ -523,6 +538,7 @@
      "deletions": 6,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -532,6 +548,7 @@
      "deletions": 0,
      "binary": true,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -549,6 +566,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -567,6 +585,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 2,
+     "review": "",
      "composable": false
     },
     {
@@ -576,6 +595,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -585,6 +605,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -602,6 +623,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -611,6 +633,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -632,6 +655,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -641,6 +665,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -650,6 +675,7 @@
      "deletions": 0,
      "binary": true,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -659,6 +685,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -669,6 +696,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 2,
+     "review": "",
      "composable": true
     }
    ]
@@ -686,6 +714,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -695,6 +724,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -712,6 +742,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -721,6 +752,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -730,6 +762,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -747,6 +780,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -764,6 +798,7 @@
      "deletions": 0,
      "binary": true,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -774,6 +809,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -793,6 +829,7 @@
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     },
     {
@@ -802,6 +839,7 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 1,
+     "review": "",
      "composable": true
     }
    ]
@@ -811,11 +849,34 @@
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": {
    "path": "CHANGELOG.md",
    "type": "deleted",
-   "stacked": false,
+   "stacked": true,
+   "note": "This file was added and deleted again within the selection, so there is no net change. Each commit's own change is shown below.",
    "pairs": [
     {
      "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
      "type": "deleted",
+     "old": {
+      "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
+      "path": "CHANGELOG.md",
+      "content": "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "CHANGELOG.md",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     }
+    },
+    {
+     "commit": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
+     "type": "added",
      "old": {
       "blob": "0000000000000000000000000000000000000000",
       "path": "CHANGELOG.md",
@@ -826,11 +887,11 @@
       "tooLarge": false
      },
      "new": {
-      "blob": "0000000000000000000000000000000000000000",
+      "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
       "path": "CHANGELOG.md",
-      "content": "",
-      "size": 0,
-      "missing": true,
+      "content": "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n",
+      "size": 58,
+      "missing": false,
       "binary": false,
       "tooLarge": false
      }
@@ -869,11 +930,34 @@
   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": {
    "path": "assets/logo.png",
    "type": "deleted",
-   "stacked": false,
+   "stacked": true,
+   "note": "This file was added and deleted again within the selection, so there is no net change. Each commit's own change is shown below.",
    "pairs": [
     {
      "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
      "type": "deleted",
+     "old": {
+      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 16,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     }
+    },
+    {
+     "commit": "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+     "type": "added",
      "old": {
       "blob": "0000000000000000000000000000000000000000",
       "path": "assets/logo.png",
@@ -884,12 +968,12 @@
       "tooLarge": false
      },
      "new": {
-      "blob": "0000000000000000000000000000000000000000",
+      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
       "path": "assets/logo.png",
       "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
+      "size": 16,
+      "missing": false,
+      "binary": true,
       "tooLarge": false
      }
     }
@@ -1971,6 +2055,46 @@
   "c98626eeb63b09321a622056f1adf1694e851e72": "feature/stack-base",
   "d3631e45a9424d66837b732bbb5f3cd84475d30c": "main",
   "dd5a6027936904682e9712844f278de10516346c": "main"
+ },
+ "newestBlob": {
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": "0000000000000000000000000000000000000000",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": "0000000000000000000000000000000000000000",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|CHANGELOG.md": "0000000000000000000000000000000000000000",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|assets/logo.png": "0000000000000000000000000000000000000000",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+  "6830070971e8696e93c3dfa859832fbb4e800d79|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "6d29c096a2b08ead328b4d5cab2e230df301f777|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "6f765b3563185a27af32bf6837fa121f8a9ed441|CHANGELOG.md": "0000000000000000000000000000000000000000",
+  "6f765b3563185a27af32bf6837fa121f8a9ed441|assets/logo.png": "0000000000000000000000000000000000000000",
+  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
+  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+  "7432c6aa54c6ded53202b8e0b5180f4126f652c3|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
+  "7adf6354c6e5a673359abb6ceeddcb25c5372862|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+  "b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "c6df7193098bc53415df8cef39031bcf446ae48e",
+  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
+  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
+  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+  "c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
+  "d3631e45a9424d66837b732bbb5f3cd84475d30c|assets/logo.png": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
+  "d3631e45a9424d66837b732bbb5f3cd84475d30c|src/main.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+  "dd5a6027936904682e9712844f278de10516346c|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "dd5a6027936904682e9712844f278de10516346c|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e"
  },
  "labels": {
   "Merge branch 'feature/login'": "dd5a6027936904682e9712844f278de10516346c",

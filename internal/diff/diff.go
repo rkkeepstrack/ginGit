@@ -295,3 +295,19 @@ func CountMatches(ctx context.Context, root string, files []changes.FileChange, 
 	}
 	return counts, nil
 }
+
+// Since compares an earlier version of the file (the one the user reviewed)
+// with the newest one in the selection.
+func Since(ctx context.Context, root string, fc changes.FileChange, reviewedBlob string, cache *Cache) (*Result, error) {
+	if len(fc.Touches) == 0 {
+		return nil, fmt.Errorf("%w: no touches for %s", gitcmd.ErrInvalidArg, fc.Path)
+	}
+	newest := fc.Touches[0]
+	from := changes.Touch{OldBlob: reviewedBlob, OldPath: fc.Path, Path: fc.Path}
+	p, err := pair(ctx, root, cache, from, newest)
+	if err != nil {
+		return nil, err
+	}
+	p.Type = fc.Type
+	return &Result{Path: fc.Path, Type: fc.Type, Pairs: []Pair{p}}, nil
+}

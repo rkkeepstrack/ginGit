@@ -4,6 +4,7 @@
   import { categoryFor, iconFor } from '../../lib/fileIcon'
   import type { FileChange } from '../../lib/types'
   import { hint } from '../../state/hint.svelte'
+  import ReviewMark from './ReviewMark.svelte'
 
   let { change, name, depth, active, onclick }: { change: FileChange; name: string; depth: number; active: boolean; onclick: () => void } = $props()
   const Icon = $derived(iconFor(change.path))
@@ -26,6 +27,7 @@
   {#if change.oldPath}<span class="opacity-40 truncate text-[10px]">← {change.oldPath.split('/').pop()}</span>{/if}
   {#if change.touchCount > 1}<span class="text-[10.5px] opacity-50 tabular-nums shrink-0" use:hint={`Changed in ${change.touchCount} selected commits`}>×{change.touchCount}</span>{/if}
   {#if !change.composable}<Unlink size={12} strokeWidth={1.75} class="text-warning shrink-0" />{/if}
+  <ReviewMark review={change.review} size={12} />
   <span class="flex-1"></span>
   {#if change.binary}
     <span class="opacity-40 text-[10px]">bin</span>

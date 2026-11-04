@@ -8,7 +8,7 @@ type Fixture = typeof fixture
  * fixture, before the app's scripts run. The generated bindings call these
  * globals, so the frontend cannot tell the difference.
  */
-export interface BridgeOptions { initialRepo?: boolean; theme?: 'pastel' | 'dim' | 'system'; diffMode?: 'split' | 'unified' }
+export interface BridgeOptions { initialRepo?: boolean; theme?: 'pastel' | 'dim' | 'system'; diffMode?: 'split' | 'unified'; /** path → blob the user supposedly reviewed */ reviewed?: Record<string, string> }
 
 export async function installBridge(page: Page, opts: BridgeOptions = {}) {
   await page.addInitScript(({ fx, opts }: { fx: Fixture; opts: BridgeOptions }) => {
@@ -17,6 +17,7 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
     const key = (hashes: string[]) => [...hashes].sort().join(',')
     const fail = (msg: string) => Promise.reject(msg)
     const repoOpen = (root: string) => root === fx.repo.path
+    const marks: Record<string, string> = { ...(opts.reviewed ?? {}) }
 
     localStorage.setItem('gingit-ui', JSON.stringify({
       state: { theme: opts.theme ?? 'pastel', diffMode: opts.diffMode ?? 'unified', fileSort: 'name', flatFiles: false },
@@ -39,9 +40,20 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
         }, 10)
       },
       ListChanges: async (root: string, hashes: string[]) => {
-        const cs = (fx.changes as Record<string, unknown>)[key(hashes)]
-        return repoOpen(root) && cs ? cs : fail(`object_not_found: fixture has no change set for ${key(hashes)}`)
+        const cs = (fx.changes as unknown as Record<string, { files: { path: string }[] }>)[key(hashes)]
+        if (!repoOpen(root) || !cs) return fail(`object_not_found: fixture has no change set for ${key(hashes)}`)
+        const files = cs.files.map((f) => {
+          const seen = marks[f.path]
+          const newest = ((fx as unknown as { newestBlob: Record<string, string> }).newestBlob)[key(hashes) + '|' + f.path]
+          return { ...f, review: seen === undefined ? '' : seen === newest ? 'reviewed' : 'stale' }
+        })
+        return { ...cs, files }
       },
+      MarkReviewed: async (_root: string, hashes: string[], path: string, seen: boolean) => {
+        if (seen) marks[path] = ((fx as unknown as { newestBlob: Record<string, string> }).newestBlob)[key(hashes) + '|' + path]
+        else delete marks[path]
+      },
+      FileDiffSince: async (root: string, hashes: string[], path: string) => App.FileDiff(root, hashes, path),
       FileDiff: async (root: string, hashes: string[], path: string) => {
         const d = (fx.diffs as Record<string, unknown>)[key(hashes) + '|' + path]
         return repoOpen(root) && d ? d : fail(`object_not_found: fixture has no diff for ${path}`)

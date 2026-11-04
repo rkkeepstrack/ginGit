@@ -41,6 +41,11 @@ type FileChange struct {
 	Binary     bool    `json:"binary"`
 	Touches    []Touch `json:"-"` // newest first; FileDiff reads them, the UI only needs the count
 	TouchCount int     `json:"touchCount"`
+	// Review is "", "reviewed" or "stale": whether the user has seen the newest
+	// version of this file, or an older one. Filled in by the app, not here.
+	Review string `json:"review"`
+	// ReviewedBlob is the version the user saw, when Review is "stale".
+	ReviewedBlob string `json:"-"`
 	// Composable is true when each touch starts from the blob the previous
 	// one produced, i.e. nothing outside the selection changed the file in
 	// between. Then old(first)..new(last) is one honest patch.

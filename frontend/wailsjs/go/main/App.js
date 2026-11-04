@@ -10,6 +10,10 @@ export function FileDiff(arg1, arg2, arg3) {
   return window['go']['main']['App']['FileDiff'](arg1, arg2, arg3);
 }
 
+export function FileDiffSince(arg1, arg2, arg3) {
+  return window['go']['main']['App']['FileDiffSince'](arg1, arg2, arg3);
+}
+
 export function FileDiffs(arg1, arg2, arg3) {
   return window['go']['main']['App']['FileDiffs'](arg1, arg2, arg3);
 }
@@ -28,6 +32,10 @@ export function ListChanges(arg1, arg2) {
 
 export function LoadHistory(arg1, arg2) {
   return window['go']['main']['App']['LoadHistory'](arg1, arg2);
+}
+
+export function MarkReviewed(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['MarkReviewed'](arg1, arg2, arg3, arg4);
 }
 
 export function NameCommits(arg1, arg2) {
