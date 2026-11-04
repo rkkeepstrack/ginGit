@@ -77,11 +77,16 @@ section { padding: 48px 0 8px; }
 .button.primary:hover { filter: brightness(1.07); }
 .fine { font-size: 13px; color: var(--muted); }
 
-.shot { margin: 40px 0 0; text-align: center; }
+.slider { padding: 40px 0 0; }
+.slides { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; outline: none; }
+.slides::-webkit-scrollbar { display: none; }
+.shot { flex: 0 0 100%; margin: 0; text-align: center; scroll-snap-align: start; }
 .shot img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.5); }
 .shot figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
-.shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; margin-top: 8px; }
-.shots .shot { margin: 0; }
+.slider-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+.dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: var(--line); cursor: pointer; }
+.dot:hover { background: var(--muted); }
+.dot.active { background: var(--brand); }
 
 .features dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px 40px; margin: 0; }
 .features dt { font-weight: 600; margin-bottom: 4px; }

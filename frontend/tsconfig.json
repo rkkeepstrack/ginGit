@@ -17,5 +17,5 @@
     "noEmit": true,
     "types": ["vite/client", "svelte"]
   },
-  "include": ["src", "wailsjs", "vite.config.ts", "e2e", "playwright.config.ts", "svelte.config.js"]
+  "include": ["src", "wailsjs", "vite.config.ts", "e2e", "playwright.config.ts", "playwright.site.ts", "svelte.config.js"]
 }

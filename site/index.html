@@ -35,13 +35,38 @@
       <p class="fine" id="version"></p>
     </section>
 
-    <figure class="shot">
-      <picture>
-        <source id="shot-dark" srcset="img/review-dark.png" media="(prefers-color-scheme: dark)">
-        <img id="shot" src="img/review-light.png" alt="ginGit with three commits selected: the commit graph on the left, a collapsible review of every changed file in the middle, the file tree on the right" width="1280" height="720">
-      </picture>
-      <figcaption>Three commits selected. Every file they touched, as one review.</figcaption>
-    </figure>
+    <section class="slider" aria-label="Screenshots">
+      <div class="slides" id="slides" tabindex="0">
+        <figure class="shot">
+          <picture>
+            <source srcset="img/review-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="img/review-light.png" data-light="img/review-light.png" data-dark="img/review-dark.png" alt="ginGit with three commits selected: the commit graph on the left, a collapsible review of every changed file in the middle, the file tree on the right" width="1280" height="720">
+          </picture>
+          <figcaption>Three commits selected. Every file they touched, as one review.</figcaption>
+        </figure>
+        <figure class="shot">
+          <picture>
+            <source srcset="img/marks-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="img/marks-light.png" data-light="img/marks-light.png" data-dark="img/marks-dark.png" alt="Two files of a branch under review: one marked as reviewed, one marked stale with a button to show only what changed since" width="1280" height="720" loading="lazy">
+          </picture>
+          <figcaption>Review marks. The amber one changed since you read it; "since" shows just that.</figcaption>
+        </figure>
+        <figure class="shot">
+          <picture>
+            <source srcset="img/find-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="img/find-light.png" data-light="img/find-light.png" data-dark="img/find-dark.png" alt="The find bar open over the review, with the one file containing the search text expanded and the match highlighted" width="1280" height="720" loading="lazy">
+          </picture>
+          <figcaption>Find in changes. Files with hits open, the rest fold away.</figcaption>
+        </figure>
+      </div>
+      <div class="slider-nav">
+        <button class="icon" type="button" data-step="-1" aria-label="Previous screenshot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+        <button class="dot active" type="button" data-slide="0" aria-label="Review"></button>
+        <button class="dot" type="button" data-slide="1" aria-label="Review marks"></button>
+        <button class="dot" type="button" data-slide="2" aria-label="Find in changes"></button>
+        <button class="icon" type="button" data-step="1" aria-label="Next screenshot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      </div>
+    </section>
 
     <section id="features" class="features">
       <h2>What it does</h2>
@@ -80,17 +105,6 @@
         </div>
       </dl>
     </section>
-
-    <div class="shots">
-      <figure class="shot">
-        <img src="img/marks-light.png" alt="Two files of a branch under review: one marked as reviewed, one marked stale with a button to show only what changed since" width="1280" height="720" loading="lazy">
-        <figcaption>Review marks. The amber one changed since you read it; "since" shows just that.</figcaption>
-      </figure>
-      <figure class="shot">
-        <img src="img/find-light.png" alt="The find bar open over the review, with the one file containing the search text expanded and the match highlighted" width="1280" height="720" loading="lazy">
-        <figcaption>Find in changes. Files with hits open, the rest fold away.</figcaption>
-      </figure>
-    </div>
 
     <section id="shortcuts" class="shortcuts">
       <h2>Shortcuts</h2>

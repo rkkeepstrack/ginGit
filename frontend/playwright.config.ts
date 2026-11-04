@@ -6,6 +6,8 @@ import { defineConfig, devices } from '@playwright/test'
 // comparable between a laptop and the pipeline.
 export default defineConfig({
   testDir: './e2e',
+  // site.spec.ts renders the site's screenshots; only `make site-shots` runs it.
+  testIgnore: 'site.spec.ts',
   fullyParallel: true,
   retries: 0,
   reporter: [['list'], ['html', { open: 'never' }]],

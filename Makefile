@@ -1,4 +1,4 @@
-.PHONY: check test build dev bindings fixture snapshots snapshots-update
+.PHONY: check test build dev bindings fixture snapshots snapshots-update site-shots
 
 # Pinned to the same version as @playwright/test in frontend/package.json;
 # the image carries the matching Chromium and fonts.
@@ -36,3 +36,8 @@ snapshots:
 
 snapshots-update:
 	$(SNAPSHOT_RUN) --update-snapshots=all"
+
+# The site's screenshots, light and dark, from the same fixture and container.
+site-shots:
+	$(SNAPSHOT_RUN) --config playwright.site.ts"
+	cp frontend/e2e/site-shots/*.png site/img/

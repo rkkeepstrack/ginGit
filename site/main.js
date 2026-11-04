@@ -8,13 +8,14 @@ function currentTheme() {
   return root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 }
 
+// Every screenshot has a light and a dark version. The <source> follows the
+// OS; once the toggle is used it must step aside and the script picks.
 function applyShot() {
   const dark = currentTheme() === 'dark'
-  const shot = document.getElementById('shot')
-  const source = document.getElementById('shot-dark')
-  shot.src = dark ? 'img/review-dark.png' : 'img/review-light.png'
-  // The <source> only switches with the OS; once the toggle is used it must step aside.
-  if (root.dataset.theme) source.media = 'not all'
+  for (const img of document.querySelectorAll('img[data-light]')) {
+    img.src = dark ? img.dataset.dark : img.dataset.light
+    if (root.dataset.theme) img.previousElementSibling.media = 'not all'
+  }
 }
 
 themeButton.addEventListener('click', () => {
@@ -49,3 +50,16 @@ fetch('https://api.github.com/repos/rkkeepstrack/ginGit/releases/latest')
     document.getElementById('version').textContent = `Latest release ${release.tag_name}`
   })
   .catch(() => {})
+
+// Screenshot slider: scroll-snap does the moving, this keeps the dots honest.
+const slides = document.getElementById('slides')
+const figures = [...slides.children]
+const dots = [...document.querySelectorAll('.dot')]
+const current = () => Math.round(slides.scrollLeft / (slides.clientWidth + 24))
+const go = (i) => {
+  const n = (i + figures.length) % figures.length
+  slides.scrollTo({ left: figures[n].offsetLeft - slides.offsetLeft, behavior: 'smooth' })
+}
+dots.forEach((dot, i) => dot.addEventListener('click', () => go(i)))
+for (const button of document.querySelectorAll('[data-step]')) button.addEventListener('click', () => go(current() + Number(button.dataset.step)))
+slides.addEventListener('scroll', () => { const c = current(); dots.forEach((dot, i) => dot.classList.toggle('active', i === c)) }, { passive: true })
