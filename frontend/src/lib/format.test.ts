@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { abbreviatePath, plural, shortenPath } from './format'
+import { abbreviatePath, formatBytes, plural, shortenPath } from './format'
 
 describe('paths', () => {
   it('shortens home and keeps short paths whole', () => {
@@ -20,4 +20,10 @@ it('plural', () => {
   expect(plural(1, 'file')).toBe('1 file')
   expect(plural(0, 'file')).toBe('0 files')
   expect(plural(2, 'match', 'matches')).toBe('2 matches')
+})
+
+it('formatBytes', () => {
+  expect(formatBytes(812)).toBe('812 B')
+  expect(formatBytes(14540)).toBe('14.2 KB')
+  expect(formatBytes(3.1 * 1024 * 1024)).toBe('3.1 MB')
 })

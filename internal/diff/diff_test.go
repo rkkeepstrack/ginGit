@@ -2,10 +2,12 @@ package diff
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"testing"
 
 	"ginGit/internal/changes"
+	"ginGit/internal/gitcmd"
 	"ginGit/internal/gittest"
 	"ginGit/internal/history"
 )
@@ -159,5 +161,22 @@ func TestCountMatches(t *testing.T) {
 	}
 	if n, _ := CountMatches(context.Background(), r.Path, cs.Files, NewCache(1<<20), ""); len(n) != 0 {
 		t.Errorf("empty needle must match nothing, got %v", n)
+	}
+}
+
+func TestRaw(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a.bin", "\x89PNG\x00bytes")
+	r.Commit("binary")
+	hash := strings.TrimSpace(r.Git("rev-parse", "HEAD:a.bin"))
+	got, err := Raw(context.Background(), r.Path, hash, 1024)
+	if err != nil || string(got) != "\x89PNG\x00bytes" {
+		t.Fatalf("got %q, %v", got, err)
+	}
+	if _, err := Raw(context.Background(), r.Path, hash, 4); !errors.Is(err, ErrTooLarge) {
+		t.Errorf("over the cap: want ErrTooLarge, got %v", err)
+	}
+	if _, err := Raw(context.Background(), r.Path, "HEAD", 1024); !errors.Is(err, gitcmd.ErrInvalidArg) {
+		t.Errorf("a ref is not a hash: want ErrInvalidArg, got %v", err)
 	}
 }

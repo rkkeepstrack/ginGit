@@ -7,6 +7,7 @@ package diff
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -18,6 +19,11 @@ import (
 
 // MaxSide caps each side of a diff.
 const MaxSide = 2 * 1024 * 1024
+
+// MaxImage caps an image the review shows as a picture; those never become text.
+const MaxImage = 20 * 1024 * 1024
+
+var ErrTooLarge = errors.New("blob too large")
 
 const zeroBlob = "0000000000000000000000000000000000000000"
 
@@ -310,4 +316,23 @@ func Since(ctx context.Context, root string, fc changes.FileChange, reviewedBlob
 	}
 	p.Type = fc.Type
 	return &Result{Path: fc.Path, Type: fc.Type, Pairs: []Pair{p}}, nil
+}
+
+// Raw returns a blob's bytes, refusing anything over max before reading it.
+func Raw(ctx context.Context, root, hash string, max int) ([]byte, error) {
+	if err := gitcmd.ValidateHash(hash); err != nil {
+		return nil, err
+	}
+	out, err := gitcmd.Run(ctx, root, "cat-file", "-s", hash)
+	if err != nil {
+		return nil, err
+	}
+	size, err := strconv.Atoi(strings.TrimSpace(string(out)))
+	if err != nil {
+		return nil, fmt.Errorf("%w: size of %s", gitcmd.ErrInvalidArg, hash)
+	}
+	if size > max {
+		return nil, fmt.Errorf("%w: %s is %d bytes", ErrTooLarge, hash, size)
+	}
+	return gitcmd.Run(ctx, root, "cat-file", "blob", hash)
 }

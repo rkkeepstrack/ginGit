@@ -11,6 +11,11 @@ type Fixture = typeof fixture
 export interface BridgeOptions { initialRepo?: boolean; theme?: 'pastel' | 'dim' | 'system'; diffMode?: 'split' | 'unified'; /** path → blob the user supposedly reviewed */ reviewed?: Record<string, string> }
 
 export async function installBridge(page: Page, opts: BridgeOptions = {}) {
+  // Repository images, which the Go side serves in the app; the fixture wrote them out.
+  await page.route('**/blob/**', (route) => {
+    const hash = new URL(route.request().url()).pathname.split('/')[2]
+    return route.fulfill({ path: `e2e/fixture-blobs/${hash}.png` })
+  })
   await page.addInitScript(({ fx, opts }: { fx: Fixture; opts: BridgeOptions }) => {
     const listeners = new Map<string, ((...data: unknown[]) => void)[]>()
     const emit = (name: string, data: unknown) => { for (const cb of listeners.get(name) ?? []) cb(data) }

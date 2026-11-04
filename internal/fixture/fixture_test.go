@@ -6,9 +6,15 @@
 package fixture
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"image"
+	"image/color"
+	"image/png"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"ginGit/internal/changes"
@@ -31,9 +37,27 @@ type Fixture struct {
 	Labels     map[string]string `json:"labels"`     // label -> hash, so tests can pick commits by name
 }
 
+// disc is a small, deterministic PNG: a coloured disc on transparency.
+func disc(w, h int, fill color.NRGBA) string {
+	img := image.NewNRGBA(image.Rect(0, 0, w, h))
+	cx, cy, r := w/2, h/2, min(w, h)/2-6
+	for y := range h {
+		for x := range w {
+			if (x-cx)*(x-cx)+(y-cy)*(y-cy) <= r*r {
+				img.SetNRGBA(x, y, fill)
+			}
+		}
+	}
+	var buf bytes.Buffer
+	if err := png.Encode(&buf, img); err != nil {
+		panic(err)
+	}
+	return buf.String()
+}
+
 // script builds a history with everything the UI renders differently:
-// a feature branch and merge, a rename, a deletion, a binary, a tag, a
-// stacked branch, and a file touched twice with a gap between.
+// a feature branch and merge, a rename, a deletion, an image added, changed
+// and deleted, a tag, a stacked branch, and a file touched twice with a gap between.
 func script(t *testing.T) *gittest.Repo {
 	r := gittest.New(t)
 	r.Write("README.md", "# demo\n\nA small repository for screenshots.\n")
@@ -53,11 +77,12 @@ func script(t *testing.T) *gittest.Repo {
 	r.Write("CHANGELOG.md", "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n")
 	r.Commit("docs: usage section")
 	r.Rename("src/app.ts", "src/main.ts")
-	r.Write("assets/logo.png", "\x89PNG\r\n\x1a\n\x00\x00binary")
+	r.Write("assets/logo.png", disc(96, 96, color.NRGBA{0x74, 0xc0, 0xfc, 0xff}))
 	r.Commit("refactor: app.ts becomes main.ts, logo lands")
 	r.Merge("Merge branch 'feature/login'", "feature/login")
 	r.Git("tag", "v1.0.0")
 
+	r.Write("assets/logo.png", disc(128, 96, color.NRGBA{0x63, 0xe6, 0xbe, 0xff}))
 	r.Write("package.json", "{\n  \"name\": \"demo\",\n  \"version\": \"1.1.0\",\n  \"dependencies\": {\n    \"left-pad\": \"^1.3.0\"\n  }\n}\n")
 	r.Commit("chore(LD-2): depend on left-pad, as one does")
 	r.Remove("assets/logo.png")
@@ -126,6 +151,14 @@ func TestGenerate(t *testing.T) {
 	if fx.Names, err = repo.NameCommits(ctx, r.Path, all); err != nil {
 		t.Fatal(err)
 	}
+	// Image bytes for the mock bridge to serve under /blob/, one file per blob.
+	images := filepath.Join(filepath.Dir(out), "fixture-blobs")
+	if err := os.RemoveAll(images); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(images, 0o755); err != nil {
+		t.Fatal(err)
+	}
 	blobs := diff.NewCache(64 << 20)
 	for _, sel := range selections {
 		key := changes.Key(sel)
@@ -144,6 +177,23 @@ func TestGenerate(t *testing.T) {
 			}
 			fx.Diffs[key+"|"+fc.Path] = res
 			fx.NewestBlob[key+"|"+fc.Path] = changes.NewestBlob(fc)
+			if !strings.HasSuffix(fc.Path, ".png") {
+				continue
+			}
+			for _, p := range res.Pairs {
+				for _, side := range []diff.Side{p.Old, p.New} {
+					if side.Missing {
+						continue
+					}
+					data, err := diff.Raw(ctx, r.Path, side.Blob, diff.MaxImage)
+					if err != nil {
+						t.Fatal(err)
+					}
+					if err := os.WriteFile(filepath.Join(images, side.Blob+".png"), data, 0o644); err != nil {
+						t.Fatal(err)
+					}
+				}
+			}
 		}
 	}
 	data, err := json.MarshalIndent(fx, "", " ")

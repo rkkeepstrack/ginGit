@@ -21,7 +21,8 @@ func main() {
 		MinWidth:  900,
 		MinHeight: 600,
 		AssetServer: &assetserver.Options{
-			Assets: assets,
+			Assets:  assets,
+			Handler: blobServer{app},
 		},
 		BackgroundColour: &options.RGBA{R: 250, G: 250, B: 250, A: 1},
 		Menu:             app.appMenu(),

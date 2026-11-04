@@ -25,6 +25,13 @@ export function formatCount(n: number): string {
   return n.toLocaleString()
 }
 
+/** 812 B, 14.2 KB, 3.1 MB. */
+export function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`
+  return `${(n / 1024 / 1024).toFixed(1)} MB`
+}
+
 /** "1 file", "2 files"; an irregular plural is passed in. */
 export function plural(n: number, word: string, pluralForm = word + 's'): string {
   return `${n} ${n === 1 ? word : pluralForm}`

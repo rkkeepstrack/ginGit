@@ -3,7 +3,7 @@
   "path": "/home/demo/repos/demo",
   "name": "demo",
   "branch": "main",
-  "head": "7432c6aa54c6ded53202b8e0b5180f4126f652c3"
+  "head": "58ccd8ed953dce3b64a21bf557f78aa798164835"
  },
  "refs": [
   {
@@ -16,37 +16,37 @@
   {
    "name": "feature/stack-base",
    "full": "refs/heads/feature/stack-base",
-   "hash": "c98626eeb63b09321a622056f1adf1694e851e72",
+   "hash": "16ba5fcd354dedeb482587d8b1814d101c8af9d4",
    "kind": "head",
    "isHead": false
   },
   {
    "name": "feature/stack-top",
    "full": "refs/heads/feature/stack-top",
-   "hash": "6830070971e8696e93c3dfa859832fbb4e800d79",
+   "hash": "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9",
    "kind": "head",
    "isHead": false
   },
   {
    "name": "main",
    "full": "refs/heads/main",
-   "hash": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
+   "hash": "58ccd8ed953dce3b64a21bf557f78aa798164835",
    "kind": "head",
    "isHead": true
   },
   {
    "name": "v1.0.0",
    "full": "refs/tags/v1.0.0",
-   "hash": "dd5a6027936904682e9712844f278de10516346c",
+   "hash": "a8f454dcdb317da01beadfa9251833c48c124af0",
    "kind": "tag",
    "isHead": false
   }
  ],
  "commits": [
   {
-   "hash": "6830070971e8696e93c3dfa859832fbb4e800d79",
+   "hash": "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9",
    "parents": [
-    "c98626eeb63b09321a622056f1adf1694e851e72"
+    "16ba5fcd354dedeb482587d8b1814d101c8af9d4"
    ],
    "author": "Test",
    "authorEmail": "test@example.com",
@@ -67,9 +67,9 @@
    }
   },
   {
-   "hash": "c98626eeb63b09321a622056f1adf1694e851e72",
+   "hash": "16ba5fcd354dedeb482587d8b1814d101c8af9d4",
    "parents": [
-    "7432c6aa54c6ded53202b8e0b5180f4126f652c3"
+    "58ccd8ed953dce3b64a21bf557f78aa798164835"
    ],
    "author": "Test",
    "authorEmail": "test@example.com",
@@ -90,9 +90,9 @@
    }
   },
   {
-   "hash": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
+   "hash": "58ccd8ed953dce3b64a21bf557f78aa798164835",
    "parents": [
-    "6f765b3563185a27af32bf6837fa121f8a9ed441"
+    "965f1634cca72299715a551681e77d71cfa94352"
    ],
    "author": "Test",
    "authorEmail": "test@example.com",
@@ -113,9 +113,9 @@
    }
   },
   {
-   "hash": "6f765b3563185a27af32bf6837fa121f8a9ed441",
+   "hash": "965f1634cca72299715a551681e77d71cfa94352",
    "parents": [
-    "3c944b9d656e7e87abf4c5567bcc05666fa5fb59"
+    "af3743fb7b3393e2e18d887082ed3ab855cbb2bd"
    ],
    "author": "Test",
    "authorEmail": "test@example.com",
@@ -136,9 +136,9 @@
    }
   },
   {
-   "hash": "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
+   "hash": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
    "parents": [
-    "dd5a6027936904682e9712844f278de10516346c"
+    "a8f454dcdb317da01beadfa9251833c48c124af0"
    ],
    "author": "Test",
    "authorEmail": "test@example.com",
@@ -159,9 +159,9 @@
    }
   },
   {
-   "hash": "dd5a6027936904682e9712844f278de10516346c",
+   "hash": "a8f454dcdb317da01beadfa9251833c48c124af0",
    "parents": [
-    "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+    "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
     "6d29c096a2b08ead328b4d5cab2e230df301f777"
    ],
    "author": "Test",
@@ -244,7 +244,7 @@
    }
   },
   {
-   "hash": "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+   "hash": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
    "parents": [
     "7adf6354c6e5a673359abb6ceeddcb25c5372862"
    ],
@@ -316,17 +316,17 @@
   }
  ],
  "changes": {
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59": {
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4": {
    "hashes": [
-    "3c944b9d656e7e87abf4c5567bcc05666fa5fb59"
+    "16ba5fcd354dedeb482587d8b1814d101c8af9d4"
    ],
    "merges": [],
    "files": [
     {
-     "path": "package.json",
-     "type": "modified",
-     "additions": 4,
-     "deletions": 1,
+     "path": "src/base.ts",
+     "type": "added",
+     "additions": 1,
+     "deletions": 0,
      "binary": false,
      "touchCount": 1,
      "review": "",
@@ -335,37 +335,45 @@
    ],
    "reviewable": false
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3": {
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4,91bcb989fb797bd50a8d8ea618f8c6cca265a0d9": {
    "hashes": [
-    "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
-    "6f765b3563185a27af32bf6837fa121f8a9ed441",
-    "3c944b9d656e7e87abf4c5567bcc05666fa5fb59"
+    "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9",
+    "16ba5fcd354dedeb482587d8b1814d101c8af9d4"
    ],
    "merges": [],
    "files": [
     {
-     "path": "CHANGELOG.md",
-     "type": "deleted",
-     "additions": 0,
-     "deletions": 6,
+     "path": "src/base.ts",
+     "type": "added",
+     "additions": 1,
+     "deletions": 0,
      "binary": false,
      "touchCount": 1,
      "review": "",
      "composable": true
     },
     {
-     "path": "README.md",
-     "type": "modified",
-     "additions": 1,
-     "deletions": 1,
+     "path": "src/top.ts",
+     "type": "added",
+     "additions": 2,
+     "deletions": 0,
      "binary": false,
      "touchCount": 1,
      "review": "",
      "composable": true
-    },
+    }
+   ],
+   "reviewable": false
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c": {
+   "hashes": [
+    "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c"
+   ],
+   "merges": [],
+   "files": [
     {
      "path": "assets/logo.png",
-     "type": "deleted",
+     "type": "added",
      "additions": 0,
      "deletions": 0,
      "binary": true,
@@ -374,10 +382,11 @@
      "composable": true
     },
     {
-     "path": "package.json",
-     "type": "modified",
-     "additions": 4,
-     "deletions": 1,
+     "path": "src/main.ts",
+     "oldPath": "src/app.ts",
+     "type": "renamed",
+     "additions": 0,
+     "deletions": 0,
      "binary": false,
      "touchCount": 1,
      "review": "",
@@ -386,17 +395,17 @@
    ],
    "reviewable": false
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd": {
    "hashes": [
-    "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
-    "6f765b3563185a27af32bf6837fa121f8a9ed441",
-    "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
-    "dd5a6027936904682e9712844f278de10516346c",
-    "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+    "58ccd8ed953dce3b64a21bf557f78aa798164835",
+    "965f1634cca72299715a551681e77d71cfa94352",
+    "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
+    "a8f454dcdb317da01beadfa9251833c48c124af0",
+    "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
     "7adf6354c6e5a673359abb6ceeddcb25c5372862"
    ],
    "merges": [
-    "dd5a6027936904682e9712844f278de10516346c"
+    "a8f454dcdb317da01beadfa9251833c48c124af0"
    ],
    "files": [
     {
@@ -425,7 +434,7 @@
      "additions": 0,
      "deletions": 0,
      "binary": true,
-     "touchCount": 2,
+     "touchCount": 3,
      "review": "",
      "composable": true
     },
@@ -463,17 +472,81 @@
    ],
    "reviewable": false
   },
-  "6830070971e8696e93c3dfa859832fbb4e800d79": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0": {
    "hashes": [
-    "6830070971e8696e93c3dfa859832fbb4e800d79"
+    "a8f454dcdb317da01beadfa9251833c48c124af0",
+    "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
+    "7adf6354c6e5a673359abb6ceeddcb25c5372862"
+   ],
+   "merges": [
+    "a8f454dcdb317da01beadfa9251833c48c124af0"
+   ],
+   "files": [
+    {
+     "path": "CHANGELOG.md",
+     "type": "added",
+     "additions": 6,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "README.md",
+     "type": "modified",
+     "additions": 4,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "assets/logo.png",
+     "type": "added",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/login.ts",
+     "type": "added",
+     "additions": 4,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/main.ts",
+     "oldPath": "src/app.ts",
+     "type": "renamed",
+     "additions": 3,
+     "deletions": 1,
+     "binary": false,
+     "touchCount": 2,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "reviewable": false
+  },
+  "58ccd8ed953dce3b64a21bf557f78aa798164835": {
+   "hashes": [
+    "58ccd8ed953dce3b64a21bf557f78aa798164835"
    ],
    "merges": [],
    "files": [
     {
-     "path": "src/top.ts",
-     "type": "added",
-     "additions": 2,
-     "deletions": 0,
+     "path": "README.md",
+     "type": "modified",
+     "additions": 1,
+     "deletions": 1,
      "binary": false,
      "touchCount": 1,
      "review": "",
@@ -482,17 +555,78 @@
    ],
    "reviewable": false
   },
-  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72": {
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd": {
    "hashes": [
-    "6830070971e8696e93c3dfa859832fbb4e800d79",
-    "c98626eeb63b09321a622056f1adf1694e851e72"
+    "58ccd8ed953dce3b64a21bf557f78aa798164835",
+    "965f1634cca72299715a551681e77d71cfa94352",
+    "af3743fb7b3393e2e18d887082ed3ab855cbb2bd"
    ],
    "merges": [],
    "files": [
     {
-     "path": "src/base.ts",
-     "type": "added",
+     "path": "CHANGELOG.md",
+     "type": "deleted",
+     "additions": 0,
+     "deletions": 6,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "README.md",
+     "type": "modified",
      "additions": 1,
+     "deletions": 1,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "assets/logo.png",
+     "type": "deleted",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 2,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "package.json",
+     "type": "modified",
+     "additions": 4,
+     "deletions": 1,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "reviewable": false
+  },
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": {
+   "hashes": [
+    "58ccd8ed953dce3b64a21bf557f78aa798164835",
+    "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9"
+   ],
+   "merges": [],
+   "files": [
+    {
+     "path": "README.md",
+     "type": "added",
+     "additions": 4,
+     "deletions": 1,
+     "binary": false,
+     "touchCount": 2,
+     "review": "",
+     "composable": false
+    },
+    {
+     "path": "package.json",
+     "type": "added",
+     "additions": 4,
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
@@ -500,9 +634,9 @@
      "composable": true
     },
     {
-     "path": "src/top.ts",
+     "path": "src/app.ts",
      "type": "added",
-     "additions": 2,
+     "additions": 3,
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
@@ -561,94 +695,6 @@
    ],
    "reviewable": false
   },
-  "6f765b3563185a27af32bf6837fa121f8a9ed441": {
-   "hashes": [
-    "6f765b3563185a27af32bf6837fa121f8a9ed441"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "CHANGELOG.md",
-     "type": "deleted",
-     "additions": 0,
-     "deletions": 6,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    },
-    {
-     "path": "assets/logo.png",
-     "type": "deleted",
-     "additions": 0,
-     "deletions": 0,
-     "binary": true,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "reviewable": false
-  },
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3": {
-   "hashes": [
-    "7432c6aa54c6ded53202b8e0b5180f4126f652c3"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "README.md",
-     "type": "modified",
-     "additions": 1,
-     "deletions": 1,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "reviewable": false
-  },
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": {
-   "hashes": [
-    "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
-    "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "README.md",
-     "type": "added",
-     "additions": 4,
-     "deletions": 1,
-     "binary": false,
-     "touchCount": 2,
-     "review": "",
-     "composable": false
-    },
-    {
-     "path": "package.json",
-     "type": "added",
-     "additions": 4,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    },
-    {
-     "path": "src/app.ts",
-     "type": "added",
-     "additions": 3,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "reviewable": false
-  },
   "7adf6354c6e5a673359abb6ceeddcb25c5372862": {
    "hashes": [
     "7adf6354c6e5a673359abb6ceeddcb25c5372862"
@@ -678,31 +724,36 @@
    ],
    "reviewable": false
   },
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c": {
+  "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9": {
    "hashes": [
-    "dd5a6027936904682e9712844f278de10516346c",
-    "d3631e45a9424d66837b732bbb5f3cd84475d30c",
-    "7adf6354c6e5a673359abb6ceeddcb25c5372862"
+    "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9"
    ],
-   "merges": [
-    "dd5a6027936904682e9712844f278de10516346c"
-   ],
+   "merges": [],
    "files": [
     {
-     "path": "CHANGELOG.md",
+     "path": "src/top.ts",
      "type": "added",
-     "additions": 6,
+     "additions": 2,
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
      "review": "",
      "composable": true
-    },
+    }
+   ],
+   "reviewable": false
+  },
+  "965f1634cca72299715a551681e77d71cfa94352": {
+   "hashes": [
+    "965f1634cca72299715a551681e77d71cfa94352"
+   ],
+   "merges": [],
+   "files": [
     {
-     "path": "README.md",
-     "type": "modified",
-     "additions": 4,
-     "deletions": 0,
+     "path": "CHANGELOG.md",
+     "type": "deleted",
+     "additions": 0,
+     "deletions": 6,
      "binary": false,
      "touchCount": 1,
      "review": "",
@@ -710,14 +761,25 @@
     },
     {
      "path": "assets/logo.png",
-     "type": "added",
+     "type": "deleted",
      "additions": 0,
      "deletions": 0,
      "binary": true,
      "touchCount": 1,
      "review": "",
      "composable": true
-    },
+    }
+   ],
+   "reviewable": false
+  },
+  "a8f454dcdb317da01beadfa9251833c48c124af0": {
+   "hashes": [
+    "a8f454dcdb317da01beadfa9251833c48c124af0"
+   ],
+   "merges": [
+    "a8f454dcdb317da01beadfa9251833c48c124af0"
+   ],
+   "files": [
     {
      "path": "src/login.ts",
      "type": "added",
@@ -730,12 +792,40 @@
     },
     {
      "path": "src/main.ts",
-     "oldPath": "src/app.ts",
-     "type": "renamed",
+     "type": "modified",
      "additions": 3,
      "deletions": 1,
      "binary": false,
-     "touchCount": 2,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "reviewable": false
+  },
+  "af3743fb7b3393e2e18d887082ed3ab855cbb2bd": {
+   "hashes": [
+    "af3743fb7b3393e2e18d887082ed3ab855cbb2bd"
+   ],
+   "merges": [],
+   "files": [
+    {
+     "path": "assets/logo.png",
+     "type": "modified",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "package.json",
+     "type": "modified",
+     "additions": 4,
+     "deletions": 1,
+     "binary": false,
+     "touchCount": 1,
      "review": "",
      "composable": true
     }
@@ -809,97 +899,104 @@
     }
    ],
    "reviewable": false
-  },
-  "c98626eeb63b09321a622056f1adf1694e851e72": {
-   "hashes": [
-    "c98626eeb63b09321a622056f1adf1694e851e72"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "src/base.ts",
-     "type": "added",
-     "additions": 1,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "reviewable": false
-  },
-  "d3631e45a9424d66837b732bbb5f3cd84475d30c": {
-   "hashes": [
-    "d3631e45a9424d66837b732bbb5f3cd84475d30c"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "assets/logo.png",
-     "type": "added",
-     "additions": 0,
-     "deletions": 0,
-     "binary": true,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    },
-    {
-     "path": "src/main.ts",
-     "oldPath": "src/app.ts",
-     "type": "renamed",
-     "additions": 0,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "reviewable": false
-  },
-  "dd5a6027936904682e9712844f278de10516346c": {
-   "hashes": [
-    "dd5a6027936904682e9712844f278de10516346c"
-   ],
-   "merges": [
-    "dd5a6027936904682e9712844f278de10516346c"
-   ],
-   "files": [
-    {
-     "path": "src/login.ts",
-     "type": "added",
-     "additions": 4,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    },
-    {
-     "path": "src/main.ts",
-     "type": "modified",
-     "additions": 3,
-     "deletions": 1,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "reviewable": false
   }
  },
  "diffs": {
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": {
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4,91bcb989fb797bd50a8d8ea618f8c6cca265a0d9|src/base.ts": {
+   "path": "src/base.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "16ba5fcd354dedeb482587d8b1814d101c8af9d4",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/base.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
+      "path": "src/base.ts",
+      "content": "export const base = 1\n",
+      "size": 22,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4,91bcb989fb797bd50a8d8ea618f8c6cca265a0d9|src/top.ts": {
+   "path": "src/top.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/top.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+      "path": "src/top.ts",
+      "content": "import { base } from './base'\nexport const top = base + 1\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4|src/base.ts": {
+   "path": "src/base.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "16ba5fcd354dedeb482587d8b1814d101c8af9d4",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/base.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
+      "path": "src/base.ts",
+      "content": "export const base = 1\n",
+      "size": 22,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|CHANGELOG.md": {
    "path": "CHANGELOG.md",
    "type": "deleted",
    "stacked": true,
    "note": "This file was added and deleted again within the selection, so there is no net change. Each commit's own change is shown below.",
    "pairs": [
     {
-     "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
+     "commit": "965f1634cca72299715a551681e77d71cfa94352",
      "type": "deleted",
      "old": {
       "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
@@ -944,13 +1041,13 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|README.md": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|README.md": {
    "path": "README.md",
    "type": "modified",
    "stacked": false,
    "pairs": [
     {
-     "commit": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
+     "commit": "58ccd8ed953dce3b64a21bf557f78aa798164835",
      "type": "modified",
      "old": {
       "blob": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
@@ -973,20 +1070,20 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|assets/logo.png": {
    "path": "assets/logo.png",
    "type": "deleted",
    "stacked": true,
    "note": "This file was added and deleted again within the selection, so there is no net change. Each commit's own change is shown below.",
    "pairs": [
     {
-     "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
+     "commit": "965f1634cca72299715a551681e77d71cfa94352",
      "type": "deleted",
      "old": {
-      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
+      "blob": "0e9015bd56d51b6140be13370438930ef3b3b62f",
       "path": "assets/logo.png",
       "content": "",
-      "size": 16,
+      "size": 662,
       "missing": false,
       "binary": true,
       "tooLarge": false
@@ -1002,7 +1099,29 @@
      }
     },
     {
-     "commit": "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+     "commit": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
+     "type": "modified",
+     "old": {
+      "blob": "8474b64844e46f7725b7a0fa666c50112c28865f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 578,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0e9015bd56d51b6140be13370438930ef3b3b62f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 662,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    },
+    {
+     "commit": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
      "type": "added",
      "old": {
       "blob": "0000000000000000000000000000000000000000",
@@ -1014,10 +1133,10 @@
       "tooLarge": false
      },
      "new": {
-      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
+      "blob": "8474b64844e46f7725b7a0fa666c50112c28865f",
       "path": "assets/logo.png",
       "content": "",
-      "size": 16,
+      "size": 578,
       "missing": false,
       "binary": true,
       "tooLarge": false
@@ -1025,13 +1144,13 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|package.json": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|package.json": {
    "path": "package.json",
    "type": "modified",
    "stacked": false,
    "pairs": [
     {
-     "commit": "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
+     "commit": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
      "type": "modified",
      "old": {
       "blob": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
@@ -1054,13 +1173,13 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/login.ts": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|src/login.ts": {
    "path": "src/login.ts",
    "type": "added",
    "stacked": false,
    "pairs": [
     {
-     "commit": "dd5a6027936904682e9712844f278de10516346c",
+     "commit": "a8f454dcdb317da01beadfa9251833c48c124af0",
      "type": "added",
      "old": {
       "blob": "0000000000000000000000000000000000000000",
@@ -1083,13 +1202,13 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/main.ts": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|src/main.ts": {
    "path": "src/main.ts",
    "type": "renamed",
    "stacked": false,
    "pairs": [
     {
-     "commit": "dd5a6027936904682e9712844f278de10516346c",
+     "commit": "a8f454dcdb317da01beadfa9251833c48c124af0",
      "type": "renamed",
      "old": {
       "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
@@ -1112,13 +1231,216 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|CHANGELOG.md": {
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|CHANGELOG.md": {
+   "path": "CHANGELOG.md",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "CHANGELOG.md",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
+      "path": "CHANGELOG.md",
+      "content": "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|README.md": {
+   "path": "README.md",
+   "type": "modified",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
+     "type": "modified",
+     "old": {
+      "blob": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n",
+      "size": 44,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
+      "size": 63,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|assets/logo.png": {
+   "path": "assets/logo.png",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "8474b64844e46f7725b7a0fa666c50112c28865f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 578,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|src/login.ts": {
+   "path": "src/login.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "a8f454dcdb317da01beadfa9251833c48c124af0",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/login.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+      "path": "src/login.ts",
+      "content": "export function login(user: string, password: string) {\n  if (!password) return false\n  return user.length \u003e 0\n}\n",
+      "size": 113,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|src/main.ts": {
+   "path": "src/main.ts",
+   "type": "renamed",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "a8f454dcdb317da01beadfa9251833c48c124af0",
+     "type": "renamed",
+     "old": {
+      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+      "path": "src/app.ts",
+      "content": "export function main() {\n  console.log('hello')\n}\n",
+      "size": 50,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+      "path": "src/main.ts",
+      "content": "import { login } from './login'\n\nexport function main() {\n  console.log('hello', login('ada'))\n}\n",
+      "size": 97,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c|assets/logo.png": {
+   "path": "assets/logo.png",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "8474b64844e46f7725b7a0fa666c50112c28865f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 578,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c|src/main.ts": {
+   "path": "src/main.ts",
+   "type": "renamed",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
+     "type": "renamed",
+     "old": {
+      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+      "path": "src/app.ts",
+      "content": "export function main() {\n  console.log('hello')\n}\n",
+      "size": 50,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+      "path": "src/main.ts",
+      "content": "export function main() {\n  console.log('hello')\n}\n",
+      "size": 50,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|CHANGELOG.md": {
    "path": "CHANGELOG.md",
    "type": "deleted",
    "stacked": false,
    "pairs": [
     {
-     "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
+     "commit": "965f1634cca72299715a551681e77d71cfa94352",
      "type": "deleted",
      "old": {
       "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
@@ -1141,13 +1463,13 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|README.md": {
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|README.md": {
    "path": "README.md",
    "type": "modified",
    "stacked": false,
    "pairs": [
     {
-     "commit": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
+     "commit": "58ccd8ed953dce3b64a21bf557f78aa798164835",
      "type": "modified",
      "old": {
       "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
@@ -1170,19 +1492,19 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|assets/logo.png": {
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|assets/logo.png": {
    "path": "assets/logo.png",
    "type": "deleted",
    "stacked": false,
    "pairs": [
     {
-     "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
+     "commit": "965f1634cca72299715a551681e77d71cfa94352",
      "type": "deleted",
      "old": {
-      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
+      "blob": "8474b64844e46f7725b7a0fa666c50112c28865f",
       "path": "assets/logo.png",
       "content": "",
-      "size": 16,
+      "size": 578,
       "missing": false,
       "binary": true,
       "tooLarge": false
@@ -1199,13 +1521,13 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|package.json": {
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|package.json": {
    "path": "package.json",
    "type": "modified",
    "stacked": false,
    "pairs": [
     {
-     "commit": "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
+     "commit": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
      "type": "modified",
      "old": {
       "blob": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
@@ -1228,15 +1550,76 @@
     }
    ]
   },
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59|package.json": {
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": {
+   "path": "README.md",
+   "type": "added",
+   "stacked": true,
+   "note": "Commits outside the selection also changed this file in between, so the selected changes can't be merged into one patch. Each commit's own change is shown below.",
+   "pairs": [
+    {
+     "commit": "58ccd8ed953dce3b64a21bf557f78aa798164835",
+     "type": "modified",
+     "old": {
+      "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
+      "size": 63,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it. Then run it again.\n",
+      "size": 82,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    },
+    {
+     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "README.md",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n",
+      "size": 44,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": {
    "path": "package.json",
-   "type": "modified",
+   "type": "added",
    "stacked": false,
    "pairs": [
     {
-     "commit": "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
-     "type": "modified",
+     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
+     "type": "added",
      "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "package.json",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
       "blob": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
       "path": "package.json",
       "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.0.0\"\n}\n",
@@ -1244,30 +1627,21 @@
       "missing": false,
       "binary": false,
       "tooLarge": false
-     },
-     "new": {
-      "blob": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
-      "path": "package.json",
-      "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.1.0\",\n  \"dependencies\": {\n    \"left-pad\": \"^1.3.0\"\n  }\n}\n",
-      "size": 93,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
      }
     }
    ]
   },
-  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": {
-   "path": "src/base.ts",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": {
+   "path": "src/app.ts",
    "type": "added",
    "stacked": false,
    "pairs": [
     {
-     "commit": "c98626eeb63b09321a622056f1adf1694e851e72",
+     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
      "type": "added",
      "old": {
       "blob": "0000000000000000000000000000000000000000",
-      "path": "src/base.ts",
+      "path": "src/app.ts",
       "content": "",
       "size": 0,
       "missing": true,
@@ -1275,10 +1649,10 @@
       "tooLarge": false
      },
      "new": {
-      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
-      "path": "src/base.ts",
-      "content": "export const base = 1\n",
-      "size": 22,
+      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+      "path": "src/app.ts",
+      "content": "export function main() {\n  console.log('hello')\n}\n",
+      "size": 50,
       "missing": false,
       "binary": false,
       "tooLarge": false
@@ -1286,57 +1660,28 @@
     }
    ]
   },
-  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/top.ts": {
-   "path": "src/top.ts",
-   "type": "added",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835|README.md": {
+   "path": "README.md",
+   "type": "modified",
    "stacked": false,
    "pairs": [
     {
-     "commit": "6830070971e8696e93c3dfa859832fbb4e800d79",
-     "type": "added",
+     "commit": "58ccd8ed953dce3b64a21bf557f78aa798164835",
+     "type": "modified",
      "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/top.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
-      "path": "src/top.ts",
-      "content": "import { base } from './base'\nexport const top = base + 1\n",
-      "size": 58,
+      "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
+      "size": 63,
       "missing": false,
       "binary": false,
       "tooLarge": false
-     }
-    }
-   ]
-  },
-  "6830070971e8696e93c3dfa859832fbb4e800d79|src/top.ts": {
-   "path": "src/top.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "6830070971e8696e93c3dfa859832fbb4e800d79",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/top.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
      },
      "new": {
-      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
-      "path": "src/top.ts",
-      "content": "import { base } from './base'\nexport const top = base + 1\n",
-      "size": 58,
+      "blob": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+      "path": "README.md",
+      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it. Then run it again.\n",
+      "size": 82,
       "missing": false,
       "binary": false,
       "tooLarge": false
@@ -1431,348 +1776,6 @@
     }
    ]
   },
-  "6f765b3563185a27af32bf6837fa121f8a9ed441|CHANGELOG.md": {
-   "path": "CHANGELOG.md",
-   "type": "deleted",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
-     "type": "deleted",
-     "old": {
-      "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
-      "path": "CHANGELOG.md",
-      "content": "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n",
-      "size": 58,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "CHANGELOG.md",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "6f765b3563185a27af32bf6837fa121f8a9ed441|assets/logo.png": {
-   "path": "assets/logo.png",
-   "type": "deleted",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "6f765b3563185a27af32bf6837fa121f8a9ed441",
-     "type": "deleted",
-     "old": {
-      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
-      "path": "assets/logo.png",
-      "content": "",
-      "size": 16,
-      "missing": false,
-      "binary": true,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "assets/logo.png",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": {
-   "path": "README.md",
-   "type": "added",
-   "stacked": true,
-   "note": "Commits outside the selection also changed this file in between, so the selected changes can't be merged into one patch. Each commit's own change is shown below.",
-   "pairs": [
-    {
-     "commit": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
-     "type": "modified",
-     "old": {
-      "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
-      "size": 63,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it. Then run it again.\n",
-      "size": 82,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    },
-    {
-     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "README.md",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n",
-      "size": 44,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": {
-   "path": "package.json",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "package.json",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
-      "path": "package.json",
-      "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.0.0\"\n}\n",
-      "size": 43,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": {
-   "path": "src/app.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/app.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-      "path": "src/app.ts",
-      "content": "export function main() {\n  console.log('hello')\n}\n",
-      "size": 50,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3|README.md": {
-   "path": "README.md",
-   "type": "modified",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
-     "type": "modified",
-     "old": {
-      "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
-      "size": 63,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it. Then run it again.\n",
-      "size": 82,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": {
-   "path": "CHANGELOG.md",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "CHANGELOG.md",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
-      "path": "CHANGELOG.md",
-      "content": "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n",
-      "size": 58,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|README.md": {
-   "path": "README.md",
-   "type": "modified",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
-     "type": "modified",
-     "old": {
-      "blob": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n",
-      "size": 44,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
-      "path": "README.md",
-      "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
-      "size": 63,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": {
-   "path": "assets/logo.png",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "d3631e45a9424d66837b732bbb5f3cd84475d30c",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "assets/logo.png",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
-      "path": "assets/logo.png",
-      "content": "",
-      "size": 16,
-      "missing": false,
-      "binary": true,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/login.ts": {
-   "path": "src/login.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "dd5a6027936904682e9712844f278de10516346c",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/login.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-      "path": "src/login.ts",
-      "content": "export function login(user: string, password: string) {\n  if (!password) return false\n  return user.length \u003e 0\n}\n",
-      "size": 113,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/main.ts": {
-   "path": "src/main.ts",
-   "type": "renamed",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "dd5a6027936904682e9712844f278de10516346c",
-     "type": "renamed",
-     "old": {
-      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-      "path": "src/app.ts",
-      "content": "export function main() {\n  console.log('hello')\n}\n",
-      "size": 50,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
-      "path": "src/main.ts",
-      "content": "import { login } from './login'\n\nexport function main() {\n  console.log('hello', login('ada'))\n}\n",
-      "size": 97,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
   "7adf6354c6e5a673359abb6ceeddcb25c5372862|CHANGELOG.md": {
    "path": "CHANGELOG.md",
    "type": "added",
@@ -1824,6 +1827,209 @@
       "path": "README.md",
       "content": "# demo\n\nA small repository for screenshots.\n\n## Usage\n\nRun it.\n",
       "size": 63,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9|src/top.ts": {
+   "path": "src/top.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/top.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+      "path": "src/top.ts",
+      "content": "import { base } from './base'\nexport const top = base + 1\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "965f1634cca72299715a551681e77d71cfa94352|CHANGELOG.md": {
+   "path": "CHANGELOG.md",
+   "type": "deleted",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "965f1634cca72299715a551681e77d71cfa94352",
+     "type": "deleted",
+     "old": {
+      "blob": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
+      "path": "CHANGELOG.md",
+      "content": "# Changelog\n\n## 1.0.0\n\n- first release\n- nothing else yet\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "CHANGELOG.md",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "965f1634cca72299715a551681e77d71cfa94352|assets/logo.png": {
+   "path": "assets/logo.png",
+   "type": "deleted",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "965f1634cca72299715a551681e77d71cfa94352",
+     "type": "deleted",
+     "old": {
+      "blob": "0e9015bd56d51b6140be13370438930ef3b3b62f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 662,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "a8f454dcdb317da01beadfa9251833c48c124af0|src/login.ts": {
+   "path": "src/login.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "a8f454dcdb317da01beadfa9251833c48c124af0",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/login.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+      "path": "src/login.ts",
+      "content": "export function login(user: string, password: string) {\n  if (!password) return false\n  return user.length \u003e 0\n}\n",
+      "size": 113,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "a8f454dcdb317da01beadfa9251833c48c124af0|src/main.ts": {
+   "path": "src/main.ts",
+   "type": "modified",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "a8f454dcdb317da01beadfa9251833c48c124af0",
+     "type": "modified",
+     "old": {
+      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+      "path": "src/main.ts",
+      "content": "export function main() {\n  console.log('hello')\n}\n",
+      "size": 50,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+      "path": "src/main.ts",
+      "content": "import { login } from './login'\n\nexport function main() {\n  console.log('hello', login('ada'))\n}\n",
+      "size": 97,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "af3743fb7b3393e2e18d887082ed3ab855cbb2bd|assets/logo.png": {
+   "path": "assets/logo.png",
+   "type": "modified",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
+     "type": "modified",
+     "old": {
+      "blob": "8474b64844e46f7725b7a0fa666c50112c28865f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 578,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0e9015bd56d51b6140be13370438930ef3b3b62f",
+      "path": "assets/logo.png",
+      "content": "",
+      "size": 662,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "af3743fb7b3393e2e18d887082ed3ab855cbb2bd|package.json": {
+   "path": "package.json",
+   "type": "modified",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
+     "type": "modified",
+     "old": {
+      "blob": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
+      "path": "package.json",
+      "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.0.0\"\n}\n",
+      "size": 43,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+      "path": "package.json",
+      "content": "{\n  \"name\": \"demo\",\n  \"version\": \"1.1.0\",\n  \"dependencies\": {\n    \"left-pad\": \"^1.3.0\"\n  }\n}\n",
+      "size": 93,
       "missing": false,
       "binary": false,
       "tooLarge": false
@@ -1975,151 +2181,6 @@
      }
     }
    ]
-  },
-  "c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": {
-   "path": "src/base.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "c98626eeb63b09321a622056f1adf1694e851e72",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/base.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
-      "path": "src/base.ts",
-      "content": "export const base = 1\n",
-      "size": 22,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "d3631e45a9424d66837b732bbb5f3cd84475d30c|assets/logo.png": {
-   "path": "assets/logo.png",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "d3631e45a9424d66837b732bbb5f3cd84475d30c",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "assets/logo.png",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
-      "path": "assets/logo.png",
-      "content": "",
-      "size": 16,
-      "missing": false,
-      "binary": true,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "d3631e45a9424d66837b732bbb5f3cd84475d30c|src/main.ts": {
-   "path": "src/main.ts",
-   "type": "renamed",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "d3631e45a9424d66837b732bbb5f3cd84475d30c",
-     "type": "renamed",
-     "old": {
-      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-      "path": "src/app.ts",
-      "content": "export function main() {\n  console.log('hello')\n}\n",
-      "size": 50,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-      "path": "src/main.ts",
-      "content": "export function main() {\n  console.log('hello')\n}\n",
-      "size": 50,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "dd5a6027936904682e9712844f278de10516346c|src/login.ts": {
-   "path": "src/login.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "dd5a6027936904682e9712844f278de10516346c",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/login.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-      "path": "src/login.ts",
-      "content": "export function login(user: string, password: string) {\n  if (!password) return false\n  return user.length \u003e 0\n}\n",
-      "size": 113,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "dd5a6027936904682e9712844f278de10516346c|src/main.ts": {
-   "path": "src/main.ts",
-   "type": "modified",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "dd5a6027936904682e9712844f278de10516346c",
-     "type": "modified",
-     "old": {
-      "blob": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-      "path": "src/main.ts",
-      "content": "export function main() {\n  console.log('hello')\n}\n",
-      "size": 50,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
-      "path": "src/main.ts",
-      "content": "import { login } from './login'\n\nexport function main() {\n  console.log('hello', login('ada'))\n}\n",
-      "size": 97,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
   }
  },
  "branches": {
@@ -2128,91 +2189,92 @@
    "b179da9e48d66a81a6dda4f0d4fa01301ab54156"
   ],
   "refs/heads/feature/stack-base": [
-   "c98626eeb63b09321a622056f1adf1694e851e72"
+   "16ba5fcd354dedeb482587d8b1814d101c8af9d4"
   ],
   "refs/heads/feature/stack-top": [
-   "6830070971e8696e93c3dfa859832fbb4e800d79"
+   "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9"
   ],
   "refs/heads/main": [
-   "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
-   "6f765b3563185a27af32bf6837fa121f8a9ed441",
-   "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
-   "dd5a6027936904682e9712844f278de10516346c",
-   "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+   "58ccd8ed953dce3b64a21bf557f78aa798164835",
+   "965f1634cca72299715a551681e77d71cfa94352",
+   "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
+   "a8f454dcdb317da01beadfa9251833c48c124af0",
+   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
    "7adf6354c6e5a673359abb6ceeddcb25c5372862"
   ],
   "refs/tags/v1.0.0": [
-   "dd5a6027936904682e9712844f278de10516346c",
-   "d3631e45a9424d66837b732bbb5f3cd84475d30c",
+   "a8f454dcdb317da01beadfa9251833c48c124af0",
+   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c",
    "7adf6354c6e5a673359abb6ceeddcb25c5372862"
   ]
  },
  "names": {
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59": "main",
-  "6830070971e8696e93c3dfa859832fbb4e800d79": "feature/stack-top",
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4": "feature/stack-base",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c": "main",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835": "main",
   "6d29c096a2b08ead328b4d5cab2e230df301f777": "feature/login",
-  "6f765b3563185a27af32bf6837fa121f8a9ed441": "main",
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3": "main",
   "7adf6354c6e5a673359abb6ceeddcb25c5372862": "main",
+  "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9": "feature/stack-top",
+  "965f1634cca72299715a551681e77d71cfa94352": "main",
+  "a8f454dcdb317da01beadfa9251833c48c124af0": "main",
+  "af3743fb7b3393e2e18d887082ed3ab855cbb2bd": "main",
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156": "feature/login",
-  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": "feature/login",
-  "c98626eeb63b09321a622056f1adf1694e851e72": "feature/stack-base",
-  "d3631e45a9424d66837b732bbb5f3cd84475d30c": "main",
-  "dd5a6027936904682e9712844f278de10516346c": "main"
+  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": "feature/login"
  },
  "newestBlob": {
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": "0000000000000000000000000000000000000000",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": "0000000000000000000000000000000000000000",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3,7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|CHANGELOG.md": "0000000000000000000000000000000000000000",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|assets/logo.png": "0000000000000000000000000000000000000000",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59,6f765b3563185a27af32bf6837fa121f8a9ed441,7432c6aa54c6ded53202b8e0b5180f4126f652c3|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
-  "3c944b9d656e7e87abf4c5567bcc05666fa5fb59|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
-  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
-  "6830070971e8696e93c3dfa859832fbb4e800d79,c98626eeb63b09321a622056f1adf1694e851e72|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
-  "6830070971e8696e93c3dfa859832fbb4e800d79|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4,91bcb989fb797bd50a8d8ea618f8c6cca265a0d9|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4,91bcb989fb797bd50a8d8ea618f8c6cca265a0d9|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+  "16ba5fcd354dedeb482587d8b1814d101c8af9d4|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|CHANGELOG.md": "0000000000000000000000000000000000000000",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|assets/logo.png": "0000000000000000000000000000000000000000",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,58ccd8ed953dce3b64a21bf557f78aa798164835,7adf6354c6e5a673359abb6ceeddcb25c5372862,965f1634cca72299715a551681e77d71cfa94352,a8f454dcdb317da01beadfa9251833c48c124af0,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|assets/logo.png": "8474b64844e46f7725b7a0fa666c50112c28865f",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c|assets/logo.png": "8474b64844e46f7725b7a0fa666c50112c28865f",
+  "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c|src/main.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|CHANGELOG.md": "0000000000000000000000000000000000000000",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|assets/logo.png": "0000000000000000000000000000000000000000",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,965f1634cca72299715a551681e77d71cfa94352,af3743fb7b3393e2e18d887082ed3ab855cbb2bd|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
+  "58ccd8ed953dce3b64a21bf557f78aa798164835|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
   "6d29c096a2b08ead328b4d5cab2e230df301f777|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-  "6f765b3563185a27af32bf6837fa121f8a9ed441|CHANGELOG.md": "0000000000000000000000000000000000000000",
-  "6f765b3563185a27af32bf6837fa121f8a9ed441|assets/logo.png": "0000000000000000000000000000000000000000",
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-  "7432c6aa54c6ded53202b8e0b5180f4126f652c3|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|assets/logo.png": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-  "7adf6354c6e5a673359abb6ceeddcb25c5372862,d3631e45a9424d66837b732bbb5f3cd84475d30c,dd5a6027936904682e9712844f278de10516346c|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "7adf6354c6e5a673359abb6ceeddcb25c5372862|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
   "7adf6354c6e5a673359abb6ceeddcb25c5372862|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
+  "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+  "965f1634cca72299715a551681e77d71cfa94352|CHANGELOG.md": "0000000000000000000000000000000000000000",
+  "965f1634cca72299715a551681e77d71cfa94352|assets/logo.png": "0000000000000000000000000000000000000000",
+  "a8f454dcdb317da01beadfa9251833c48c124af0|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
+  "a8f454dcdb317da01beadfa9251833c48c124af0|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
+  "af3743fb7b3393e2e18d887082ed3ab855cbb2bd|assets/logo.png": "0e9015bd56d51b6140be13370438930ef3b3b62f",
+  "af3743fb7b3393e2e18d887082ed3ab855cbb2bd|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "c6df7193098bc53415df8cef39031bcf446ae48e",
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
-  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-  "c98626eeb63b09321a622056f1adf1694e851e72|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
-  "d3631e45a9424d66837b732bbb5f3cd84475d30c|assets/logo.png": "ac6c5447f9db7f0df9199b469c3dd025c5b92d6c",
-  "d3631e45a9424d66837b732bbb5f3cd84475d30c|src/main.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
-  "dd5a6027936904682e9712844f278de10516346c|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-  "dd5a6027936904682e9712844f278de10516346c|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e"
+  "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791"
  },
  "labels": {
-  "Merge branch 'feature/login'": "dd5a6027936904682e9712844f278de10516346c",
-  "chore(LD-2): depend on left-pad, as one does": "3c944b9d656e7e87abf4c5567bcc05666fa5fb59",
+  "Merge branch 'feature/login'": "a8f454dcdb317da01beadfa9251833c48c124af0",
+  "chore(LD-2): depend on left-pad, as one does": "af3743fb7b3393e2e18d887082ed3ab855cbb2bd",
   "chore: initial import": "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9",
-  "chore: logo was a mistake": "6f765b3563185a27af32bf6837fa121f8a9ed441",
-  "docs: more usage": "7432c6aa54c6ded53202b8e0b5180f4126f652c3",
+  "chore: logo was a mistake": "965f1634cca72299715a551681e77d71cfa94352",
+  "docs: more usage": "58ccd8ed953dce3b64a21bf557f78aa798164835",
   "docs: usage section": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
   "feat(LD-1): login helper and wire it into main": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-  "feat(LD-3): base of the stack": "c98626eeb63b09321a622056f1adf1694e851e72",
-  "feat(LD-3): top of the stack": "6830070971e8696e93c3dfa859832fbb4e800d79",
+  "feat(LD-3): base of the stack": "16ba5fcd354dedeb482587d8b1814d101c8af9d4",
+  "feat(LD-3): top of the stack": "91bcb989fb797bd50a8d8ea618f8c6cca265a0d9",
   "fix(LD-1): a login needs a password": "6d29c096a2b08ead328b4d5cab2e230df301f777",
-  "refactor: app.ts becomes main.ts, logo lands": "d3631e45a9424d66837b732bbb5f3cd84475d30c"
+  "refactor: app.ts becomes main.ts, logo lands": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c"
  }
 }

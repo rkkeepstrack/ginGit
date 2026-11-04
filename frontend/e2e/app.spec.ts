@@ -141,6 +141,17 @@ test('stepping to a hit inside unchanged lines unfolds them', async ({ page }) =
   await expect(page.locator('.cm-findMatch')).toBeVisible()
 })
 
+test('a changed image shows before and after side by side', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'chore(LD-2): depend on left-pad, as one does').click()
+  await expect(page.locator('.image-pair.both .image-side')).toHaveCount(2)
+  await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('.image-side img')].every((i) => i.complete && i.naturalWidth > 0))
+  await expect(page.locator('.image-side figcaption')).toHaveText(['Before · 96 × 96 · 578 B', 'After · 128 × 96 · 662 B'])
+  await expect(ready(page)).toHaveCount(1)
+  await shoot(page, 'image.png')
+})
+
 test('marking a file as reviewed folds it, and a later change turns the mark stale', async ({ page }) => {
   await installBridge(page, { reviewed: { 'src/base.ts': 'some-older-blob' } })
   await loaded(page)

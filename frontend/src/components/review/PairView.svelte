@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { isImage } from '../../lib/image'
   import type { Pair } from '../../lib/types'
   import type { DiffMode } from '../../state/ui.svelte'
+  import ImagePair from './ImagePair.svelte'
   import MergeViewHost from './MergeViewHost.svelte'
   import SingleSideView from './SingleSideView.svelte'
 
@@ -11,7 +13,9 @@
   const oneSided = $derived(pair.old.missing !== pair.new.missing)
 </script>
 
-{#if problem}
+{#if isImage(path)}
+  <ImagePair {pair} {path} />
+{:else if problem}
   <div class="p-3 text-xs opacity-50">{problem}</div>
 {:else if oneSided}
   <SingleSideView text={pair.old.missing ? pair.new.content : pair.old.content} {path} kind={pair.old.missing ? 'added' : 'deleted'} />
