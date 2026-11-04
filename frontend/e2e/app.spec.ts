@@ -127,6 +127,20 @@ test('find in changes opens the matching files and steps through hits', async ({
   await expect(page.locator('#review .entry-head.open')).toHaveCount(4)
 })
 
+test('stepping to a hit inside unchanged lines unfolds them', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  // the rename leaves main.ts unchanged: its four lines arrive folded
+  await row(page, 'refactor: app.ts becomes main.ts, logo lands').click()
+  await expect(page.locator('#review .cm-collapsedLines')).toHaveCount(1)
+  await page.keyboard.press('ControlOrMeta+f')
+  await page.locator('#find-input').fill('hello')
+  await expect(page.locator('#review')).toContainText('1 match in 1 file')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('#review .cm-collapsedLines')).toHaveCount(0)
+  await expect(page.locator('.cm-findMatch')).toBeVisible()
+})
+
 test('marking a file as reviewed folds it, and a later change turns the mark stale', async ({ page }) => {
   await installBridge(page, { reviewed: { 'src/base.ts': 'some-older-blob' } })
   await loaded(page)

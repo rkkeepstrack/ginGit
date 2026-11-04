@@ -48,8 +48,30 @@ export function collectMatches(): Match[] {
   return out
 }
 
-/** Selects a match and brings it on screen. */
+/**
+ * A match inside a folded run of unchanged lines is invisible. The fold
+ * widget knows its line count, so the one covering pos can be found and
+ * clicked, which unfolds both sides of a split view the way the user would.
+ */
+function unfoldAround(view: EditorView, pos: number): boolean {
+  for (const el of view.dom.querySelectorAll<HTMLElement>('.cm-collapsedLines')) {
+    const start = view.posAtDOM(el)
+    const lines = parseInt(el.textContent ?? '', 10)
+    if (!lines || start > pos) continue
+    const first = view.state.doc.lineAt(start)
+    const last = view.state.doc.line(Math.min(view.state.doc.lines, first.number + lines - 1))
+    if (pos <= last.to) { el.click(); return true }
+  }
+  return false
+}
+
+/** Selects a match and brings it on screen, unfolding the lines around it if need be. */
 export function revealMatch(m: Match) {
-  m.view.dispatch({ selection: EditorSelection.single(m.from, m.to), effects: EditorView.scrollIntoView(m.from, { y: 'center' }) })
-  m.view.contentDOM.focus({ preventScroll: true })
+  const show = () => {
+    m.view.dispatch({ selection: EditorSelection.single(m.from, m.to), effects: EditorView.scrollIntoView(m.from, { y: 'center' }) })
+    m.view.contentDOM.focus({ preventScroll: true })
+  }
+  show()
+  // Fold widgets only exist in the rendered part of the editor: look once the scroll has landed.
+  requestAnimationFrame(() => { if (unfoldAround(m.view, m.from)) requestAnimationFrame(show) })
 }
