@@ -1,7 +1,6 @@
 <script lang="ts">
   import ChevronDown from '@lucide/svelte/icons/chevron-down'
   import ChevronRight from '@lucide/svelte/icons/chevron-right'
-  import History from '@lucide/svelte/icons/history'
   import Unlink from '@lucide/svelte/icons/unlink'
   import ReviewMark from '../files/ReviewMark.svelte'
   import { changes, markReviewed } from '../../state/changes.svelte'
@@ -95,9 +94,12 @@
     {/if}
     {#if typeMark}<span class="ct-label ct-{file.type}">{typeMark.label}</span>{/if}
     {#if file.review === 'stale'}
-      <button type="button" class="btn btn-ghost btn-xs" class:btn-active={since} onmousedown={(e) => e.stopPropagation()} onclick={(e) => { e.stopPropagation(); since = !since }} use:hint={since ? 'Show the whole diff' : 'Show only what changed since you reviewed it'}>
-        <History size={13} strokeWidth={1.75} /> since
-      </button>
+      <!-- Clicks stay here instead of folding the entry. -->
+      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_interactive_supports_focus -->
+      <div role="tablist" class="tabs tabs-box tabs-xs p-0.5" onmousedown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
+        <button role="tab" class="tab px-1.5" class:tab-active={!since} class:brand={!since} class:opacity-60={since} onclick={() => (since = false)} use:hint={'The whole diff of the selection'}>All</button>
+        <button role="tab" class="tab px-1.5" class:tab-active={since} class:brand={since} class:opacity-60={!since} onclick={() => (since = true)} use:hint={'Only what changed since you reviewed it'}>New</button>
+      </div>
     {/if}
     {#if changes.changeSet?.reviewable}<ReviewMark review={file.review} onmark={mark} />{/if}
   </div>

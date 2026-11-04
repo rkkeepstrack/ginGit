@@ -148,10 +148,10 @@ test('marking a file as reviewed folds it, and a later change turns the mark sta
   await row(page, 'feat(LD-3): top of the stack').click()
   await row(page, 'feat(LD-3): base of the stack').click({ modifiers: ['ControlOrMeta'] })
   await expect(page.locator('#review .entry-head')).toHaveCount(2)
-  // base.ts was reviewed at an older version: stale, open, with a "since" toggle
+  // base.ts was reviewed at an older version: stale, open, with an All / New toggle
   await expect(page.locator('#review .entry-head.stale')).toHaveCount(1)
   await expect(page.locator('#review .entry-head.stale')).toContainText('base.ts')
-  await expect(page.locator('#review .entry-head.stale .btn', { hasText: 'since' })).toBeVisible()
+  await expect(page.locator('#review .entry-head.stale .tab', { hasText: 'New' })).toBeVisible()
   // mark top.ts: it folds and the counter appears
   await page.locator('#review .entry-head', { hasText: 'top.ts' }).locator('.review').click()
   await expect(page.locator('#review .entry-head.reviewed')).toHaveCount(1)
