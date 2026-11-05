@@ -10,11 +10,11 @@ import type { LineKind } from './lineDiff'
  */
 type Shown = Exclude<LineKind, 'same'>
 
-// A re-indented line is a modified one that skips the word highlight.
+// Re-indented lines are modified ones that skip the word highlight.
 const classes: Record<Shown, string> = {
   inserted: 'cm-kind-inserted',
   modified: 'cm-kind-modified',
-  reindented: 'cm-kind-modified cm-kind-reindented',
+  reindented: 'cm-kind-modified cm-kind-plain',
   deleted: 'cm-kind-deleted',
 }
 class KindMarker extends GutterMarker {

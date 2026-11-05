@@ -1,7 +1,12 @@
 import { Change, diff, presentableDiff } from '@codemirror/merge'
 
-/** What happened to a line: kept, new, rewritten, only re-indented, or gone. */
+/** What happened to a line: kept, new, edited, only re-indented, or gone. */
 export type LineKind = 'same' | 'inserted' | 'modified' | 'reindented' | 'deleted'
+
+/** Two lines of a changed block belong together from this similarity on (0 to 1). */
+const SIMILAR = 0.5
+/** Beyond this many line pairs a block is not searched for similar lines; it stays one change. */
+const MAX_PAIRS = 250_000
 
 export interface Alignment {
   changes: readonly Change[]
@@ -123,8 +128,20 @@ function align(a: string, b: string): Alignment {
     unchanged(pa, ca.length, pb)
     const [la, lb] = [SA[SA.length - 1], SB[SB.length - 1]]
     spacing(la.to, la.end, lb.to, lb.end)
-    kindsA.fill('modified', fa, ta)
-    kindsB.fill('modified', fb, tb)
+    // As IntelliJ does: inside the block, lines that resemble each other are a
+    // change; what is left over is new on one side and gone on the other.
+    const pairs = pairSimilar(linesA.slice(fa, ta), linesB.slice(fb, tb))
+    if (!pairs) {
+      kindsA.fill('modified', fa, ta)
+      kindsB.fill('modified', fb, tb)
+      return
+    }
+    kindsA.fill('deleted', fa, ta)
+    kindsB.fill('inserted', fb, tb)
+    for (const [i, j] of pairs) {
+      kindsA[fa + i] = 'modified'
+      kindsB[fb + j] = 'modified'
+    }
   }
   let i = 0
   let j = 0
@@ -144,6 +161,69 @@ function align(a: string, b: string): Alignment {
   }
   paired(i, linesA.length, j)
   return { changes, kindsA, kindsB }
+}
+
+/**
+ * The best ordered pairing of similar lines between two blocks (largest total
+ * similarity), or null when the blocks are too big to search.
+ */
+function pairSimilar(a: string[], b: string[]): [number, number][] | null {
+  const [n, m] = [a.length, b.length]
+  if (n * m > MAX_PAIRS) return null
+  const [ga, gb] = [a.map(grams), b.map(grams)]
+  const w = m + 1
+  const sim = new Float64Array(n * m)
+  const score = new Float64Array((n + 1) * w)
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      const s = (sim[(i - 1) * m + j - 1] = similarity(ga[i - 1], gb[j - 1]))
+      let best = Math.max(score[(i - 1) * w + j], score[i * w + j - 1])
+      if (s >= SIMILAR) best = Math.max(best, score[(i - 1) * w + j - 1] + s)
+      score[i * w + j] = best
+    }
+  }
+  const pairs: [number, number][] = []
+  for (let [i, j] = [n, m]; i > 0 && j > 0; ) {
+    if (score[i * w + j] === score[(i - 1) * w + j]) i--
+    else if (score[i * w + j] === score[i * w + j - 1]) j--
+    else {
+      pairs.push([i - 1, j - 1])
+      i--
+      j--
+    }
+  }
+  return pairs.reverse()
+}
+
+/** A line's content as a bag of character pairs, for comparing lines. */
+function grams(line: string): Map<string, number> {
+  const t = line.trim()
+  const out = new Map<string, number>()
+  if (t.length < 2) out.set(t, 1)
+  for (let k = 0; k + 1 < t.length; k++) {
+    const g = t.slice(k, k + 2)
+    out.set(g, (out.get(g) ?? 0) + 1)
+  }
+  return out
+}
+
+/**
+ * How alike two lines are, 0 to 1: the share of character pairs they have in
+ * common. A line that grew (or shrank) counts too: when most of the shorter
+ * one, at least a few characters of it, is found in the longer, it's an edit.
+ */
+function similarity(x: Map<string, number>, y: Map<string, number>): number {
+  let common = 0
+  let [sizeX, sizeY] = [0, 0]
+  for (const [g, c] of x) {
+    common += Math.min(c, y.get(g) ?? 0)
+    sizeX += c
+  }
+  for (const c of y.values()) sizeY += c
+  if (!sizeX && !sizeY) return 1
+  const shared = (2 * common) / (sizeX + sizeY)
+  const shorter = Math.min(sizeX, sizeY)
+  return shorter >= 4 && common / shorter >= 0.8 ? Math.max(shared, SIMILAR) : shared
 }
 
 /** A line's place in its document: start, content start and end, end with its newline. */

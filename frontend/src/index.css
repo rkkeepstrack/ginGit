@@ -377,7 +377,7 @@ body {
 .cm-host .cm-editor.cm-merge-a .cm-kind-modified.cm-changedLine { background: var(--diff-mod-old-bg); }
 .cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText { background: var(--diff-mod-old-text); }
 /* Only the indentation moved: the line colour says so, a highlight would only mark spaces. */
-.cm-host .cm-editor .cm-line.cm-kind-reindented .cm-changedText { background: transparent; }
+.cm-host .cm-editor .cm-line.cm-kind-plain .cm-changedText { background: transparent; }
 /* Indentation is never a word, but the character diff of a re-indented block
    marks it anyway. lib/lineKinds.ts wraps a changed line's leading and trailing
    whitespace in .cm-ws, inside the highlight, which paints it back in the

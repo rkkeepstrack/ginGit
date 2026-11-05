@@ -75,4 +75,24 @@ describe('alignLines', () => {
     }
     expect(changes.some((c) => b.slice(c.fromB, c.toB).includes('Pager'))).toBe(true)
   })
+  it('pairs an edited line with its old self; a line with nothing like it is new, its old one gone', () => {
+    const a = 'start\nlet total = price * count\nreturn old()\nend\n'
+    const b = 'start\nlet total = price * amount\nvar cards = vehicles.map(card)\nend\n'
+    const { kindsA, kindsB } = alignLines(a, b)
+    expect(kindsB.slice(1, 3)).toEqual(['modified', 'inserted'])
+    expect(kindsA.slice(1, 3)).toEqual(['modified', 'deleted'])
+  })
+  it('splits a changed block into new, changed and gone lines by similarity', () => {
+    const a = 'body {\n  HStack {\n    Text(vehicle.name).font(.headline)\n  }\n}\n'
+    const b = 'body {\n  VStack(alignment: .leading) {\n    Divider().padding(16)\n    Stat(label: battery)\n    Text(vehicle.name).font(.title2)\n  }\n}\n'
+    const { kindsA, kindsB } = alignLines(a, b)
+    // the text line found its counterpart; the stack line has none, and the new lines are new
+    expect(kindsB.slice(1, 5)).toEqual(['inserted', 'inserted', 'inserted', 'modified'])
+    expect(kindsA.slice(1, 3)).toEqual(['deleted', 'modified'])
+  })
+  it('counts a line that grew as changed, not as gone and new', () => {
+    const { kindsA, kindsB } = alignLines('# Usage\n\nRun it.\n', '# Usage\n\nRun it. Then run it again.\n')
+    expect(kindsA[2]).toBe('modified')
+    expect(kindsB[2]).toBe('modified')
+  })
 })
