@@ -171,6 +171,26 @@ test('cmd-shift-o opens the recent repositories, the arrows walk them, esc close
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
 
+test('arrows in the commit search browse the hits in the log; enter there opens one', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  // a review is open already: browsing doesn't replace it until enter
+  await row(page, 'docs: more usage').click()
+  await page.locator('#commit-search').fill('login')
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('#log [role="grid"]')).toBeFocused()
+  await expect(page.locator('.log-row').first()).toHaveClass(/cursor/)
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/cursor/)
+  await expect(page.locator('#files')).toContainText('1 commit')
+  await expect(page.locator('.log-row.selected')).toHaveCount(0)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/selected/)
+  // opened: from here the arrows open each hit they land on again
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+})
+
 test('the focus stays on the list, its ring follows the arrow keys', async ({ page }) => {
   await installBridge(page)
   await loaded(page)

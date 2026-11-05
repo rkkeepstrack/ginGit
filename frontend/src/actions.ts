@@ -15,7 +15,7 @@ export type Action =
 /** DOM anchors the actions need; components set these ids. */
 const anchors = {
   search: '#commit-search',
-  log: '#log [tabindex]',
+  log: '#log [role="grid"]',
   files: '#files input',
   review: '#review .cm-content',
   find: '#find-input',

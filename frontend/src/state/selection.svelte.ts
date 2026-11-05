@@ -21,6 +21,8 @@ class SelectionStore {
   file = $state<string | null>(null)
   /** Bumped when the list should scroll the cursor into a comfortable spot. */
   reveal = $state(0)
+  /** The arrows only move the cursor until Enter opens it: set when they came over from the search. */
+  browsing = $state(false)
   /** Newest first; recomputed when the selection or the history changes. */
   hashes = $derived.by(() => { void repo.commits; return sortedSelection(this.selected) })
 }
@@ -33,11 +35,13 @@ export function click(index: number, mods: ClickModifiers) {
   selection.anchor = anchor
   selection.cursor = index
   selection.file = null
+  selection.browsing = false
 }
 
 /**
  * The arrow keys in the log. With a review open they select at once; in the
- * full-width log they only move the cursor, to browse, and Enter opens it.
+ * full-width log, or when they came over from the search, they only move the
+ * cursor, to browse, and Enter opens it.
  * visible lists the commit indices a search left on screen; null means all.
  */
 export function step(delta: number, extend: boolean, visible: readonly number[] | null) {
@@ -46,19 +50,26 @@ export function step(delta: number, extend: boolean, visible: readonly number[] 
   const cursor = selection.cursor
   const pos = cursor === null ? -1 : visible ? visible.indexOf(cursor) : cursor
   const next = visible ? visible[Math.max(0, Math.min(count - 1, pos + delta))] : Math.max(0, Math.min(count - 1, pos + delta))
-  if (selection.hashes.length > 0) click(next, { toggle: false, range: extend })
+  if (selection.hashes.length > 0 && !selection.browsing) click(next, { toggle: false, range: extend })
   else selection.cursor = next
 }
 
-/** Enter in the full-width log: opens the commit the cursor is on. */
+/** The arrows pressed in the search: they browse its hits until Enter opens one. */
+export function browse(delta: number, visible: readonly number[] | null) {
+  selection.browsing = true
+  step(delta, false, visible)
+}
+
+/** Enter in the log: opens the commit the cursor browsed to. */
 export function openCursor() {
-  if (selection.cursor !== null && selection.hashes.length === 0) click(selection.cursor, { toggle: false, range: false })
+  if (selection.cursor !== null && (selection.browsing || selection.hashes.length === 0)) click(selection.cursor, { toggle: false, range: false })
 }
 
 export function clear() {
   selection.selected = new Set()
   selection.anchor = null
   selection.file = null
+  selection.browsing = false
 }
 
 export function setFile(path: string | null) {
@@ -73,6 +84,7 @@ export function selectMany(hashes: string[], opts: { reveal?: boolean } = {}) {
   selection.anchor = cursor
   selection.cursor = cursor
   selection.file = null
+  selection.browsing = false
   if (opts.reveal) selection.reveal++
 }
 
