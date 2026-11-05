@@ -3,7 +3,7 @@ import { plural } from '../lib/format'
 import { applyClick, type ClickModifiers } from '../lib/selection'
 import type { Ref } from '../lib/types'
 import { positionOf, repo } from './repo.svelte'
-import { setText } from './search.svelte'
+import { search, setText } from './search.svelte'
 
 /** Selected hashes newest first. Only commits present in the loaded history count. */
 function sortedSelection(selected: Set<string>): string[] {
@@ -50,9 +50,12 @@ export function step(delta: number, extend: boolean, visible: readonly number[] 
   const cursor = selection.cursor
   const pos = cursor === null ? -1 : visible ? visible.indexOf(cursor) : cursor
   const next = visible ? visible[Math.max(0, Math.min(count - 1, pos + delta))] : Math.max(0, Math.min(count - 1, pos + delta))
-  if (selection.hashes.length > 0 && !selection.browsing) click(next, { toggle: false, range: extend })
+  if (selection.hashes.length > 0 && !browsingHits()) click(next, { toggle: false, range: extend })
   else selection.cursor = next
 }
+
+// Browsing came from the search; once the search is gone, so is the browsing.
+const browsingHits = () => selection.browsing && search.matches !== null
 
 /** The arrows pressed in the search: they browse its hits until Enter opens one. */
 export function browse(delta: number, visible: readonly number[] | null) {
@@ -62,7 +65,15 @@ export function browse(delta: number, visible: readonly number[] | null) {
 
 /** Enter in the log: opens the commit the cursor browsed to. */
 export function openCursor() {
-  if (selection.cursor !== null && (selection.browsing || selection.hashes.length === 0)) click(selection.cursor, { toggle: false, range: false })
+  if (selection.cursor !== null && (browsingHits() || selection.hashes.length === 0)) click(selection.cursor, { toggle: false, range: false })
+}
+
+/** The log's keys, wherever they arrive: Enter opens what was browsed to, the arrows step. */
+export function logKey(e: KeyboardEvent) {
+  if (e.key === 'Enter') return openCursor()
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
+  e.preventDefault()
+  step(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
 }
 
 export function clear() {

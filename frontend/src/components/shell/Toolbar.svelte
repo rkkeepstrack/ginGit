@@ -4,28 +4,29 @@
   import Rows3 from '@lucide/svelte/icons/rows-3'
   import Search from '@lucide/svelte/icons/search'
   import X from '@lucide/svelte/icons/x'
-  import { focus } from '../../lib/dom'
+  import { runAction } from '../../actions'
   import { keys } from '../../lib/platform'
   import { hint } from '../../state/hint.svelte'
   import { refresh, repo } from '../../state/repo.svelte'
   import { search, searchNow, setText } from '../../state/search.svelte'
   import { browse, click } from '../../state/selection.svelte'
 
+  import { ui } from '../../state/ui.svelte'
+  import RepoMenu from './RepoMenu.svelte'
+  import ThemeMenu from './ThemeMenu.svelte'
+
   // Enter opens the first hit, as a search field in an IDE would; the arrows
   // walk over to the log and browse the hits, and Enter there opens one.
   // Either way the keyboard ends up in the log.
   async function onKey(e: KeyboardEvent) {
-    if (e.key !== 'Enter' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
+    if (e.isComposing || (e.key !== 'Enter' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp')) return
     e.preventDefault()
     const hits = await searchNow()
     if (!hits?.length) return
     if (e.key === 'Enter') click(hits[0], { toggle: false, range: false })
     else browse(e.key === 'ArrowDown' ? 1 : -1, hits)
-    focus('#log [role="grid"]')
+    runAction('focusLog')
   }
-  import { ui } from '../../state/ui.svelte'
-  import RepoMenu from './RepoMenu.svelte'
-  import ThemeMenu from './ThemeMenu.svelte'
 </script>
 
 <div class="flex items-center gap-1.5 h-11 px-2 shrink-0 chrome">

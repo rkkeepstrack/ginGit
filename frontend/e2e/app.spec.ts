@@ -76,6 +76,7 @@ test('the file filter is one shortcut away and clears with its x', async ({ page
   await expect(page.locator('#files .tree-row', { hasText: 'main.ts' })).toHaveCount(0)
   await page.locator('#files label.input button').click()
   await expect(filter).toHaveValue('')
+  await expect(filter).toBeFocused()
   await expect(page.locator('#files .tree-row', { hasText: 'main.ts' })).toHaveCount(1)
 })
 
@@ -138,6 +139,8 @@ test('the full-width log browses with the arrows and opens with enter; with a re
   await loaded(page)
   await expect(page.locator('#log [role="grid"]')).toBeFocused()
   await page.keyboard.press('ArrowDown')
+  // the focus fell back to the page: with only the log on screen the arrows still browse it
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur())
   await page.keyboard.press('ArrowDown')
   await expect(page.locator('.log-row').nth(1)).toHaveClass(/cursor/)
   await expect(page.locator('.log-row.selected')).toHaveCount(0)
@@ -148,10 +151,11 @@ test('the full-width log browses with the arrows and opens with enter; with a re
   await page.keyboard.press('ArrowDown')
   await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
-  // and with the focus lost to the page, the arrows still go to the log
+  // with a review open, arrows on the page itself are left alone: they may be meant for the review
   await page.evaluate(() => (document.activeElement as HTMLElement).blur())
   await page.keyboard.press('ArrowDown')
-  await expect(page.locator('.log-row').nth(3)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
 
 test('cmd-shift-o opens the recent repositories, the arrows walk them, esc closes', async ({ page }) => {
@@ -168,6 +172,12 @@ test('cmd-shift-o opens the recent repositories, the arrows walk them, esc close
   await page.keyboard.press('Escape')
   await expect(entry).not.toBeFocused()
   // the menu's Esc is its own: the commit stays selected
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  // in the built app the native menu catches Esc before the page sees it
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  await expect(entry).toBeFocused()
+  await page.evaluate(() => (window as unknown as { runtime: { EventsEmit: (n: string, d: string) => void } }).runtime.EventsEmit('menu', 'escape'))
+  await expect(entry).not.toBeFocused()
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
 
@@ -189,6 +199,15 @@ test('arrows in the commit search browse the hits in the log; enter there opens 
   // opened: from here the arrows open each hit they land on again
   await page.keyboard.press('ArrowDown')
   await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+  // browsing again, then the search goes away: the arrows open what they land on, as everywhere with a review
+  await page.locator('#commit-search').focus()
+  await page.keyboard.press('ArrowDown')
+  await page.locator('#commit-search').fill('')
+  await page.locator('#log [role="grid"]').focus()
+  const before = await page.locator('.log-row.selected').getAttribute('data-hash')
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  expect(await page.locator('.log-row.selected').getAttribute('data-hash')).not.toBe(before)
 })
 
 test('a menu opened by keyboard marks one entry, not also the one under the pointer', async ({ page }) => {

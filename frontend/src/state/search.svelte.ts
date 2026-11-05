@@ -35,35 +35,50 @@ async function run() {
     if (gen !== generation) return
     search.matches = matches
     search.pending = false
-    if (matches.length > 0 && matches.length <= MAX_NAMED) {
-      const names = await api.nameCommits(path, matches.map((i) => repo.commits[i].hash))
-      if (gen === generation) search.names = names
-    } else {
-      search.names = {}
-    }
+    void label(gen, path, matches)
   } catch {
     if (gen === generation) { search.matches = []; search.names = {}; search.pending = false }
   }
 }
 
+/** The branch each hit sits on: a second git call, which nobody waits for. */
+async function label(gen: number, path: string, matches: number[]) {
+  if (matches.length === 0 || matches.length > MAX_NAMED) {
+    search.names = {}
+    return
+  }
+  try {
+    const names = await api.nameCommits(path, matches.map((i) => repo.commits[i].hash))
+    if (gen === generation) search.names = names
+  } catch {
+    /* labels are a convenience */
+  }
+}
+
 let scheduled = false
+let running: Promise<void> | null = null
+
+function start() {
+  scheduled = false
+  running = run()
+  return running
+}
 
 function schedule() {
   clearTimeout(timer)
   scheduled = true
-  timer = setTimeout(() => {
-    scheduled = false
-    void run()
-  }, 120)
+  timer = setTimeout(() => void start(), 120)
 }
 
-/** The hits for what's typed now: a search still waiting or running is done first, so Enter never acts on stale ones. */
+/**
+ * The hits for what's typed now: a search still waiting starts at once, one
+ * already running is waited for, so Enter never acts on stale hits.
+ */
 export async function searchNow(): Promise<number[] | null> {
-  if (scheduled || search.pending) {
+  if (scheduled) {
     clearTimeout(timer)
-    scheduled = false
-    await run()
-  }
+    await start()
+  } else if (search.pending && running) await running
   return search.matches
 }
 

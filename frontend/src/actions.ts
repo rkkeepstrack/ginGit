@@ -1,5 +1,5 @@
 import { tick } from 'svelte'
-import { focus, focusSelected } from './lib/dom'
+import { closeDropdown, focus, focusSelected } from './lib/dom'
 import { stepFile } from './state/changes.svelte'
 import { closeFind, find } from './state/find.svelte'
 import { open, refresh, repo } from './state/repo.svelte'
@@ -43,6 +43,8 @@ export function runAction(action: Action, target: HTMLElement | null = document.
     case 'find': if (selection.hashes.length > 0) { find.open = true; void tick().then(() => focus(anchors.find)) } break
     case 'toggleDiff': ui.toggleDiffMode(); break
     case 'escape':
+      // A menu takes its own Esc, also when the native menu's accelerator caught it first.
+      if (target?.closest('.dropdown')) { closeDropdown(); break }
       if (target?.id === 'find-input' || (find.open && !target?.id)) { closeFind(); break }
       if (target?.id === 'commit-search') { setText(''); target.blur() }
       else if (target?.tagName === 'INPUT') target.blur()

@@ -98,6 +98,7 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
         return () => listeners.set(name, (listeners.get(name) ?? []).filter((x) => x !== cb))
       },
       EventsOff: () => {},
+      EventsEmit: (name: string, data: unknown) => emit(name, data),
       ClipboardSetText: async () => true,
       WindowToggleMaximise: () => {},
       LogPrint: () => {}, LogTrace: () => {}, LogDebug: () => {}, LogInfo: () => {}, LogWarning: () => {}, LogError: () => {}, LogFatal: () => {},
