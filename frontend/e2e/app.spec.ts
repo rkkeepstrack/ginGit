@@ -133,6 +133,19 @@ test('enter in the commit search opens the first hit, and the arrows go on from 
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
 
+test('the focus stays on the list, its ring follows the arrow keys', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'docs: more usage').click()
+  await expect(page.locator('#log [role="grid"]')).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  const cursor = row(page, 'chore: logo was a mistake')
+  await expect(cursor).toHaveClass(/cursor/)
+  await expect(page.locator('#log [role="grid"]')).toHaveAttribute('aria-activedescendant', (await cursor.getAttribute('id'))!)
+  await expect(cursor).toHaveCSS('outline-style', 'solid')
+  await expect(row(page, 'docs: more usage')).toHaveCSS('outline-style', 'none')
+})
+
 test('a branch badge in search results reviews the branch and jumps to it', async ({ page }) => {
   await installBridge(page)
   await loaded(page)

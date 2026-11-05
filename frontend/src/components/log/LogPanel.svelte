@@ -103,6 +103,7 @@
     tabindex="0"
     onkeydown={onKeyDown}
     role="grid"
+    aria-activedescendant={selection.cursor === null ? undefined : `log-row-${selection.cursor}`}
   >
     {#if count === 0 && !repo.loading && !repo.error}
       <div class="p-6 text-center opacity-50">{search.matches ? 'No commits match.' : 'No commits.'}</div>
@@ -120,6 +121,7 @@
               refs={repo.refsByHash.get(c.hash) ?? EMPTY}
               isHead={c.hash === repo.info?.head}
               selected={selection.selected.has(c.hash)}
+              cursor={selection.cursor === idx}
               {graphWidth}
               {columns}
               branch={search.matches ? search.names[c.hash] ?? '' : undefined}

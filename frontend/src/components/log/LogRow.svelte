@@ -12,13 +12,15 @@
   import RefPill from './RefPill.svelte'
   import RefPills from './RefPills.svelte'
 
-  let { index, commit, prev, refs, isHead, selected, graphWidth, columns, branch }: {
+  let { index, commit, prev, refs, isHead, selected, cursor, graphWidth, columns, branch }: {
     index: number
     commit: Commit
     prev: Commit | undefined
     refs: Ref[]
     isHead: boolean
     selected: boolean
+    /** The row the arrow keys are on. */
+    cursor: boolean
     graphWidth: number
     columns: Columns
     /** Set while a search filters the list: replaces the lanes with a pill. */
@@ -38,15 +40,20 @@
   }
 </script>
 
+<!-- The list keeps the focus and points at this row with aria-activedescendant; a focusable
+     row would hold its focus ring while the arrow keys move on. -->
+<!-- svelte-ignore a11y_interactive_supports_focus -->
 <div
   class="log-row flex items-center"
   class:selected
+  class:cursor
   style:height="{ROW_H}px"
   style:line-height="{ROW_H}px"
   onmousedown={(e) => { if (e.button === 0) click(index, { toggle: hasMod(e), range: e.shiftKey }) }}
   data-hash={commit.hash}
+  id="log-row-{index}"
   role="row"
-  tabindex="-1"
+  aria-selected={selected}
 >
   {#if branch === undefined}
     <LogLanes row={commit.row} prev={prev?.row} {isMerge} {isHead} width={graphWidth} />
