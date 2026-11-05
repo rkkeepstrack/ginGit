@@ -46,15 +46,31 @@ async function run() {
   }
 }
 
+let scheduled = false
+
 function schedule() {
   clearTimeout(timer)
-  timer = setTimeout(() => void run(), 120)
+  scheduled = true
+  timer = setTimeout(() => {
+    scheduled = false
+    void run()
+  }, 120)
+}
+
+/** The hits for what's typed now: a search still waiting or running is done first, so Enter never acts on stale ones. */
+export async function searchNow(): Promise<number[] | null> {
+  if (scheduled || search.pending) {
+    clearTimeout(timer)
+    scheduled = false
+    await run()
+  }
+  return search.matches
 }
 
 export function setText(text: string) {
   search.text = text
   // Clearing takes effect at once so the graph is back before anything scrolls it.
-  if (!text.trim()) { clearTimeout(timer); generation++; search.matches = null; search.names = {}; search.pending = false; return }
+  if (!text.trim()) { clearTimeout(timer); scheduled = false; generation++; search.matches = null; search.names = {}; search.pending = false; return }
   schedule()
 }
 

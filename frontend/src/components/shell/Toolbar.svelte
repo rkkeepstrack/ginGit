@@ -4,10 +4,23 @@
   import Rows3 from '@lucide/svelte/icons/rows-3'
   import Search from '@lucide/svelte/icons/search'
   import X from '@lucide/svelte/icons/x'
+  import { focus } from '../../lib/dom'
   import { keys } from '../../lib/platform'
   import { hint } from '../../state/hint.svelte'
   import { refresh, repo } from '../../state/repo.svelte'
-  import { search, setText } from '../../state/search.svelte'
+  import { search, searchNow, setText } from '../../state/search.svelte'
+  import { click } from '../../state/selection.svelte'
+
+  // Enter opens the first hit, as a search field in an IDE would, and hands
+  // the keyboard to the log: the arrow keys go on through the hits from there.
+  async function openFirst(e: KeyboardEvent) {
+    if (e.key !== 'Enter') return
+    e.preventDefault()
+    const hits = await searchNow()
+    if (!hits?.length) return
+    click(hits[0], { toggle: false, range: false })
+    focus('#log [tabindex]')
+  }
   import { ui } from '../../state/ui.svelte'
   import RepoMenu from './RepoMenu.svelte'
   import ThemeMenu from './ThemeMenu.svelte'
@@ -25,6 +38,7 @@
         placeholder="Find commit  {keys('mod', 'P')}"
         value={search.text}
         oninput={(e) => setText(e.currentTarget.value)}
+        onkeydown={openFirst}
         disabled={!repo.info}
       />
       {#if search.text}<button class="btn btn-ghost btn-xs btn-square" onclick={() => setText('')}><X size={13} strokeWidth={1.75} /></button>{/if}

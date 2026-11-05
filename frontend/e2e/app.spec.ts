@@ -119,6 +119,20 @@ test('search narrows the list', async ({ page }) => {
   await shoot(page, 'search.png')
 })
 
+test('enter in the commit search opens the first hit, and the arrows go on from there', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await page.locator('#commit-search').fill('login')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.log-row')).toHaveCount(3)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  await expect(page.locator('.log-row').first()).toHaveClass(/selected/)
+  await expect(page.locator('#review .entry-head').first()).toBeVisible()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+})
+
 test('a branch badge in search results reviews the branch and jumps to it', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
