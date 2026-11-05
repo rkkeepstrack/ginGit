@@ -53,17 +53,31 @@
   --lane-5: #15aabf;
   --lane-6: #e64980;
   --lane-7: #74b816;
-  --diff-add-bg: #d3f9d8;
-  --diff-add-text: #c0eec8;
-  --diff-del-bg: #ffe3e3;
-  --diff-del-text: #ffb8b8;
+  /* Editor diff style: new lines green, changed lines in the logo's blue,
+     removed lines slate. The pure-text pair is the word highlight inside a
+     wholly new or wholly removed block, where every word changed anyway. */
+  --diff-add-bg: #e3f7ec;
+  --diff-add-text: #c3ecd5;
+  --diff-add-bar: #20c997;
+  --diff-add-pure-text: transparent;
+  --diff-del-bg: #eceef2;
+  --diff-del-text: #d5d9e0;
+  --diff-del-bar: #8a94a6;
+  --diff-del-pure-text: transparent;
+  --diff-mod-bg: #e5f2fd;
+  --diff-mod-text: #c2e0fa;
+  --diff-mod-bar: #228be6;
+  --diff-mod-old-bg: var(--diff-mod-bg);
+  --diff-mod-old-text: var(--diff-mod-text);
+  --diff-mod-old-bar: var(--diff-mod-bar);
+  --diff-mod-new-bg: var(--diff-mod-bg);
+  --diff-mod-new-text: var(--diff-mod-text);
+  --diff-mod-new-bar: var(--diff-mod-bar);
   --diff-collapsed-bg: #f1f3f5;
-  --diff-add-bar: #2b2;
-  --diff-del-bar: #e43;
   --review-ok: #2f9e44;
   --review-stale: #e8a000;
-  --ct-added: #2f9e44;
-  --ct-deleted: #c92a2a;
+  --ct-added: #0ca678;
+  --ct-deleted: #6b7480;
   --ct-renamed: #7048e8;
   --kind-feat: #2f9e44;
   --kind-fix: #e03131;
@@ -102,17 +116,28 @@
   --lane-5: #66d9e8;
   --lane-6: #f783ac;
   --lane-7: #c0eb75;
-  --diff-add-bg: #1f3a2a;
-  --diff-add-text: #2f6b45;
-  --diff-del-bg: #44262b;
-  --diff-del-text: #7e3a44;
+  --diff-add-bg: #1d3a33;
+  --diff-add-text: #285a4c;
+  --diff-add-bar: #63e6be;
+  --diff-add-pure-text: transparent;
+  --diff-del-bg: #343a46;
+  --diff-del-text: #4a5262;
+  --diff-del-bar: #8a94a6;
+  --diff-del-pure-text: transparent;
+  --diff-mod-bg: #22364d;
+  --diff-mod-text: #2e5478;
+  --diff-mod-bar: #74c0fc;
+  --diff-mod-old-bg: var(--diff-mod-bg);
+  --diff-mod-old-text: var(--diff-mod-text);
+  --diff-mod-old-bar: var(--diff-mod-bar);
+  --diff-mod-new-bg: var(--diff-mod-bg);
+  --diff-mod-new-text: var(--diff-mod-text);
+  --diff-mod-new-bar: var(--diff-mod-bar);
   --diff-collapsed-bg: #2a2e37;
-  --diff-add-bar: #8f8;
-  --diff-del-bar: #fa9;
   --review-ok: #69db7c;
   --review-stale: #ffd43b;
-  --ct-added: #69db7c;
-  --ct-deleted: #ff8787;
+  --ct-added: #63e6be;
+  --ct-deleted: #9aa3b2;
   --ct-renamed: #b197fc;
   --kind-feat: #69db7c;
   --kind-fix: #ff8787;
@@ -138,6 +163,39 @@
   --syn-punct: #adb5bd;
   --syn-tag: #ffa94d;
   --syn-attr: #91a7ff;
+}
+
+/* Patch diff style, as in a pull request: everything new is green, everything
+   old is red, a changed line is simply both. */
+[data-diff="patch"] {
+  --diff-add-pure-text: var(--diff-add-text);
+  --diff-del-pure-text: var(--diff-del-text);
+  --diff-mod-old-bg: var(--diff-del-bg);
+  --diff-mod-old-text: var(--diff-del-text);
+  --diff-mod-old-bar: var(--diff-del-bar);
+  --diff-mod-new-bg: var(--diff-add-bg);
+  --diff-mod-new-text: var(--diff-add-text);
+  --diff-mod-new-bar: var(--diff-add-bar);
+}
+[data-theme="pastel"][data-diff="patch"] {
+  --diff-add-bg: #d3f9d8;
+  --diff-add-text: #c0eec8;
+  --diff-del-bg: #ffe3e3;
+  --diff-del-text: #ffb8b8;
+  --diff-add-bar: #2b2;
+  --diff-del-bar: #e43;
+  --ct-added: #2f9e44;
+  --ct-deleted: #c92a2a;
+}
+[data-theme="dim"][data-diff="patch"] {
+  --diff-add-bg: #1f3a2a;
+  --diff-add-text: #2f6b45;
+  --diff-del-bg: #44262b;
+  --diff-del-text: #7e3a44;
+  --diff-add-bar: #8f8;
+  --diff-del-bar: #fa9;
+  --ct-added: #69db7c;
+  --ct-deleted: #ff8787;
 }
 
 :root {
@@ -274,6 +332,8 @@ body {
 .image-side { margin: 0; display: flex; flex-direction: column; min-width: 0; background: var(--color-base-100); }
 .image-side.old { box-shadow: inset 3px 0 0 var(--diff-del-bar); }
 .image-side.new { box-shadow: inset 3px 0 0 var(--diff-add-bar); }
+.image-pair.both .image-side.old { box-shadow: inset 3px 0 0 var(--diff-mod-old-bar); }
+.image-pair.both .image-side.new { box-shadow: inset 3px 0 0 var(--diff-mod-new-bar); }
 .image-frame { display: flex; align-items: center; justify-content: center; padding: 16px; min-height: 80px; }
 .image-frame img {
   /* Big enough to read a phone screenshot, small enough to see both at once. */
@@ -300,15 +360,32 @@ body {
 .cm-host .cm-scroller { font-family: var(--font-mono); line-height: 1.5; }
 .cm-host .cm-gutters { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); color: color-mix(in oklab, var(--color-base-content) 45%, transparent); border-right: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent); }
 .cm-host .cm-content { -webkit-user-select: text; user-select: text; }
-.cm-host .cm-changedLine { background: var(--diff-add-bg); }
-.cm-host .cm-changedText { background: var(--diff-add-text); }
-.cm-host .cm-deletedChunk { background: var(--diff-del-bg); }
-.cm-host .cm-deletedText { background: var(--diff-del-text); }
-/* The unified view marks inserted lines with its own class, not changedLine. */
-.cm-host .cm-insertedLine { background: var(--diff-add-bg); }
-.cm-host .cm-insertedLine .cm-changedText { background: var(--diff-add-text); }
-.cm-host .cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
-.cm-host .cm-merge-a .cm-changedText { background: var(--diff-del-text); }
+/* Prefixed with .cm-editor so they outrank the merge view's own green and red
+   theme. Lines carry their kind from the line diff (lib/lineKinds.ts): inserted,
+   modified or deleted. Unified view shows removed lines in a widget, which
+   stays in the removed colours. */
+.cm-host .cm-editor .cm-changedLine, .cm-host .cm-editor .cm-insertedLine { background: var(--diff-add-bg); }
+.cm-host .cm-editor .cm-changedText { background: var(--diff-add-text); }
+.cm-host .cm-editor .cm-kind-inserted .cm-changedText { background: var(--diff-add-pure-text); }
+.cm-host .cm-editor .cm-kind-modified.cm-changedLine, .cm-host .cm-editor .cm-kind-modified .cm-insertedLine { background: var(--diff-mod-new-bg); }
+.cm-host .cm-editor .cm-kind-modified .cm-changedText { background: var(--diff-mod-new-text); }
+.cm-host .cm-editor .cm-deletedChunk { background: var(--diff-del-bg); }
+.cm-host .cm-editor .cm-deletedText { background: var(--diff-del-text); }
+.cm-host .cm-editor.cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-changedText { background: var(--diff-del-text); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-deleted .cm-changedText { background: var(--diff-del-pure-text); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-modified.cm-changedLine { background: var(--diff-mod-old-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText { background: var(--diff-mod-old-text); }
+/* Only the indentation moved: the line colour says so, a highlight would only mark spaces. */
+.cm-host .cm-editor .cm-line.cm-kind-plain .cm-changedText { background: transparent; }
+/* Indentation is never a word, but the character diff of a re-indented block
+   marks it anyway. lib/lineKinds.ts wraps a changed line's leading and trailing
+   whitespace in .cm-ws, inside the highlight, which paints it back in the
+   line's own colour. */
+.cm-host .cm-editor .cm-kind-inserted .cm-changedText .cm-ws { background: var(--diff-add-bg); }
+.cm-host .cm-editor .cm-kind-modified .cm-changedText .cm-ws { background: var(--diff-mod-new-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-deleted .cm-changedText .cm-ws { background: var(--diff-del-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText .cm-ws { background: var(--diff-mod-old-bg); }
 .cm-host .cm-collapsedLines {
   display: flex; align-items: center; gap: 6px;
   background: var(--diff-collapsed-bg);
@@ -322,6 +399,11 @@ body {
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22v-6'/%3E%3Cpath d='M12 8V2'/%3E%3Cpath d='M4 12H2'/%3E%3Cpath d='M10 12H8'/%3E%3Cpath d='M16 12h-2'/%3E%3Cpath d='M22 12h-2'/%3E%3Cpath d='m15 19-3 3-3-3'/%3E%3Cpath d='m15 5-3-3-3 3'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .cm-host .cm-collapsedLines::after { content: none; }
+/* The merge view's own theme paints its gutter bars green and red; ours follow the style. */
+.cm-host .cm-editor .cm-changedLineGutter { background: var(--diff-add-bar); }
+.cm-host .cm-editor .cm-changedLineGutter.cm-kind-modified { background: var(--diff-mod-new-bar); }
+.cm-host .cm-editor.cm-merge-a .cm-changedLineGutter, .cm-host .cm-editor .cm-deletedLineGutter { background: var(--diff-del-bar); }
+.cm-host .cm-editor.cm-merge-a .cm-changedLineGutter.cm-kind-modified { background: var(--diff-mod-old-bar); }
 /* One-sided files: tinted lines plus the merge view's gutter bar, numbers untouched. */
 .cm-host.single-added .cm-line { background: var(--diff-add-bg); }
 .cm-host.single-deleted .cm-line { background: var(--diff-del-bg); }

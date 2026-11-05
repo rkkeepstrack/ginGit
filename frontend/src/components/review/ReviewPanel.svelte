@@ -23,11 +23,14 @@
   const fold = (path: string) => { collapsed = new Set([...collapsed, path]) }
 
   // The file picked in the tree (or with [ and ]): open its entry and bring it to the top.
+  // Only the pick drives this; reading the folds too would undo every later fold of that file.
   $effect(() => {
     const path = selection.file
     if (!path || !scroller) return
-    if (collapsed.has(path)) { const n = new Set(collapsed); n.delete(path); collapsed = n }
-    want(path)
+    untrack(() => {
+      if (collapsed.has(path)) { const n = new Set(collapsed); n.delete(path); collapsed = n }
+      want(path)
+    })
     void tick().then(() => scroller?.querySelector(`[data-path="${CSS.escape(path)}"]`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }))
   })
   // While a find is active, only files with a hit stay open, and they load.
