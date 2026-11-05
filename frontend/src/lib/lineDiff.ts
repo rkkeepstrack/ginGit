@@ -207,27 +207,33 @@ function pairSimilar(a: string[], b: string[]): [number, number][] | null {
   const [n, m] = [a.length, b.length]
   if (n * m > MAX_PAIRS) return null
   const [ga, gb] = [a.map(grams), b.map(grams)]
+  // Best = most total similarity; between equally similar pairings, the one
+  // with more lines identical to the character, indentation included: every
+  // } looks alike, the one at the same depth is the counterpart.
   const w = m + 1
-  const sim = new Float64Array(n * m)
   const score = new Float64Array((n + 1) * w)
+  const exact = new Int32Array((n + 1) * w)
+  const move = new Uint8Array((n + 1) * w) // 0: skip a line of a, 1: skip one of b, 2: pair them
+  const better = (s: number, e: number, t: number, f: number) => s > t + 1e-9 || (s > t - 1e-9 && e > f)
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
-      // Every } looks alike; the one at the same indentation is the counterpart.
-      const s = (sim[(i - 1) * m + j - 1] = similarity(ga[i - 1], gb[j - 1]) + (a[i - 1] === b[j - 1] ? 0.01 : 0))
-      let best = Math.max(score[(i - 1) * w + j], score[i * w + j - 1])
-      if (s >= SIMILAR) best = Math.max(best, score[(i - 1) * w + j - 1] + s)
-      score[i * w + j] = best
+      const [up, left, diag, here] = [(i - 1) * w + j, i * w + j - 1, (i - 1) * w + j - 1, i * w + j]
+      let [s, e, mv] = [score[up], exact[up], 0]
+      if (better(score[left], exact[left], s, e)) [s, e, mv] = [score[left], exact[left], 1]
+      const sim = similarity(ga[i - 1], gb[j - 1])
+      if (sim >= SIMILAR) {
+        const [ps, pe] = [score[diag] + sim, exact[diag] + (a[i - 1] === b[j - 1] ? 1 : 0)]
+        if (better(ps, pe, s, e)) [s, e, mv] = [ps, pe, 2]
+      }
+      ;[score[here], exact[here], move[here]] = [s, e, mv]
     }
   }
   const pairs: [number, number][] = []
   for (let [i, j] = [n, m]; i > 0 && j > 0; ) {
-    if (score[i * w + j] === score[(i - 1) * w + j]) i--
-    else if (score[i * w + j] === score[i * w + j - 1]) j--
-    else {
-      pairs.push([i - 1, j - 1])
-      i--
-      j--
-    }
+    const mv = move[i * w + j]
+    if (mv === 0) i--
+    else if (mv === 1) j--
+    else pairs.push([--i, --j])
   }
   return pairs.reverse()
 }
@@ -248,6 +254,8 @@ function grams(line: string): Map<string, number> {
  * How alike two lines are, 0 to 1: the share of character pairs they have in
  * common. A line that grew (or shrank) counts too: when most of the shorter
  * one, at least a few characters of it, is found in the longer, it's an edit.
+ * One measure can't do both: a field that gained a trailing comment shares
+ * less than half of everything with its old self (see the diff corpus).
  */
 function similarity(x: Map<string, number>, y: Map<string, number>): number {
   let common = 0

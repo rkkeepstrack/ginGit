@@ -1,0 +1,24 @@
+old
+  61 ~ // Matches are row indices into the history: a reload invalidates them, and the
+  62 ~ // search re-runs once the new history has arrived.
+  64 -   let lastLoad = 0
+  66 ~     const id = repo.loadId
+  67 -     if (id !== lastLoad) { lastLoad = id; untrack(() => { search.matches = null; search.names = {} }
+  68 -   })
+  69 -   let wasLoading = false
+  70 -   $effect(() => {
+  72 ~     if (wasLoading && !loading) untrack(schedule)
+  73 -     wasLoading = loading
+
+new
+  61 ~ // Matches are row indices into the history: a load in progress invalidates
+  62 + // them (and any answer still in flight), and the search re-runs once the new
+  63 ~ // history has arrived.
+  66 ~     void repo.loadId
+  68 +     untrack(() => {
+  69 +       generation++
+  70 +       search.matches = null
+  71 +       search.names = {}
+  72 +       search.pending = false
+  73 ~       if (!loading) schedule()
+  74 +     })

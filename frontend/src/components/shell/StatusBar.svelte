@@ -5,7 +5,7 @@
   import { repo } from '../../state/repo.svelte'
   import { selection } from '../../state/selection.svelte'
 
-  const idleHint = `Click: select · ${keys('mod')}-click: toggle · Shift-click: range`
+  const idleHint = `↑↓: browse · Enter or click: open · ${keys('mod')}-click: toggle · Shift-click: range`
   const selectionHint = `${keys('mod', 'F')}: find in changes · [ ] or ${keys('mod', '↑')} ${keys('mod', '↓')}: previous/next file · ${keys('mod', 'shift', 'D')}: diff layout · Esc: clear`
   const count = $derived(selection.hashes.length)
 </script>

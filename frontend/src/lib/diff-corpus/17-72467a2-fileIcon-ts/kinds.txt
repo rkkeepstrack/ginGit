@@ -1,0 +1,80 @@
+old
+   1 ~ import {
+   2 -   Braces, FileArchive, FileCode2, FileCog, FileImage, FileJson2, FileLock2, FileSpreadsheet,
+   3 -   FileTerminal, FileText, FileType2, Film, Music, Package, type LucideIcon,
+   4 - } from 'lucide-react'
+   6 ~ const byExt: Record<string, LucideIcon> = {
+   8 ~   ts: FileCode2, tsx: FileCode2, js: FileCode2, jsx: FileCode2, mjs: FileCode2, cjs: FileCode2,
+   9 ~   go: FileCode2, rs: FileCode2, py: FileCode2, rb: FileCode2, java: FileCode2, kt: FileCode2, kts: F
+  10 ~   swift: FileCode2, c: FileCode2, h: FileCode2, cc: FileCode2, cpp: FileCode2, hpp: FileCode2, cs: F
+  11 ~   php: FileCode2, scala: FileCode2, dart: FileCode2, lua: FileCode2, ex: FileCode2, exs: FileCode2, 
+  12 ~   hs: FileCode2, clj: FileCode2, el: FileCode2, vue: FileCode2, svelte: FileCode2, astro: FileCode2,
+  13 ~   html: FileCode2, htm: FileCode2, css: Braces, scss: Braces, sass: Braces, less: Braces, sql: FileC
+  15 -   json: FileJson2, jsonc: FileJson2, json5: FileJson2,
+  17 ~   properties: FileCog, plist: FileCog, xml: FileCode2, gradle: FileCog, editorconfig: FileCog,
+  20 ~   md: FileText, mdx: FileText, txt: FileText, rst: FileText, adoc: FileText, log: FileText, pdf: Fil
+  25 ~   mp4: Film, mov: Film, webm: Film, mp3: Music, wav: Music, ogg: Music,
+  27 ~   lock: FileLock2,
+  30 ~ const byName: Record<string, LucideIcon> = {
+  31 ~   dockerfile: FileTerminal, makefile: FileTerminal, 'package.json': Package, 'go.mod': Package, 'go.
+  32 ~   'cargo.toml': Package, 'cargo.lock': FileLock2, 'package-lock.json': FileLock2, 'yarn.lock': FileL
+  33 ~   'pnpm-lock.yaml': FileLock2, 'bun.lock': FileLock2, 'bun.lockb': FileLock2, 'gemfile': Package, 'g
+  37 - export type FileCategory = 'code' | 'style' | 'data' | 'text' | 'shell' | 'media' | 'lock'
+  38 - 
+  39 ~ const category = new Map<LucideIcon, FileCategory>([
+  40 ~   [FileCode2, 'code'], [Braces, 'style'], [FileJson2, 'data'], [FileCog, 'data'], [FileSpreadsheet, 
+  41 ~   [FileText, 'text'], [FileType2, 'text'], [FileTerminal, 'shell'],
+  42 ~   [FileImage, 'media'], [Film, 'media'], [Music, 'media'], [FileArchive, 'media'], [FileLock2, 'lock
+  45 - /** The category of a path's icon, for tinting. */
+  46 - export function categoryFor(path: string): FileCategory {
+  47 -   return category.get(iconFor(path)) ?? 'text'
+  48 - }
+  49 - 
+  51 ~ export function iconFor(path: string): LucideIcon {
+  54 ~   if (name.endsWith('.lock')) return FileLock2
+
+new
+   1 ~ import AudioLines from '@lucide/svelte/icons/audio-lines'
+   2 + import Braces from '@lucide/svelte/icons/braces'
+   3 + import FileArchive from '@lucide/svelte/icons/file-archive'
+   4 + import FileCode from '@lucide/svelte/icons/file-code'
+   5 + import FileCog from '@lucide/svelte/icons/file-cog'
+   6 + import FileImage from '@lucide/svelte/icons/file-image'
+   7 + import FileLock from '@lucide/svelte/icons/file-lock'
+   8 + import FileSpreadsheet from '@lucide/svelte/icons/file-spreadsheet'
+   9 + import FileTerminal from '@lucide/svelte/icons/file-terminal'
+  10 + import FileText from '@lucide/svelte/icons/file-text'
+  11 + import FileType from '@lucide/svelte/icons/file-type'
+  12 + import Film from '@lucide/svelte/icons/film'
+  13 + import Package from '@lucide/svelte/icons/package'
+  14 + import type { Component } from 'svelte'
+  16 + export type Icon = Component<{ size?: number | string; strokeWidth?: number | string; class?: string
+  17 + export type FileCategory = 'code' | 'style' | 'data' | 'text' | 'shell' | 'media' | 'lock'
+  18 + 
+  19 ~ const byExt: Record<string, Icon> = {
+  21 ~   ts: FileCode, tsx: FileCode, js: FileCode, jsx: FileCode, mjs: FileCode, cjs: FileCode,
+  22 ~   go: FileCode, rs: FileCode, py: FileCode, rb: FileCode, java: FileCode, kt: FileCode, kts: FileCod
+  23 ~   swift: FileCode, c: FileCode, h: FileCode, cc: FileCode, cpp: FileCode, hpp: FileCode, cs: FileCod
+  24 ~   php: FileCode, scala: FileCode, dart: FileCode, lua: FileCode, ex: FileCode, exs: FileCode, erl: F
+  25 ~   hs: FileCode, clj: FileCode, el: FileCode, vue: FileCode, svelte: FileCode, astro: FileCode,
+  26 ~   html: FileCode, htm: FileCode, css: Braces, scss: Braces, sass: Braces, less: Braces, sql: FileCod
+  28 +   json: Braces, jsonc: Braces, json5: Braces,
+  30 ~   properties: FileCog, plist: FileCog, xml: FileCode, gradle: FileCog, editorconfig: FileCog,
+  33 ~   md: FileText, mdx: FileText, txt: FileText, rst: FileText, adoc: FileText, log: FileText, pdf: Fil
+  38 ~   mp4: Film, mov: Film, webm: Film, mp3: AudioLines, wav: AudioLines, ogg: AudioLines,
+  40 ~   lock: FileLock,
+  43 ~ const byName: Record<string, Icon> = {
+  44 ~   dockerfile: FileTerminal, makefile: FileTerminal, 'package.json': Package, 'go.mod': Package, 'go.
+  45 ~   'cargo.toml': Package, 'cargo.lock': FileLock, 'package-lock.json': FileLock, 'yarn.lock': FileLoc
+  46 ~   'pnpm-lock.yaml': FileLock, 'bun.lock': FileLock, 'bun.lockb': FileLock, 'gemfile': Package, 'gemf
+  50 ~ const category = new Map<Icon, FileCategory>([
+  51 ~   [FileCode, 'code'], [Braces, 'style'], [FileCog, 'data'], [FileSpreadsheet, 'data'], [Package, 'da
+  52 ~   [FileText, 'text'], [FileType, 'text'], [FileTerminal, 'shell'],
+  53 ~   [FileImage, 'media'], [Film, 'media'], [AudioLines, 'media'], [FileArchive, 'media'], [FileLock, '
+  57 ~ export function iconFor(path: string): Icon {
+  60 ~   if (name.endsWith('.lock')) return FileLock
+  65 + 
+  66 + /** The category of a path's icon, for tinting. */
+  67 + export function categoryFor(path: string): FileCategory {
+  68 +   return category.get(iconFor(path)) ?? 'text'
+  69 + }

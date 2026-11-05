@@ -21,6 +21,7 @@ func (a *App) appMenu() *menu.Menu {
 
 	file := m.AddSubmenu("File")
 	file.AddText("Open Repository…", keys.CmdOrCtrl("o"), act("open"))
+	file.AddText("Open Recent…", keys.Combo("o", keys.CmdOrCtrlKey, keys.ShiftKey), act("openRecent"))
 	file.AddText("Reload History", keys.CmdOrCtrl("r"), act("refresh"))
 	file.AddSeparator()
 	file.AddText("Clear Selection", keys.Key("escape"), act("escape"))
@@ -35,6 +36,7 @@ func (a *App) appMenu() *menu.Menu {
 	view := m.AddSubmenu("View")
 	view.AddText("Find in Changes", keys.CmdOrCtrl("f"), act("find"))
 	view.AddText("Find Commit", keys.CmdOrCtrl("p"), act("search"))
+	view.AddText("Filter Files", keys.CmdOrCtrl("e"), act("filterFiles"))
 	view.AddSeparator()
 	view.AddText("Toggle Side-by-side / Unified Diff", keys.Combo("d", keys.CmdOrCtrlKey, keys.ShiftKey), act("toggleDiff"))
 	view.AddSeparator()

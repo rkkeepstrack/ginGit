@@ -3,7 +3,7 @@ import { plural } from '../lib/format'
 import { applyClick, type ClickModifiers } from '../lib/selection'
 import type { Ref } from '../lib/types'
 import { positionOf, repo } from './repo.svelte'
-import { setText } from './search.svelte'
+import { search, setText } from './search.svelte'
 
 /** Selected hashes newest first. Only commits present in the loaded history count. */
 function sortedSelection(selected: Set<string>): string[] {
@@ -21,6 +21,8 @@ class SelectionStore {
   file = $state<string | null>(null)
   /** Bumped when the list should scroll the cursor into a comfortable spot. */
   reveal = $state(0)
+  /** The arrows only move the cursor until Enter opens it: set when they came over from the search. */
+  browsing = $state(false)
   /** Newest first; recomputed when the selection or the history changes. */
   hashes = $derived.by(() => { void repo.commits; return sortedSelection(this.selected) })
 }
@@ -33,22 +35,52 @@ export function click(index: number, mods: ClickModifiers) {
   selection.anchor = anchor
   selection.cursor = index
   selection.file = null
+  selection.browsing = false
 }
 
-/** visible lists the commit indices a search left on screen; null means all of them. */
-export function moveCursor(delta: number, extend: boolean, visible: readonly number[] | null) {
+/**
+ * The arrow keys in the log. With a review open they select at once; in the
+ * full-width log, or when they came over from the search, they only move the
+ * cursor, to browse, and Enter opens it.
+ * visible lists the commit indices a search left on screen; null means all.
+ */
+export function step(delta: number, extend: boolean, visible: readonly number[] | null) {
   const count = visible ? visible.length : repo.commits.length
   if (count === 0) return
   const cursor = selection.cursor
   const pos = cursor === null ? -1 : visible ? visible.indexOf(cursor) : cursor
-  const next = Math.max(0, Math.min(count - 1, pos + delta))
-  click(visible ? visible[next] : next, { toggle: false, range: extend })
+  const next = visible ? visible[Math.max(0, Math.min(count - 1, pos + delta))] : Math.max(0, Math.min(count - 1, pos + delta))
+  if (selection.hashes.length > 0 && !browsingHits()) click(next, { toggle: false, range: extend })
+  else selection.cursor = next
+}
+
+// Browsing came from the search; once the search is gone, so is the browsing.
+const browsingHits = () => selection.browsing && search.matches !== null
+
+/** The arrows pressed in the search: they browse its hits until Enter opens one. */
+export function browse(delta: number, visible: readonly number[] | null) {
+  selection.browsing = true
+  step(delta, false, visible)
+}
+
+/** Enter in the log: opens the commit the cursor browsed to. */
+export function openCursor() {
+  if (selection.cursor !== null && (browsingHits() || selection.hashes.length === 0)) click(selection.cursor, { toggle: false, range: false })
+}
+
+/** The log's keys, wherever they arrive: Enter opens what was browsed to, the arrows step. */
+export function logKey(e: KeyboardEvent) {
+  if (e.key === 'Enter') return openCursor()
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
+  e.preventDefault()
+  step(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
 }
 
 export function clear() {
   selection.selected = new Set()
   selection.anchor = null
   selection.file = null
+  selection.browsing = false
 }
 
 export function setFile(path: string | null) {
@@ -63,6 +95,7 @@ export function selectMany(hashes: string[], opts: { reveal?: boolean } = {}) {
   selection.anchor = cursor
   selection.cursor = cursor
   selection.file = null
+  selection.browsing = false
   if (opts.reveal) selection.reveal++
 }
 

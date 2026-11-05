@@ -1,0 +1,107 @@
+old
+   1 ~ // Package search filters the in-memory history. No git involved except for
+   2 - // branch membership, which is resolved once per branch and cached.
+   6 - 	"context"
+   8 - 	"sync"
+   9 - 	"time"
+  11 - 	"ginGit/internal/gitcmd"
+  15 - type Query struct {
+  16 - 	Text   string    `json:"text"`   // matches subject, body, author, hash prefix
+  17 - 	Author string    `json:"author"` // substring, case-insensitive
+  18 - 	Branch string    `json:"branch"` // full ref name, e.g. refs/heads/main
+  19 - 	Since  time.Time `json:"since"`
+  20 - 	Until  time.Time `json:"until"`
+  21 - }
+  22 - 
+  23 - // Branches caches which commits belong to which branch.
+  24 - type Branches struct {
+  25 - 	mu   sync.Mutex
+  26 - 	sets map[string]map[string]bool
+  27 - }
+  28 - 
+  29 - func NewBranches() *Branches { return &Branches{sets: map[string]map[string]bool{}} }
+  30 - 
+  31 - func (b *Branches) Clear() {
+  32 - 	b.mu.Lock()
+  33 - 	defer b.mu.Unlock()
+  34 - 	b.sets = map[string]map[string]bool{}
+  35 - }
+  36 - 
+  37 - func (b *Branches) members(ctx context.Context, root, ref string) (map[string]bool, error) {
+  38 - 	b.mu.Lock()
+  39 - 	if s, ok := b.sets[ref]; ok {
+  40 - 		b.mu.Unlock()
+  41 - 		return s, nil
+  42 - 	}
+  43 - 	b.mu.Unlock()
+  44 - 	if !strings.HasPrefix(ref, "refs/") || strings.Contains(ref, "..") || strings.HasPrefix(ref, "-") {
+  45 - 		return nil, gitcmd.ErrInvalidArg
+  46 - 	}
+  47 - 	out, err := gitcmd.Run(ctx, root, "rev-list", ref, "--")
+  48 - 	if err != nil {
+  49 - 		return nil, err
+  50 - 	}
+  51 - 	set := map[string]bool{}
+  52 - 	for _, h := range strings.Fields(string(out)) {
+  53 - 		set[h] = true
+  54 - 	}
+  55 - 	b.mu.Lock()
+  56 - 	b.sets[ref] = set
+  57 - 	b.mu.Unlock()
+  58 - 	return set, nil
+  59 - }
+  60 - 
+  61 ~ // Run returns the positions of matching commits, in history order.
+  62 ~ func Run(ctx context.Context, root string, ix *history.Index, br *Branches, q Query) ([]int, error) 
+  63 - 	var inBranch map[string]bool
+  64 - 	if q.Branch != "" {
+  65 - 		var err error
+  66 - 		inBranch, err = br.members(ctx, root, q.Branch)
+  67 - 		if err != nil {
+  68 - 			return nil, err
+  69 - 		}
+  70 - 	}
+  71 ~ 	text := strings.ToLower(strings.TrimSpace(q.Text))
+  72 - 	author := strings.ToLower(strings.TrimSpace(q.Author))
+  73 ~ 	var hits []int
+  75 - 		if inBranch != nil && !inBranch[c.Hash] {
+  76 - 			return true
+  77 - 		}
+  78 - 		if !q.Since.IsZero() && c.AuthorDate.Before(q.Since) {
+  79 - 			return true
+  80 - 		}
+  81 - 		if !q.Until.IsZero() && c.AuthorDate.After(q.Until) {
+  82 - 			return true
+  83 - 		}
+  84 - 		if author != "" && !strings.Contains(strings.ToLower(c.Author), author) && !strings.Contains(strin
+  85 - 			return true
+  86 - 		}
+  87 ~ 		if text != "" {
+  88 ~ 			if !(strings.HasPrefix(c.Hash, text) ||
+  89 > 				strings.Contains(strings.ToLower(c.Subject), text) ||
+  90 > 				strings.Contains(strings.ToLower(c.Body), text) ||
+  91 ~ 				strings.Contains(strings.ToLower(c.Author), text)) {
+  92 - 				return true
+  93 - 			}
+  94 - 		}
+  95 > 		hits = append(hits, i)
+  98 - 	if hits == nil {
+  99 - 		hits = []int{}
+ 100 - 	}
+ 101 ~ 	return hits, nil
+
+new
+   1 ~ // Package search filters the in-memory history; no git involved.
+  10 ~ // Run returns the positions of commits whose hash prefix, subject, body or
+  11 + // author contains text, in history order.
+  12 ~ func Run(ix *history.Index, text string) []int {
+  13 ~ 	text = strings.ToLower(strings.TrimSpace(text))
+  14 ~ 	hits := []int{}
+  16 ~ 		if text == "" ||
+  17 ~ 			strings.HasPrefix(c.Hash, text) ||
+  18 > 			strings.Contains(strings.ToLower(c.Subject), text) ||
+  19 > 			strings.Contains(strings.ToLower(c.Body), text) ||
+  20 ~ 			strings.Contains(strings.ToLower(c.Author), text) {
+  21 > 			hits = append(hits, i)
+  22 + 		}
+  25 ~ 	return hits

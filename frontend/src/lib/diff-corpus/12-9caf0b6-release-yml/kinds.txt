@@ -1,0 +1,37 @@
+old
+  24 ~     runs-on: ubuntu-latest
+  28 ~       - uses: actions/checkout@v4
+  75 ~       - uses: actions/upload-artifact@v4
+  83 ~     runs-on: macos-latest
+  85 ~       - uses: actions/checkout@v4
+  86 ~       - uses: actions/setup-go@v5
+  89 ~       - uses: actions/setup-node@v4
+  97 ~       - uses: actions/upload-artifact@v4
+ 105 ~     runs-on: ubuntu-latest
+ 107 ~       - uses: actions/checkout@v4
+ 108 ~       - uses: actions/setup-go@v5
+ 111 ~       - uses: actions/setup-node@v4
+ 120 ~       - uses: actions/upload-artifact@v4
+ 128 ~     runs-on: ubuntu-latest
+ 130 ~       - uses: actions/checkout@v4
+ 131 ~       - uses: actions/download-artifact@v4
+ 140 ~       - uses: softprops/action-gh-release@v2
+
+new
+  24 ~     runs-on: ubuntu-24.04
+  28 ~       - uses: actions/checkout@v7
+  75 ~       - uses: actions/upload-artifact@v7
+  83 ~     runs-on: macos-15
+  85 ~       - uses: actions/checkout@v7
+  86 ~       - uses: actions/setup-go@v7
+  89 ~       - uses: actions/setup-node@v7
+  97 ~       - uses: actions/upload-artifact@v7
+ 105 ~     runs-on: ubuntu-24.04
+ 107 ~       - uses: actions/checkout@v7
+ 108 ~       - uses: actions/setup-go@v7
+ 111 ~       - uses: actions/setup-node@v7
+ 120 ~       - uses: actions/upload-artifact@v7
+ 128 ~     runs-on: ubuntu-24.04
+ 130 ~       - uses: actions/checkout@v7
+ 131 ~       - uses: actions/download-artifact@v8
+ 140 ~       - uses: softprops/action-gh-release@v3

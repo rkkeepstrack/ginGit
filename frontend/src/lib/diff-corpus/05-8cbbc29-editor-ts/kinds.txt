@@ -1,0 +1,68 @@
+old
+   1 ~ import { EditorState, EditorSelection, type Extension } from '@codemirror/state'
+   5 ~ import { gliding } from '../log/LogPanel.svelte'
+   6 - import { findHighlight, setFindQuery } from './findHighlight'
+  13 - interface Disposable { destroy(): void }
+  14 - 
+  35 -  * Every mounted editor, so the find bar can highlight and step through
+  36 -  * matches across all of them. Kept in DOM order when read.
+  37 -  */
+  38 - const mounted = new Map<HTMLElement, EditorView[]>()
+  39 - let currentQuery = ''
+  40 - 
+  41 - function inDomOrder(): [HTMLElement, EditorView[]][] {
+  42 -   return [...mounted.entries()].sort(([a], [b]) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POS
+  43 - }
+  44 - 
+  45 - /** Highlights text in every mounted editor; an empty query clears it. */
+  46 - export function highlightMatches(query: string) {
+  47 -   currentQuery = query
+  48 -   for (const views of mounted.values()) for (const v of views) v.dispatch({ effects: setFindQuery.of
+  49 - }
+  50 - 
+  51 - export interface Match { host: HTMLElement; view: EditorView; from: number; to: number }
+  52 - 
+  53 - /** Every occurrence of the current query across mounted editors, in document order. */
+  54 - export function collectMatches(): Match[] {
+  55 -   const out: Match[] = []
+  56 -   const needle = currentQuery.toLowerCase()
+  57 -   if (!needle) return out
+  58 -   for (const [host, views] of inDomOrder()) {
+  59 -     for (const view of views) {
+  60 -       const text = view.state.doc.toString().toLowerCase()
+  61 -       let i = text.indexOf(needle)
+  62 -       while (i >= 0) {
+  63 -         out.push({ host, view, from: i, to: i + needle.length })
+  64 -         i = text.indexOf(needle, i + needle.length)
+  65 -       }
+  66 -     }
+  67 -   }
+  68 -   return out
+  69 - }
+  70 - 
+  71 - /** Selects a match and brings it on screen. */
+  72 - export function revealMatch(m: Match) {
+  73 -   m.view.dispatch({ selection: EditorSelection.single(m.from, m.to), effects: EditorView.scrollIntoV
+  74 -   m.view.contentDOM.focus({ preventScroll: true })
+  75 - }
+  76 - 
+  77 - /**
+  82 ~ export function mountEditor(host: HTMLElement, path: string, build: (host: HTMLElement, lang: Extens
+  84 -   let view: Disposable | null = null
+  88 ~       const built = build(host, lang)
+  89 ~       view = built
+  90 -       mounted.set(host, built.views)
+  91 -       if (currentQuery) for (const v of built.views) v.dispatch({ effects: setFindQuery.of(currentQu
+  97 ~   return () => { disposed = true; mounted.delete(host); view?.destroy() }
+
+new
+   1 ~ import { EditorState, type Extension } from '@codemirror/state'
+   3 + import { findHighlight } from '../../lib/findHighlight'
+   6 + import { registerEditors, unregisterEditors } from '../../state/editors'
+   7 ~ import { gliding } from '../../state/gliding.svelte'
+  38 ~ export function mountEditor(host: HTMLElement, path: string, build: (host: HTMLElement, lang: Extens
+  40 +   let built: { destroy(): void } | null = null
+  44 ~       const b = build(host, lang)
+  45 ~       built = b
+  46 +       registerEditors(host, b.views)
+  52 ~   return () => { disposed = true; unregisterEditors(host); built?.destroy() }

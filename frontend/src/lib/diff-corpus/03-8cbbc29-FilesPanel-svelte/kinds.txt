@@ -1,0 +1,40 @@
+old
+  12 -   import { buildTree, filterFiles, flatRows, flatten, visibleFilePaths } from '../../lib/fileTree'
+  22 -   let filter = $state('')
+  23 -   let collapsed = $state.raw<Set<string>>(new Set())
+  28 -   const count = $derived(selection.selected.size)
+  29 -   const files = $derived(filterFiles(changes.changeSet?.files ?? [], filter))
+  30 ~   const rows = $derived(ui.flatFiles ? flatRows(files, ui.fileSort) : flatten(buildTree(files, ui.fi
+  31 -   $effect(() => {
+  32 -     const next = visibleFilePaths(rows)
+  33 -     const same = next.length === changes.paths.length && next.every((p, i) => p === changes.paths[i]
+  34 -     if (!same) changes.paths = next
+  35 -   })
+  42 - 
+  43 -   const toggleDir = (path: string) => {
+  44 -     const n = new Set(collapsed)
+  45 -     n.has(path) ? n.delete(path) : n.add(path)
+  46 -     collapsed = n
+  47 -   }
+  52 ~     <span class="font-medium tabular-nums shrink-0">{count} {count === 1 ? 'commit' : 'commits'}</sp
+  57 ~     <input class="input input-xs flex-1 min-w-0 text-[12px]" placeholder="Filter files" bind:value={
+  68 -         {changes.changeSet.files.length} {changes.changeSet.files.length === 1 ? 'file' : 'files'} <
+  81 ~       <div class="p-6 text-center opacity-50 text-xs">{filter ? 'No files match.' : 'No file changes
+  88 ~             <div class="tree-row flex items-center gap-1 pr-2" style:padding-left="{6 + r.depth * 14
+  89 ~               {#if collapsed.has(dir.path)}<ChevronRight size={13} strokeWidth={1.75} class="opacity
+  90 ~               {#if collapsed.has(dir.path)}<Folder size={14} strokeWidth={1.75} class="opacity-55 sh
+
+new
+  12 +   import { plural } from '../../lib/format'
+  13 +   import { activate } from '../../lib/shortcuts'
+  16 +   import { files, toggleDir } from '../../state/files.svelte'
+  22 +   import Stats from './Stats.svelte'
+  29 ~   const rows = $derived(files.rows)
+  40 ~     <span class="font-medium tabular-nums shrink-0">{plural(selection.hashes.length, 'commit')}</spa
+  45 ~     <input class="input input-xs flex-1 min-w-0 text-[12px]" placeholder="Filter files" bind:value={
+  56 +         {plural(changes.changeSet.files.length, 'file')} <Stats additions={totals.a} deletions={tota
+  69 ~       <div class="p-6 text-center opacity-50 text-xs">{files.filter ? 'No files match.' : 'No file c
+  76 +             {@const closed = files.collapsed.has(dir.path)}
+  77 ~             <div class="tree-row flex items-center gap-1 pr-2" style:padding-left="{6 + r.depth * 14
+  78 ~               {#if closed}<ChevronRight size={13} strokeWidth={1.75} class="opacity-50 shrink-0" />{
+  79 ~               {#if closed}<Folder size={14} strokeWidth={1.75} class="opacity-55 shrink-0" />{:else}

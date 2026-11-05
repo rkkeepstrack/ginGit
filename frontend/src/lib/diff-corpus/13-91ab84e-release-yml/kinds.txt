@@ -1,0 +1,97 @@
+old
+   3 - # Tag v1.2.3 and this builds the macOS app (universal) and a Linux binary,
+   4 ~ # then attaches both to a GitHub release for that tag.
+   6 -   push:
+   7 -     tags: ['v*']
+  30 ~       - run: ditto -c -k --keepParent build/bin/ginGit.app ginGit-${{ github.ref_name }}-macos-unive
+  51 ~       - run: tar -C build/bin -czf ginGit-${{ github.ref_name }}-linux-amd64.tar.gz ginGit
+  58 ~     needs: [macos, linux]
+  69 -           generate_release_notes: true
+
+new
+   3 + # Run by hand from the Actions tab. Everything pushed since the last tag
+   4 + # becomes the release: the commit prefixes decide the bump (feat: minor,
+   5 + # fix/perf/refactor: patch, a "!" or BREAKING CHANGE: major), the notes list
+   6 + # those commits by type, the tag is created, both platforms are built and the
+   7 ~ # GitHub release carries the artifacts.
+   9 +   workflow_dispatch:
+  10 +     inputs:
+  11 +       version:
+  12 +         description: Explicit version (e.g. 1.2.0); empty derives it from the commits since the last
+  13 +         required: false
+  14 +         default: ''
+  23 +   version:
+  24 +     runs-on: ubuntu-latest
+  25 +     outputs:
+  26 +       tag: ${{ steps.bump.outputs.tag }}
+  27 +     steps:
+  28 +       - uses: actions/checkout@v4
+  29 +         with:
+  30 +           fetch-depth: 0
+  31 +       - id: bump
+  32 +         env:
+  33 +           EXPLICIT: ${{ github.event.inputs.version }}
+  34 +         run: |
+  35 +           set -euo pipefail
+  36 +           last=$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || echo v0.0.0)
+  37 +           if [ "$last" = v0.0.0 ]; then range=HEAD; else range="$last..HEAD"; fi
+  38 +           if [ -z "$(git log --format=%H "$range")" ]; then
+  39 +             echo "::error::nothing has been pushed since $last, nothing to release"; exit 1
+  40 +           fi
+  41 +           if [ -n "$EXPLICIT" ]; then
+  42 +             tag="v${EXPLICIT#v}"
+  43 +           else
+  44 +             text=$(git log --format=%s%n%b "$range")
+  45 +             bump=patch
+  46 +             if grep -Eq '^[a-z]+(\([^)]*\))?!:|^BREAKING CHANGE' <<<"$text"; then bump=major
+  47 +             elif grep -Eq '^feat(\([^)]*\))?:' <<<"$text"; then bump=minor
+  48 +             fi
+  49 +             IFS=. read -r major minor patch <<<"${last#v}"
+  50 +             case $bump in
+  51 +               major) if [ "$major" = 0 ]; then minor=$((minor+1)); patch=0; else major=$((major+1));
+  52 +               minor) minor=$((minor+1)); patch=0 ;;
+  53 +               patch) patch=$((patch+1)) ;;
+  54 +             esac
+  55 +             tag="v$major.$minor.$patch"
+  56 +           fi
+  57 +           echo "last=$last tag=$tag"
+  58 +           echo "tag=$tag" >> "$GITHUB_OUTPUT"
+  59 +           # Release notes: the commits since the last tag, grouped by type.
+  60 +           {
+  61 +             section() {
+  62 +               local title=$1 pattern=$2
+  63 +               local lines
+  64 +               lines=$(git log --format='- %s (%h)' "$range" | grep -E "^- $pattern" || true)
+  65 +               if [ -n "$lines" ]; then printf '## %s\n%s\n\n' "$title" "$lines"; fi
+  66 +             }
+  67 +             section Features 'feat'
+  68 +             section Fixes 'fix'
+  69 +             section Performance 'perf'
+  70 +             section Refactoring 'refactor'
+  71 +             section Other '(chore|docs|test|ci|build|style)'
+  72 +             section Unsorted '[^a-z]|[a-z]+[^a-z(:]'
+  73 +           } > notes.md
+  74 +           cat notes.md
+  75 +       - uses: actions/upload-artifact@v4
+  76 +         with:
+  77 +           name: notes
+  78 +           path: notes.md
+  79 + 
+  81 +     needs: version
+  82 +     if: needs.version.outputs.tag != ''
+  96 ~       - run: ditto -c -k --keepParent build/bin/ginGit.app ginGit-${{ needs.version.outputs.tag }}-m
+ 103 +     needs: version
+ 104 +     if: needs.version.outputs.tag != ''
+ 119 ~       - run: tar -C build/bin -czf ginGit-${{ needs.version.outputs.tag }}-linux-amd64.tar.gz ginGit
+ 126 ~     needs: [version, macos, linux]
+ 127 +     if: needs.version.outputs.tag != ''
+ 130 +       - uses: actions/checkout@v4
+ 134 +       - name: tag
+ 135 +         run: |
+ 136 +           git config user.name github-actions
+ 137 +           git config user.email github-actions@github.com
+ 138 +           git tag -a "${{ needs.version.outputs.tag }}" -m "${{ needs.version.outputs.tag }}"
+ 139 +           git push origin "${{ needs.version.outputs.tag }}"
+ 142 +           tag_name: ${{ needs.version.outputs.tag }}
+ 143 +           name: ${{ needs.version.outputs.tag }}
+ 144 +           body_path: notes.md

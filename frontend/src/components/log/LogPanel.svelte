@@ -5,7 +5,7 @@
   import { gliding } from '../../state/gliding.svelte'
   import { repo } from '../../state/repo.svelte'
   import { search } from '../../state/search.svelte'
-  import { moveCursor, selection } from '../../state/selection.svelte'
+  import { logKey, selection } from '../../state/selection.svelte'
   import Notice from '../shell/Notice.svelte'
   import LogRow from './LogRow.svelte'
   import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LogLanes.svelte'
@@ -32,6 +32,21 @@
     const next = fitColumns(panelWidth, graphWidth, authorW)
     if (!lastColumns || next.author !== lastColumns.author || next.date !== lastColumns.date || next.hash !== lastColumns.hash) lastColumns = next
     return lastColumns
+  })
+
+  // A repository that just opened (or reloaded) hands the keyboard to the log,
+  // unless something else has it, like the search field.
+  $effect(() => {
+    void repo.loadId
+    if (scroller && document.activeElement === document.body) scroller.focus({ preventScroll: true })
+  })
+
+  // Only a row that is rendered can be the active descendant.
+  const activeRow = $derived.by(() => {
+    const c = selection.cursor
+    if (c === null) return undefined
+    const at = search.matches ? search.matches.indexOf(c) : c
+    return at >= range.start && at < range.end ? `log-row-${c}` : undefined
   })
 
   // Keep the cursor in view. A jump (clicking a pill) centres it instead, so
@@ -78,11 +93,6 @@
     el.scrollTo({ top, behavior: 'smooth' })
   }
 
-  function onKeyDown(e: KeyboardEvent) {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
-    e.preventDefault()
-    moveCursor(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
-  }
 </script>
 
 <div class="flex flex-col h-full min-h-0" id="log" bind:clientWidth={panelWidth}>
@@ -101,8 +111,9 @@
     class="flex-1 overflow-auto outline-none"
     style="scrollbar-gutter: stable"
     tabindex="0"
-    onkeydown={onKeyDown}
+    onkeydown={logKey}
     role="grid"
+    aria-activedescendant={activeRow}
   >
     {#if count === 0 && !repo.loading && !repo.error}
       <div class="p-6 text-center opacity-50">{search.matches ? 'No commits match.' : 'No commits.'}</div>
@@ -120,6 +131,7 @@
               refs={repo.refsByHash.get(c.hash) ?? EMPTY}
               isHead={c.hash === repo.info?.head}
               selected={selection.selected.has(c.hash)}
+              cursor={selection.cursor === idx}
               {graphWidth}
               {columns}
               branch={search.matches ? search.names[c.hash] ?? '' : undefined}

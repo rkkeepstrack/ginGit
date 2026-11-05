@@ -1,35 +1,50 @@
 import { tick } from 'svelte'
-import { focus } from './lib/dom'
+import { closeDropdown, focus, focusSelected } from './lib/dom'
 import { stepFile } from './state/changes.svelte'
 import { closeFind, find } from './state/find.svelte'
-import { open, refresh } from './state/repo.svelte'
+import { open, refresh, repo } from './state/repo.svelte'
 import { setText } from './state/search.svelte'
 import { clear, selection } from './state/selection.svelte'
 import { ui } from './state/ui.svelte'
 
 export type Action =
-  | 'open' | 'refresh' | 'search' | 'find' | 'toggleDiff' | 'escape'
+  | 'open' | 'openRecent' | 'refresh' | 'search' | 'find' | 'filterFiles' | 'toggleDiff' | 'escape'
   | 'focusLog' | 'focusFiles' | 'focusReview' | 'prevFile' | 'nextFile'
   | 'themeLight' | 'themeDark' | 'themeSystem' | 'diffEditor' | 'diffPatch'
 
 /** DOM anchors the actions need; components set these ids. */
 const anchors = {
   search: '#commit-search',
-  log: '#log [tabindex]',
+  log: '#log [role="grid"]',
   files: '#files input',
   review: '#review .cm-content',
   find: '#find-input',
+}
+
+/**
+ * Opens the repository menu (a daisyUI dropdown is open while focus is in it)
+ * on the most recent repository that isn't the open one: Enter goes back to it.
+ * On the welcome screen, its recent list.
+ */
+function openRecent() {
+  document.querySelector<HTMLElement>('#repo-menu > [role="button"]')?.focus()
+  const entries = [...document.querySelectorAll<HTMLElement>('#repo-menu li > button[title], #welcome-recent li > button[title]')]
+  ;(entries.find((b) => b.title !== repo.info?.path) ?? entries[0])?.focus()
 }
 
 /** One implementation behind the native menu, the keyboard and the buttons. */
 export function runAction(action: Action, target: HTMLElement | null = document.activeElement as HTMLElement | null) {
   switch (action) {
     case 'open': void open(); break
+    case 'openRecent': openRecent(); break
     case 'refresh': void refresh(); break
     case 'search': focus(anchors.search); break
+    case 'filterFiles': focusSelected(anchors.files); break
     case 'find': if (selection.hashes.length > 0) { find.open = true; void tick().then(() => focus(anchors.find)) } break
     case 'toggleDiff': ui.toggleDiffMode(); break
     case 'escape':
+      // A menu takes its own Esc, also when the native menu's accelerator caught it first.
+      if (target?.closest('.dropdown')) { closeDropdown(); break }
       if (target?.id === 'find-input' || (find.open && !target?.id)) { closeFind(); break }
       if (target?.id === 'commit-search') { setText(''); target.blur() }
       else if (target?.tagName === 'INPUT') target.blur()

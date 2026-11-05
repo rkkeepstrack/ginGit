@@ -65,6 +65,21 @@ test('collapse all also folds the file picked in the tree', async ({ page }) => 
   await expect(page.locator('#review .entry-head.open')).toHaveCount(0)
 })
 
+test('the file filter is one shortcut away and clears with its x', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, "Merge branch 'feature/login'").click()
+  const filter = page.getByPlaceholder('Filter files')
+  await page.keyboard.press('ControlOrMeta+E')
+  await expect(filter).toBeFocused()
+  await page.keyboard.type('login')
+  await expect(page.locator('#files .tree-row', { hasText: 'main.ts' })).toHaveCount(0)
+  await page.locator('#files label.input button').click()
+  await expect(filter).toHaveValue('')
+  await expect(filter).toBeFocused()
+  await expect(page.locator('#files .tree-row', { hasText: 'main.ts' })).toHaveCount(1)
+})
+
 test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
@@ -103,6 +118,124 @@ test('search narrows the list', async ({ page }) => {
   await expect(page.locator('.log-row > svg')).toHaveCount(0)
   await expect(page.locator('.ref-pill.branch').first()).toBeVisible()
   await shoot(page, 'search.png')
+})
+
+test('enter in the commit search opens the first hit, and the arrows go on from there', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await page.locator('#commit-search').fill('login')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.log-row')).toHaveCount(3)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  await expect(page.locator('.log-row').first()).toHaveClass(/selected/)
+  await expect(page.locator('#review .entry-head').first()).toBeVisible()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+})
+
+test('the full-width log browses with the arrows and opens with enter; with a review open they select', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await expect(page.locator('#log [role="grid"]')).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  // the focus fell back to the page: with only the log on screen the arrows still browse it
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur())
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/cursor/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(0)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/selected/)
+  await expect(page.locator('#review .entry-head').first()).toBeVisible()
+  // the review is open: now each arrow opens the commit it lands on
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  // with a review open, arrows on the page itself are left alone: they may be meant for the review
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur())
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+})
+
+test('cmd-shift-o opens the recent repositories, the arrows walk them, esc closes', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'docs: more usage').click()
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  const entry = page.locator('#repo-menu li > button[title]')
+  await expect(entry).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('#repo-menu li > button', { hasText: 'Open…' })).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await expect(entry).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(entry).not.toBeFocused()
+  // the menu's Esc is its own: the commit stays selected
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  // in the built app the native menu catches Esc before the page sees it
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  await expect(entry).toBeFocused()
+  await page.evaluate(() => (window as unknown as { runtime: { EventsEmit: (n: string, d: string) => void } }).runtime.EventsEmit('menu', 'escape'))
+  await expect(entry).not.toBeFocused()
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+})
+
+test('arrows in the commit search browse the hits in the log; enter there opens one', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  // a review is open already: browsing doesn't replace it until enter
+  await row(page, 'docs: more usage').click()
+  await page.locator('#commit-search').fill('login')
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('#log [role="grid"]')).toBeFocused()
+  await expect(page.locator('.log-row').first()).toHaveClass(/cursor/)
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/cursor/)
+  await expect(page.locator('#files')).toContainText('1 commit')
+  await expect(page.locator('.log-row.selected')).toHaveCount(0)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/selected/)
+  // opened: from here the arrows open each hit they land on again
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+  // browsing again, then the search goes away: the arrows open what they land on, as everywhere with a review
+  await page.locator('#commit-search').focus()
+  await page.keyboard.press('ArrowDown')
+  await page.locator('#commit-search').fill('')
+  await page.locator('#log [role="grid"]').focus()
+  const before = await page.locator('.log-row.selected').getAttribute('data-hash')
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  expect(await page.locator('.log-row.selected').getAttribute('data-hash')).not.toBe(before)
+})
+
+test('a menu opened by keyboard marks one entry, not also the one under the pointer', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  // park the pointer where the menu's first entry will appear
+  const trigger = (await page.locator('#repo-menu > [role="button"]').boundingBox())!
+  await page.mouse.move(trigger.x + 30, trigger.y + trigger.height + 18)
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  const open = page.locator('#repo-menu li > button', { hasText: 'Open…' })
+  await expect(page.locator('#repo-menu li > button[title]')).toBeFocused()
+  await expect(open).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+  // moving the mouse takes the focus along
+  await open.hover({ position: { x: 40, y: 8 } })
+  await expect(open).toBeFocused()
+})
+
+test('the focus stays on the list, its ring follows the arrow keys', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'docs: more usage').click()
+  await expect(page.locator('#log [role="grid"]')).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  const cursor = row(page, 'chore: logo was a mistake')
+  await expect(cursor).toHaveClass(/cursor/)
+  await expect(page.locator('#log [role="grid"]')).toHaveAttribute('aria-activedescendant', (await cursor.getAttribute('id'))!)
+  await expect(cursor).toHaveCSS('outline-style', 'solid')
+  await expect(row(page, 'docs: more usage')).toHaveCSS('outline-style', 'none')
 })
 
 test('a branch badge in search results reviews the branch and jumps to it', async ({ page }) => {

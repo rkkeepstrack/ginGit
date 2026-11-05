@@ -1,0 +1,151 @@
+old
+  10 -   byHash: Map<string, Commit>
+  11 -   position: Map<string, number>
+  25 -   close: () => void
+  43 ~ export const useRepo = create<RepoState>()((set, get) => ({
+  44 >   repo: null,
+  45 >   refs: [],
+  46 >   refsByHash: new Map(),
+  47 >   commits: [],
+  48 -   byHash: new Map(),
+  49 -   position: new Map(),
+  50 >   maxLanes: 1,
+  51 >   loading: false,
+  52 >   loadId: 0,
+  53 >   total: null,
+  54 >   error: null,
+  55 >   changedSinceLoad: false,
+  56 >   recent: [],
+  57 >   gitMissing: false,
+  59 >   async open(path) {
+  60 >     try {
+  61 ~       const info = path ? await api.openRepository(path) : await api.openRepositoryDialog()
+  62 -       set({ repo: info, error: null, commits: [], byHash: new Map(), position: new Map(), maxLanes: 
+  63 -       await get().refresh()
+  64 -       void get().loadRecent()
+  65 >     } catch (e) {
+  66 -       const err = e as ApiError
+  67 -       if (err.kind === 'cancelled') return
+  68 -       if (err.kind === 'git_not_found') set({ gitMissing: true })
+  69 ~       set({ error: err.display ?? String(e) })
+  70 >     }
+  71 >   },
+  73 >   async refresh() {
+  74 >     const repo = get().repo
+  75 -     if (!repo) return
+  76 -     try {
+  77 -       const [info, refs] = await Promise.all([api.openRepository(repo.path), api.refs(repo.path)])
+  78 -       // Record the id before asking Go to stream, so no event can beat it.
+  79 -       const loadId = ++loadSeq
+  80 -       set({
+  81 -         repo: info, refs, refsByHash: indexRefs(refs),
+  82 -         commits: [], byHash: new Map(), position: new Map(), maxLanes: 1,
+  83 -         loading: true, loadId, total: null, error: null, changedSinceLoad: false,
+  84 -       })
+  85 ~       await api.loadHistory(repo.path, loadId)
+  86 -     } catch (e) {
+  87 -       set({ error: (e as ApiError).display ?? String(e), loading: false })
+  88 -     }
+  89 >   },
+  91 >   async loadRecent() {
+  92 >     try {
+  93 >       set({ recent: await api.recentRepositories() })
+  94 >     } catch {
+  95 >       /* recent list is a convenience, never an error */
+  96 >     }
+  97 >   },
+  99 >   async forget(path) {
+ 100 >     await api.forgetRepository(path)
+ 101 >     await get().loadRecent()
+ 102 >   },
+ 103 - 
+ 104 -   close() {
+ 105 -     set({ repo: null, commits: [], byHash: new Map(), position: new Map(), refs: [], refsByHash: new
+ 106 -   },
+ 107 ~ }))
+ 109 - let subscribed = false
+ 111 -   if (subscribed) return
+ 112 -   subscribed = true
+ 120 ~       s.byHash.set(c.hash, c)
+ 121 ~       s.position.set(c.hash, start + i)
+ 132 ~     useRepo.setState({ loading: false, error: message.replace(/^[a-z_]+: /, '') })
+
+new
+   5 + /**
+   6 +  * Lookup tables that follow `commits`. They are filled in place as chunks
+   7 +  * arrive and rebuilt on every load; subscribe to `commits` for changes, never
+   8 +  * to these.
+   9 +  */
+  10 + const byHash = new Map<string, Commit>()
+  11 + const position = new Map<string, number>()
+  12 + 
+  13 + export const commitOf = (hash: string) => byHash.get(hash)
+  14 + export const positionOf = (hash: string) => position.get(hash)
+  15 + 
+  30 +   /** Opens a path, or asks for one with the native dialog. */
+  32 +   /** Reloads refs and history of the open repository. */
+  53 ~ export const useRepo = create<RepoState>()((set, get) => {
+  54 +   // Opens (or re-opens) a path and streams its history.
+  55 +   const load = async (path: string) => {
+  56 +     try {
+  57 +       const info = await api.openRepository(path)
+  58 +       const refs = await api.refs(info.path)
+  59 +       // Record the id before asking Go to stream, so no event can beat it.
+  60 +       const loadId = ++loadSeq
+  61 +       byHash.clear()
+  62 +       position.clear()
+  63 +       set({
+  64 +         repo: info, refs, refsByHash: indexRefs(refs), commits: [], maxLanes: 1,
+  65 +         loading: true, loadId, total: null, error: null, changedSinceLoad: false,
+  66 +       })
+  67 +       await api.loadHistory(info.path, loadId)
+  68 +       void get().loadRecent()
+  69 +     } catch (e) {
+  70 +       const err = e as ApiError
+  71 +       if (err.kind === 'cancelled') return
+  72 +       set({ error: err.display ?? String(e), loading: false, gitMissing: err.kind === 'git_not_found
+  73 +     }
+  74 +   }
+  75 + 
+  76 +   return {
+  77 >     repo: null,
+  78 >     refs: [],
+  79 >     refsByHash: new Map(),
+  80 >     commits: [],
+  81 >     maxLanes: 1,
+  82 >     loading: false,
+  83 >     loadId: 0,
+  84 >     total: null,
+  85 >     error: null,
+  86 >     changedSinceLoad: false,
+  87 >     recent: [],
+  88 >     gitMissing: false,
+  90 >     async open(path) {
+  91 +       if (path) return load(path)
+  92 >       try {
+  93 ~         const info = await api.openRepositoryDialog()
+  94 +         await load(info.path)
+  95 >       } catch (e) {
+  96 ~         if ((e as ApiError).kind !== 'cancelled') set({ error: (e as ApiError).display ?? String(e) 
+  97 >       }
+  98 >     },
+ 100 >     async refresh() {
+ 101 >       const repo = get().repo
+ 102 ~       if (repo) await load(repo.path)
+ 103 >     },
+ 105 >     async loadRecent() {
+ 106 >       try {
+ 107 >         set({ recent: await api.recentRepositories() })
+ 108 >       } catch {
+ 109 >         /* recent list is a convenience, never an error */
+ 110 >       }
+ 111 >     },
+ 113 >     async forget(path) {
+ 114 >       await api.forgetRepository(path)
+ 115 >       await get().loadRecent()
+ 116 >     },
+ 117 +   }
+ 118 ~ })
+ 128 ~       byHash.set(c.hash, c)
+ 129 ~       position.set(c.hash, start + i)
+ 140 ~     useRepo.setState({ loading: false, error: new ApiError(message).display })

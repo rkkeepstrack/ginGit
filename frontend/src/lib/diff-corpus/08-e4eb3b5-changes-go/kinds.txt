@@ -1,0 +1,55 @@
+old
+  16 - // Lookup is what we need from the loaded history.
+  17 - type Lookup interface {
+  18 - 	Parents(hash string) ([]string, bool)
+  19 - 	Position(hash string) (int, bool)
+  20 - }
+  21 - 
+  42 ~ 	Touches    []Touch `json:"-"` // newest first; FileDiff reads them, the UI only needs the count
+  45 ~ 	// version of this file, or an older one. Filled in by the app, not here.
+  60 ~ 	// is not on the default branch yet. Filled in by the app.
+  65 ~ func newestFirst(lk Lookup, hashes []string) ([]string, error) {
+  68 ~ 		if _, ok := lk.Position(h); !ok {
+  73 ~ 		pi, _ := lk.Position(out[i])
+  74 ~ 		pj, _ := lk.Position(out[j])
+  81 ~ func Compute(ctx context.Context, root string, lk Lookup, hashes []string) (*ChangeSet, error) {
+  90 ~ 	sorted, err := newestFirst(lk, hashes)
+  96 ~ 		if p, _ := lk.Parents(h); len(p) > 1 {
+ 177 ~ 	args := []string{"log", "--no-walk=unsorted", "-m", "--first-parent", "--root", "-M", "--raw", "--n
+ 178 - 	out, err := gitcmd.Run(ctx, root, append(append(args, hashes...), "--")...)
+
+new
+  14 + 	"ginGit/internal/history"
+  37 ~ 	Touches    []Touch `json:"-"` // newest first; the diffs read them, the UI only needs the count
+  40 ~ 	// version of this file, or an older one. Stamped by review.Annotate.
+  55 ~ 	// is not on the default branch yet. Stamped by review.Annotate.
+  60 ~ func newestFirst(ix *history.Index, hashes []string) ([]string, error) {
+  63 ~ 		if _, ok := ix.Position(h); !ok {
+  68 ~ 		pi, _ := ix.Position(out[i])
+  69 ~ 		pj, _ := ix.Position(out[j])
+  76 ~ func Compute(ctx context.Context, root string, ix *history.Index, hashes []string) (*ChangeSet, erro
+  85 ~ 	sorted, err := newestFirst(ix, hashes)
+  91 ~ 		if p, _ := ix.Parents(h); len(p) > 1 {
+ 172 + 	// Hashes go on stdin: a shift-click over a big repository selects more
+ 173 + 	// than the command line holds.
+ 174 + 	out, err := gitcmd.RunInput(ctx, root, []byte(strings.Join(hashes, "\n")+"\n"),
+ 175 ~ 		"log", "--stdin", "--no-walk=unsorted", "-m", "--first-parent", "--root", "-M", "--raw", "--numsta
+ 312 + 
+ 313 + // File is the change for one path of the selection.
+ 314 + func (cs *ChangeSet) File(path string) (FileChange, bool) {
+ 315 + 	for _, fc := range cs.Files {
+ 316 + 		if fc.Path == path {
+ 317 + 			return fc, true
+ 318 + 		}
+ 319 + 	}
+ 320 + 	return FileChange{}, false
+ 321 + }
+ 322 + 
+ 323 + // NewestBlob is the version of a file the review shows; a deletion is the
+ 324 + // zero blob, which is still a version the user can mark as seen.
+ 325 + func NewestBlob(fc FileChange) string {
+ 326 + 	if len(fc.Touches) == 0 {
+ 327 + 		return ""
+ 328 + 	}
+ 329 + 	return fc.Touches[0].NewBlob
+ 330 + }

@@ -5,6 +5,7 @@
   import Sun from '@lucide/svelte/icons/sun'
   import SunMoon from '@lucide/svelte/icons/sun-moon'
   import { closeDropdown } from '../../lib/dom'
+  import { menuKeys } from '../../lib/menuKeys'
   import { hint } from '../../state/hint.svelte'
   import { ui, type DiffStyle, type ThemeChoice } from '../../state/ui.svelte'
 
@@ -22,7 +23,7 @@
   const chooseDiff = (value: DiffStyle) => { ui.diffStyle = value; closeDropdown() }
 </script>
 
-<div class="dropdown dropdown-end">
+<div class="dropdown dropdown-end" use:menuKeys>
   <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-square" use:hint={'Appearance: theme and diff style'}>
     <SunMoon size={16} strokeWidth={1.75} />
   </div>

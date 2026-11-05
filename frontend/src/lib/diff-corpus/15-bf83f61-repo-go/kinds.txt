@@ -1,0 +1,30 @@
+old
+  19 ~ 	Path     string `json:"path"`
+  20 ~ 	Name     string `json:"name"`
+  21 ~ 	Branch   string `json:"branch"` // empty when detached
+  22 ~ 	Head     string `json:"head"`   // full hash
+  23 ~ 	GitDir   string `json:"gitDir"` // absolute .git dir, for the watcher
+  24 ~ 	Detached bool   `json:"detached"`
+  25 ~ 	Bare     bool   `json:"bare"`
+  46 ~ 	bare, err := gitcmd.Run(ctx, abs, "rev-parse", "--is-bare-repository", "--absolute-git-dir")
+  51 ~ 	if len(lines) != 2 {
+  63 ~ 	info := Info{Path: root, Name: strings.TrimSuffix(filepath.Base(root), ".git"), GitDir: gitDir, Bar
+
+new
+  19 ~ 	Path   string `json:"path"`
+  20 ~ 	Name   string `json:"name"`
+  21 ~ 	Branch string `json:"branch"` // empty when detached
+  22 ~ 	Head   string `json:"head"`   // full hash
+  23 ~ 	GitDir string `json:"-"`      // this checkout's git dir: HEAD lives here
+  24 + 	// CommonDir holds refs and packed-refs; for a worktree it is the main
+  25 + 	// repository's .git, otherwise the same as GitDir.
+  26 + 	CommonDir string `json:"-"`
+  27 ~ 	Detached  bool   `json:"-"`
+  28 ~ 	Bare      bool   `json:"-"`
+  49 ~ 	bare, err := gitcmd.Run(ctx, abs, "rev-parse", "--is-bare-repository", "--absolute-git-dir", "--git
+  54 ~ 	if len(lines) != 3 {
+  58 + 	commonDir := lines[2]
+  59 + 	if !filepath.IsAbs(commonDir) {
+  60 + 		commonDir = filepath.Join(abs, commonDir)
+  61 + 	}
+  70 ~ 	info := Info{Path: root, Name: strings.TrimSuffix(filepath.Base(root), ".git"), GitDir: gitDir, Com
