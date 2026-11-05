@@ -1,6 +1,7 @@
 <script lang="ts">
   import FolderOpen from '@lucide/svelte/icons/folder-open'
   import { abbreviatePath } from '../../lib/format'
+  import { menuKeys } from '../../lib/menuKeys'
   import { open, repo } from '../../state/repo.svelte'
   import Logo from './Logo.svelte'
   import Notice from './Notice.svelte'
@@ -24,7 +25,7 @@
         <FolderOpen size={15} strokeWidth={1.75} /> Open repository…
       </button>
       {#if repo.recent.length > 0}
-        <ul class="menu menu-sm p-0 mt-2 w-full">
+        <ul class="menu menu-sm p-0 mt-2 w-full" id="welcome-recent" use:menuKeys>
           <li class="menu-title text-[10px] text-center">Recent</li>
           {#each repo.recent as r (r.path)}
             <li>

@@ -133,6 +133,23 @@ test('enter in the commit search opens the first hit, and the arrows go on from 
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
 
+test('cmd-shift-o opens the recent repositories, the arrows walk them, esc closes', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'docs: more usage').click()
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  const entry = page.locator('#repo-menu li > button[title]')
+  await expect(entry).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('#repo-menu li > button', { hasText: 'Open…' })).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await expect(entry).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(entry).not.toBeFocused()
+  // the menu's Esc is its own: the commit stays selected
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+})
+
 test('the focus stays on the list, its ring follows the arrow keys', async ({ page }) => {
   await installBridge(page)
   await loaded(page)

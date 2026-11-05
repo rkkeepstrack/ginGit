@@ -14,6 +14,7 @@ export function actionFor(e: KeyboardEvent): Action | null {
   const typing = !!target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)
   if (e.key === 'Escape') return 'escape'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'o') return 'open'
+  if (mod && e.shiftKey && e.key.toLowerCase() === 'o') return 'openRecent'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'r') return 'refresh'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'f') return 'find'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'p') return 'search'

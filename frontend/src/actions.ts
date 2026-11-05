@@ -2,13 +2,13 @@ import { tick } from 'svelte'
 import { focus, focusSelected } from './lib/dom'
 import { stepFile } from './state/changes.svelte'
 import { closeFind, find } from './state/find.svelte'
-import { open, refresh } from './state/repo.svelte'
+import { open, refresh, repo } from './state/repo.svelte'
 import { setText } from './state/search.svelte'
 import { clear, selection } from './state/selection.svelte'
 import { ui } from './state/ui.svelte'
 
 export type Action =
-  | 'open' | 'refresh' | 'search' | 'find' | 'filterFiles' | 'toggleDiff' | 'escape'
+  | 'open' | 'openRecent' | 'refresh' | 'search' | 'find' | 'filterFiles' | 'toggleDiff' | 'escape'
   | 'focusLog' | 'focusFiles' | 'focusReview' | 'prevFile' | 'nextFile'
   | 'themeLight' | 'themeDark' | 'themeSystem' | 'diffEditor' | 'diffPatch'
 
@@ -21,10 +21,22 @@ const anchors = {
   find: '#find-input',
 }
 
+/**
+ * Opens the repository menu (a daisyUI dropdown is open while focus is in it)
+ * on the most recent repository that isn't the open one: Enter goes back to it.
+ * On the welcome screen, its recent list.
+ */
+function openRecent() {
+  document.querySelector<HTMLElement>('#repo-menu > [role="button"]')?.focus()
+  const entries = [...document.querySelectorAll<HTMLElement>('#repo-menu li > button[title], #welcome-recent li > button[title]')]
+  ;(entries.find((b) => b.title !== repo.info?.path) ?? entries[0])?.focus()
+}
+
 /** One implementation behind the native menu, the keyboard and the buttons. */
 export function runAction(action: Action, target: HTMLElement | null = document.activeElement as HTMLElement | null) {
   switch (action) {
     case 'open': void open(); break
+    case 'openRecent': openRecent(); break
     case 'refresh': void refresh(); break
     case 'search': focus(anchors.search); break
     case 'filterFiles': focusSelected(anchors.files); break

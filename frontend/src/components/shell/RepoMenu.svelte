@@ -4,6 +4,8 @@
   import X from '@lucide/svelte/icons/x'
   import { closeDropdown } from '../../lib/dom'
   import { shortenPath } from '../../lib/format'
+  import { menuKeys } from '../../lib/menuKeys'
+  import { keys } from '../../lib/platform'
   import { hint } from '../../state/hint.svelte'
   import { forget, open, repo } from '../../state/repo.svelte'
 
@@ -13,8 +15,8 @@
   }
 </script>
 
-<div class="dropdown">
-  <div tabindex="0" role="button" class="btn btn-ghost btn-sm px-2 gap-1 font-semibold text-[13px]">
+<div class="dropdown" id="repo-menu" use:menuKeys>
+  <div tabindex="0" role="button" class="btn btn-ghost btn-sm px-2 gap-1 font-semibold text-[13px]" use:hint={`Open a repository  ${keys('mod', 'O')} · a recent one  ${keys('mod', 'shift', 'O')}`}>
     {repo.info?.name ?? 'Open repository'}
     <ChevronDown size={14} strokeWidth={2} class="opacity-50" />
   </div>
