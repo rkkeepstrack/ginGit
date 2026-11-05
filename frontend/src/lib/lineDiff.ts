@@ -143,23 +143,59 @@ function align(a: string, b: string): Alignment {
       kindsB[fb + j] = 'modified'
     }
   }
-  let i = 0
-  let j = 0
-  for (const h of diff(sa, sb, { timeout: 1000 })) {
-    paired(i, h.fromA, j)
-    if (h.fromA === h.toA) {
-      changes.push(new Change(offA[h.fromA], offA[h.fromA], offB[h.fromB], offB[h.toB]))
-      kindsB.fill('inserted', h.fromB, h.toB)
-    } else if (h.fromB === h.toB) {
-      changes.push(new Change(offA[h.fromA], offA[h.toA], offB[h.fromB], offB[h.fromB]))
-      kindsA.fill('deleted', h.fromA, h.toA)
-    } else {
-      rewritten(h.fromA, h.toA, h.fromB, h.toB)
+  // Which lines stay the same (up to whitespace), as IntelliJ finds them: lines
+  // with letters or digits are matched first; a lone } or an empty line could
+  // otherwise anchor two blocks at the wrong spot. Between two such anchors,
+  // lines are paired by similarity, braces included, and the identical pairs
+  // join the matches. What lies between two matches is a changed block.
+  const matches: [number, number][] = []
+  const exact = (fa: number, ta: number, fb: number, tb: number) => {
+    let [x, y] = [fa, fb]
+    for (const h of diff(sa.slice(fa, ta), sb.slice(fb, tb), { timeout: 1000 })) {
+      while (x < fa + h.fromA) matches.push([x++, y++])
+      ;[x, y] = [fa + h.toA, fb + h.toB]
     }
-    i = h.toA
-    j = h.toB
+    while (x < ta) matches.push([x++, y++])
   }
-  paired(i, linesA.length, j)
+  const gap = (fa: number, ta: number, fb: number, tb: number) => {
+    if (fa === ta || fb === tb) return
+    const pairs = pairSimilar(linesA.slice(fa, ta), linesB.slice(fb, tb))
+    if (!pairs) return exact(fa, ta, fb, tb)
+    for (const [x, y] of pairs) if (sa[fa + x] === sb[fb + y]) matches.push([fa + x, fb + y])
+  }
+  const worthy = (ls: string[]) => ls.flatMap((l, k) => (/[\p{L}\p{N}]/u.test(l) ? [k] : []))
+  const [wa, wb] = [worthy(linesA), worthy(linesB)]
+  const anchors: [number, number][] = []
+  {
+    const [ka, kb] = [wa.map((k) => sa[k]).join(''), wb.map((k) => sb[k]).join('')]
+    let [x, y] = [0, 0]
+    for (const h of diff(ka, kb, { timeout: 1000 })) {
+      while (x < h.fromA) anchors.push([wa[x++], wb[y++]])
+      ;[x, y] = [h.toA, h.toB]
+    }
+    while (x < wa.length) anchors.push([wa[x++], wb[y++]])
+  }
+  let [pa, pb] = [0, 0]
+  for (const [x, y] of anchors) {
+    gap(pa, x, pb, y)
+    matches.push([x, y])
+    ;[pa, pb] = [x + 1, y + 1]
+  }
+  gap(pa, linesA.length, pb, linesB.length)
+
+  let [i, j] = [0, 0]
+  for (const [x, y] of [...matches, [linesA.length, linesB.length] as [number, number]]) {
+    if (x > i && y > j) rewritten(i, x, j, y)
+    else if (y > j) {
+      changes.push(new Change(offA[i], offA[i], offB[j], offB[y]))
+      kindsB.fill('inserted', j, y)
+    } else if (x > i) {
+      changes.push(new Change(offA[i], offA[x], offB[j], offB[j]))
+      kindsA.fill('deleted', i, x)
+    }
+    if (x < linesA.length) paired(x, x + 1, y)
+    ;[i, j] = [x + 1, y + 1]
+  }
   return { changes, kindsA, kindsB }
 }
 
@@ -176,7 +212,8 @@ function pairSimilar(a: string[], b: string[]): [number, number][] | null {
   const score = new Float64Array((n + 1) * w)
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
-      const s = (sim[(i - 1) * m + j - 1] = similarity(ga[i - 1], gb[j - 1]))
+      // Every } looks alike; the one at the same indentation is the counterpart.
+      const s = (sim[(i - 1) * m + j - 1] = similarity(ga[i - 1], gb[j - 1]) + (a[i - 1] === b[j - 1] ? 0.01 : 0))
       let best = Math.max(score[(i - 1) * w + j], score[i * w + j - 1])
       if (s >= SIMILAR) best = Math.max(best, score[(i - 1) * w + j - 1] + s)
       score[i * w + j] = best

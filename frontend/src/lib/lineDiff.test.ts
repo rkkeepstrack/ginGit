@@ -95,4 +95,22 @@ describe('alignLines', () => {
     expect(kindsA[2]).toBe('modified')
     expect(kindsB[2]).toBe('modified')
   })
+  it("doesn't let a lone } anchor the alignment at the wrong spot", () => {
+    const a = 'body {\n  Observing {\n    Content(state, query) { added($0) }\n  }\n  .onChange(of: query) { addCar.changed(text) }\n  .onAppear { load() }\n}\n'
+    const b = 'body {\n  let addCar = owner.addCar()\n  Observing {\n    Content(\n      state,\n      query,\n    )\n  }\n  .onChange(of: query) { owner.addCar().changed(text) }\n  .task {\n    for await e in events {\n      handle(e)\n    }\n  }\n}\n'
+    const { kindsA, kindsB } = alignLines(a, b)
+    const at = (src: string, text: string) => src.split('\n').findIndex((l) => l.includes(text))
+    expect(kindsA[at(a, '.onChange')]).toBe('modified')
+    expect(kindsB[at(b, '.onChange')]).toBe('modified')
+    expect(kindsA[at(a, '.onAppear')]).toBe('deleted')
+    expect(kindsB[at(b, '.task')]).toBe('inserted')
+    expect(kindsB[at(b, 'let addCar')]).toBe('inserted')
+  })
+  it('pairs a closing brace with the one at its own indentation', () => {
+    const a = 'body {\n  Stack {\n    old()\n  }\n}\n'
+    const b = 'body {\n  Stack {\n    for e in events {\n      switch e {\n      }\n    }\n  }\n}\n'
+    const { kindsA, kindsB } = alignLines(a, b)
+    expect(kindsA.slice(3, 5)).toEqual(['same', 'same'])
+    expect(kindsB.slice(6, 8)).toEqual(['same', 'same'])
+  })
 })
