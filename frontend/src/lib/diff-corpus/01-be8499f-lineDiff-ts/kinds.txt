@@ -1,0 +1,72 @@
+old
+ 146 -   let i = 0
+ 147 -   let j = 0
+ 148 ~   for (const h of diff(sa, sb, { timeout: 1000 })) {
+ 149 -     paired(i, h.fromA, j)
+ 150 -     if (h.fromA === h.toA) {
+ 151 ~       changes.push(new Change(offA[h.fromA], offA[h.fromA], offB[h.fromB], offB[h.toB]))
+ 152 ~       kindsB.fill('inserted', h.fromB, h.toB)
+ 153 ~     } else if (h.fromB === h.toB) {
+ 154 ~       changes.push(new Change(offA[h.fromA], offA[h.toA], offB[h.fromB], offB[h.fromB]))
+ 155 ~       kindsA.fill('deleted', h.fromA, h.toA)
+ 156 -     } else {
+ 157 -       rewritten(h.fromA, h.toA, h.fromB, h.toB)
+ 159 -     i = h.toA
+ 160 -     j = h.toB
+ 162 -   paired(i, linesA.length, j)
+ 179 ~       const s = (sim[(i - 1) * m + j - 1] = similarity(ga[i - 1], gb[j - 1]))
+
+new
+ 146 +   // Which lines stay the same (up to whitespace), as IntelliJ finds them: lines
+ 147 +   // with letters or digits are matched first; a lone } or an empty line could
+ 148 +   // otherwise anchor two blocks at the wrong spot. Between two such anchors,
+ 149 +   // lines are paired by similarity, braces included, and the identical pairs
+ 150 +   // join the matches. What lies between two matches is a changed block.
+ 151 +   const matches: [number, number][] = []
+ 152 +   const exact = (fa: number, ta: number, fb: number, tb: number) => {
+ 153 +     let [x, y] = [fa, fb]
+ 154 +     for (const h of diff(sa.slice(fa, ta), sb.slice(fb, tb), { timeout: 1000 })) {
+ 155 +       while (x < fa + h.fromA) matches.push([x++, y++])
+ 156 +       ;[x, y] = [fa + h.toA, fb + h.toB]
+ 157 +     }
+ 158 +     while (x < ta) matches.push([x++, y++])
+ 159 +   }
+ 160 +   const gap = (fa: number, ta: number, fb: number, tb: number) => {
+ 161 +     if (fa === ta || fb === tb) return
+ 162 +     const pairs = pairSimilar(linesA.slice(fa, ta), linesB.slice(fb, tb))
+ 163 +     if (!pairs) return exact(fa, ta, fb, tb)
+ 164 +     for (const [x, y] of pairs) if (sa[fa + x] === sb[fb + y]) matches.push([fa + x, fb + y])
+ 165 +   }
+ 166 +   const worthy = (ls: string[]) => ls.flatMap((l, k) => (/[\p{L}\p{N}]/u.test(l) ? [k] : []))
+ 167 +   const [wa, wb] = [worthy(linesA), worthy(linesB)]
+ 168 +   const anchors: [number, number][] = []
+ 169 +   {
+ 170 +     const [ka, kb] = [wa.map((k) => sa[k]).join(''), wb.map((k) => sb[k]).join('')]
+ 171 +     let [x, y] = [0, 0]
+ 172 ~     for (const h of diff(ka, kb, { timeout: 1000 })) {
+ 173 +       while (x < h.fromA) anchors.push([wa[x++], wb[y++]])
+ 174 +       ;[x, y] = [h.toA, h.toB]
+ 175 +     }
+ 176 +     while (x < wa.length) anchors.push([wa[x++], wb[y++]])
+ 177 +   }
+ 178 +   let [pa, pb] = [0, 0]
+ 179 +   for (const [x, y] of anchors) {
+ 180 +     gap(pa, x, pb, y)
+ 181 +     matches.push([x, y])
+ 182 +     ;[pa, pb] = [x + 1, y + 1]
+ 183 +   }
+ 184 +   gap(pa, linesA.length, pb, linesB.length)
+ 185 + 
+ 186 +   let [i, j] = [0, 0]
+ 187 +   for (const [x, y] of [...matches, [linesA.length, linesB.length] as [number, number]]) {
+ 188 +     if (x > i && y > j) rewritten(i, x, j, y)
+ 189 +     else if (y > j) {
+ 190 ~       changes.push(new Change(offA[i], offA[i], offB[j], offB[y]))
+ 191 ~       kindsB.fill('inserted', j, y)
+ 192 ~     } else if (x > i) {
+ 193 ~       changes.push(new Change(offA[i], offA[x], offB[j], offB[j]))
+ 194 ~       kindsA.fill('deleted', i, x)
+ 196 +     if (x < linesA.length) paired(x, x + 1, y)
+ 197 +     ;[i, j] = [x + 1, y + 1]
+ 215 +       // Every } looks alike; the one at the same indentation is the counterpart.
+ 216 ~       const s = (sim[(i - 1) * m + j - 1] = similarity(ga[i - 1], gb[j - 1]) + (a[i - 1] === b[j - 1

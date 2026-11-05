@@ -1,0 +1,219 @@
+old
+  33 ~ 	mu       sync.Mutex
+  34 ~ 	root     string
+  35 - 	refs     []repo.Ref // as last listed for the frontend
+  36 ~ 	index    *history.Index
+  37 ~ 	cancel   context.CancelFunc // stops the running history load
+  38 ~ 	watcher  *fsnotify.Watcher
+  39 ~ 	changes  *changes.Cache
+  40 ~ 	blobs    *diff.Cache
+  41 - 	branches *search.Branches
+  42 ~ 	scopes   map[string]string // newest selected commit → branch it is reviewed under
+  47 ~ 		index:    history.NewIndex(),
+  48 ~ 		changes:  changes.NewCache(64),
+  49 ~ 		blobs:    diff.NewCache(64 << 20),
+  50 - 		branches: search.NewBranches(),
+  51 ~ 		scopes:   map[string]string{},
+  79 - 	a.refs = nil
+  82 - 	a.blobs.Clear()
+  83 - 	a.branches.Clear()
+ 190 - 	a.mu.Lock()
+ 191 - 	if root == a.root {
+ 192 - 		a.refs = refs
+ 193 - 	}
+ 194 - 	a.mu.Unlock()
+ 204 ~ 	refs, err := a.refsFor(root)
+ 208 - 	tips := make([]history.RefTip, len(refs))
+ 209 - 	for i, r := range refs {
+ 210 - 		tips[i] = history.RefTip{Full: r.Full, Hash: r.Hash, Tag: r.Kind == "tag"}
+ 211 - 	}
+ 212 ~ 	hashes, ok := index.BranchCommits(tips, ref)
+ 219 - // refsFor returns the refs as last listed for the frontend, or lists them.
+ 220 - func (a *App) refsFor(root string) ([]repo.Ref, error) {
+ 221 - 	a.mu.Lock()
+ 222 - 	refs := a.refs
+ 223 - 	a.mu.Unlock()
+ 224 - 	if refs != nil {
+ 225 - 		return refs, nil
+ 226 - 	}
+ 227 - 	return repo.Refs(a.ctx, root)
+ 228 - }
+ 229 - 
+ 315 - // newestBlob is the version of a file the review shows; a deletion is the
+ 316 - // zero blob, which is still a version the user can mark as seen.
+ 317 - func newestBlob(fc changes.FileChange) string {
+ 318 - 	if len(fc.Touches) == 0 {
+ 319 - 		return ""
+ 320 - 	}
+ 321 - 	return fc.Touches[0].NewBlob
+ 322 - }
+ 323 - 
+ 327 ~ // merged and marks would only be noise. Marks never leak across branches.
+ 341 ~ 	if tip := a.defaultBranchTip(root); tip == "" || !index.Reaches(tip, newest) {
+ 342 ~ 		names, err := repo.NameCommits(a.ctx, root, []string{newest})
+ 343 - 		if err == nil {
+ 344 ~ 			if name = names[newest]; name == "" {
+ 345 - 				name = "(detached)"
+ 346 - 			}
+ 355 - // defaultBranchTip is main or master, local first, then origin's.
+ 356 - func (a *App) defaultBranchTip(root string) string {
+ 357 - 	refs, err := a.refsFor(root)
+ 358 - 	if err != nil {
+ 359 - 		return ""
+ 360 - 	}
+ 361 - 	for _, full := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "
+ 362 - 		for _, r := range refs {
+ 363 - 			if r.Full == full {
+ 364 - 				return r.Hash
+ 365 - 			}
+ 366 - 		}
+ 367 - 	}
+ 368 - 	return ""
+ 369 - }
+ 370 - 
+ 371 ~ // annotate stamps each file with the review state against the marks made
+ 372 - // for this branch. The change set in the cache stays untouched; marks change
+ 373 - // independently.
+ 379 - 	out := *cs
+ 380 - 	out.Reviewable = scope != ""
+ 381 ~ 	if scope == "" {
+ 382 - 		return &out
+ 383 - 	}
+ 384 ~ 	marks, err := a.reviewed.Marks(root, scope)
+ 385 - 	if err != nil || len(marks) == 0 {
+ 386 - 		return &out
+ 388 - 	out.Files = make([]changes.FileChange, len(cs.Files))
+ 389 - 	copy(out.Files, cs.Files)
+ 390 - 	for i := range out.Files {
+ 391 - 		m, ok := marks[out.Files[i].Path]
+ 392 - 		if !ok {
+ 393 - 			continue
+ 394 - 		}
+ 395 - 		if m.Blob == newestBlob(out.Files[i]) {
+ 396 - 			out.Files[i].Review = "reviewed"
+ 397 - 		} else {
+ 398 - 			out.Files[i].Review = "stale"
+ 399 - 			out.Files[i].ReviewedBlob = m.Blob
+ 400 - 		}
+ 401 - 	}
+ 402 - 	return &out
+ 415 - 	for _, fc := range cs.Files {
+ 416 - 		if fc.Path != path {
+ 417 - 			continue
+ 418 > 		}
+ 419 > 		scope := a.reviewScope(root, cs)
+ 420 > 		if scope == "" {
+ 421 > 			return fmt.Errorf("unknown: this work is already on the default branch, nothing to review")
+ 422 > 		}
+ 423 > 		blob := ""
+ 424 > 		if seen {
+ 425 ~ 			blob = newestBlob(fc)
+ 426 > 		}
+ 427 > 		return a.reviewed.Set(root, scope, path, blob)
+ 428 > 	}
+ 439 - 	for _, fc := range cs.Files {
+ 440 - 		if fc.Path != path {
+ 441 - 			continue
+ 442 > 		}
+ 443 > 		if fc.Review != "stale" {
+ 444 > 			return nil, fmt.Errorf("object_not_found: %s has no reviewed version to compare with", path)
+ 445 > 		}
+ 446 > 		res, err := diff.Since(a.ctx, root, fc, fc.ReviewedBlob, a.blobs)
+ 447 > 		if err != nil {
+ 448 > 			return nil, userError(err)
+ 449 > 		}
+ 450 > 		return res, nil
+ 451 - 	}
+ 452 - 	return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
+ 455 - func (a *App) FileDiff(root string, hashes []string, path string) (*diff.Result, error) {
+ 456 - 	if err := gitcmd.ValidatePath(path); err != nil {
+ 457 - 		return nil, userError(err)
+ 458 - 	}
+ 459 - 	cs, err := a.ListChanges(root, hashes)
+ 460 - 	if err != nil {
+ 461 - 		return nil, err
+ 462 - 	}
+ 463 - 	for _, fc := range cs.Files {
+ 464 - 		if fc.Path == path {
+ 465 - 			res, err := diff.ForFile(a.ctx, root, fc, a.blobs)
+ 466 - 			if err != nil {
+ 467 - 				return nil, userError(err)
+ 468 - 			}
+ 469 - 			return res, nil
+ 470 - 		}
+ 471 - 	}
+ 472 - 	return nil, fmt.Errorf("object_not_found: %s is not part of the selection", path)
+ 473 - }
+ 474 - 
+ 475 ~ // FileDiffs is FileDiff for several files of the same selection in one call:
+ 478 - 	for _, p := range paths {
+ 479 - 		if err := gitcmd.ValidatePath(p); err != nil {
+ 480 - 			return nil, userError(err)
+ 481 - 		}
+ 482 - 	}
+ 520 ~ func (a *App) SearchCommits(root string, q search.Query) ([]int, error) {
+ 525 - 	hits, err := search.Run(a.ctx, root, index, a.branches, q)
+ 526 - 	if err != nil {
+ 527 - 		return nil, userError(err)
+ 528 - 	}
+ 529 - 	return hits, nil
+
+new
+  33 ~ 	mu      sync.Mutex
+  34 ~ 	root    string
+  35 ~ 	index   *history.Index
+  36 ~ 	cancel  context.CancelFunc // stops the running history load
+  37 ~ 	watcher *fsnotify.Watcher
+  38 ~ 	changes *changes.Cache
+  39 ~ 	blobs   *diff.Cache       // content-addressed, so it outlives reloads
+  40 ~ 	scopes  map[string]string // newest selected commit → branch it is reviewed under
+  45 ~ 		index:   history.NewIndex(),
+  46 ~ 		changes: changes.NewCache(64),
+  47 ~ 		blobs:   diff.NewCache(64 << 20),
+  48 ~ 		scopes:  map[string]string{},
+  67 + 	if a.watcher != nil {
+  68 + 		a.watcher.Close()
+  69 + 	}
+ 196 ~ 	refs, err := repo.Refs(a.ctx, root)
+ 200 ~ 	hashes, ok := index.BranchCommits(refs, ref)
+ 295 ~ // merged and marks would only be noise, or no branch names it at all.
+ 309 + 	refs, err := repo.Refs(a.ctx, root)
+ 310 ~ 	if tip := repo.DefaultBranchTip(refs); err == nil && (tip == "" || !index.Reaches(tip, newest)) {
+ 311 ~ 		if names, err := repo.NameCommits(a.ctx, root, []string{newest}); err == nil {
+ 312 ~ 			name = names[newest]
+ 321 ~ // annotate stamps the review state onto a copy of the cached change set.
+ 327 + 	var marks map[string]review.Mark
+ 328 ~ 	if scope != "" {
+ 329 ~ 		marks, _ = a.reviewed.Marks(root, scope)
+ 331 + 	return review.Annotate(cs, scope, marks)
+ 344 + 	fc, ok := cs.File(path)
+ 345 + 	if !ok {
+ 346 + 		return notInSelection(path)
+ 347 > 	}
+ 348 > 	scope := a.reviewScope(root, cs)
+ 349 > 	if scope == "" {
+ 350 > 		return fmt.Errorf("unknown: this work is already on the default branch, nothing to review")
+ 351 > 	}
+ 352 > 	blob := ""
+ 353 > 	if seen {
+ 354 ~ 		blob = changes.NewestBlob(fc)
+ 355 > 	}
+ 356 > 	return a.reviewed.Set(root, scope, path, blob)
+ 357 > }
+ 358 + 
+ 359 + func notInSelection(path string) error {
+ 370 + 	fc, ok := cs.File(path)
+ 371 + 	if !ok {
+ 372 + 		return nil, notInSelection(path)
+ 373 > 	}
+ 374 > 	if fc.Review != "stale" {
+ 375 > 		return nil, fmt.Errorf("object_not_found: %s has no reviewed version to compare with", path)
+ 376 > 	}
+ 377 > 	res, err := diff.Since(a.ctx, root, fc, fc.ReviewedBlob, a.blobs)
+ 378 > 	if err != nil {
+ 379 > 		return nil, userError(err)
+ 380 > 	}
+ 381 > 	return res, nil
+ 384 ~ // FileDiffs is the diffs of several files of the same selection in one call:
+ 424 ~ func (a *App) SearchCommits(root string, text string) ([]int, error) {
+ 429 + 	return search.Run(index, text), nil

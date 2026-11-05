@@ -1,0 +1,111 @@
+old
+  29 ~ // BranchCommits is the branch's own work, newest first: the commits reachable
+  30 ~ // from ref that sit on no unrelated branch's first-parent line. It runs over
+  31 - // the loaded index, no git involved, because the git version spawned one
+  32 - // rev-list per descendant branch and took a second on old branches.
+  34 ~ // A branch stacked on top of ref carries ref's tip on its first-parent line
+  35 ~ // and is left out of the comparison, so the base of a stack keeps its
+  36 ~ // commits. Ref's own remote counterparts are left out too, or a lagging
+  37 ~ // origin/x would hide the pushed ones. Returns ok=false when the ref's tip is
+  38 - // not in the index (history still loading).
+  52 ~ 	firstParent := func(h string) (string, bool) {
+  53 - 		p, ok := ix.pos[h]
+  54 ~ 		if !ok || len(ix.commits[p].Parents) == 0 {
+  55 ~ 			return "", false
+  57 - 		return ix.commits[p].Parents[0], true
+  59 ~ 	// Topo order puts children before parents: once a first-parent walk passes
+  60 ~ 	// the tip's position it can no longer reach the tip.
+  61 ~ 	stackedOn := func(h string) bool {
+  62 ~ 		for h != "" {
+  63 ~ 			if h == tip {
+  66 ~ 			if p, ok := ix.pos[h]; !ok || p > tipPos {
+  69 ~ 			next, ok := firstParent(h)
+  73 ~ 			h = next
+  75 - 		return false
+  77 ~ 	taken := make([]bool, len(ix.commits))
+  79 ~ 		if r.Tag || r.Full == ref || shortName(r.Full) == shortName(ref) || stackedOn(r.Hash) {
+  82 - 		for h := r.Hash; h != ""; {
+  83 ~ 			p, ok := ix.pos[h]
+  84 ~ 			if !ok || taken[p] {
+  87 - 			taken[p] = true
+  88 ~ 			h, _ = firstParent(h)
+  91 - 	seen := make([]bool, len(ix.commits))
+  93 - 	stack := []string{tip}
+  94 - 	for len(stack) > 0 {
+  95 - 		h := stack[len(stack)-1]
+  96 - 		stack = stack[:len(stack)-1]
+  97 - 		p, ok := ix.pos[h]
+  98 - 		if !ok || seen[p] {
+  99 - 			continue
+ 100 - 		}
+ 101 - 		seen[p] = true
+ 102 - 		if !taken[p] {
+ 105 - 		stack = append(stack, ix.commits[p].Parents...)
+
+new
+  29 ~ // BranchCommits is the branch's own work, newest first.
+  30 + //
+  31 + // For every other branch, the newest commit of its first-parent line that
+  32 + // the ref can reach is where the two meet; everything reachable from there
+  33 ~ // belongs to that other branch and is subtracted. Only first-parent lines
+  34 + // count as meeting points, so a branch merged into main still owns its
+  35 + // commits (main reaches them, but its first-parent line never passes through
+  36 + // them). Subtracting full reachability from the meeting point is what keeps
+  37 + // pull requests merged into main, whose branches are long deleted, from
+  38 + // being claimed by a branch stacked on top of main.
+  40 ~ // A branch stacked on top of ref carries ref's tip on its own first-parent
+  41 ~ // line and is left out, so the base of a stack keeps its commits. Ref's own
+  42 ~ // remote counterparts are left out too, or a lagging origin/x would hide the
+  43 ~ // pushed ones. Returns ok=false when the ref's tip is not in the index yet.
+  57 ~ 	firstParent := func(p int) (int, bool) {
+  58 + 		parents := ix.commits[p].Parents
+  59 ~ 		if len(parents) == 0 {
+  60 ~ 			return 0, false
+  62 + 		q, ok := ix.pos[parents[0]]
+  63 + 		return q, ok
+  65 ~ 	// Topo order puts children before parents: once a first-parent walk is
+  66 ~ 	// past the tip's position it can no longer reach the tip.
+  67 ~ 	stackedOn := func(p int) bool {
+  68 ~ 		for {
+  69 ~ 			if p == tipPos {
+  72 ~ 			if p > tipPos {
+  75 ~ 			next, ok := firstParent(p)
+  79 ~ 			p = next
+  82 + 	// Everything the ref reaches.
+  83 + 	reach := make([]bool, len(ix.commits))
+  84 + 	ix.walk(tipPos, reach)
+  85 + 	// Everything that belongs to another branch, from each meeting point down.
+  86 ~ 	cut := make([]bool, len(ix.commits))
+  88 ~ 		if r.Tag || r.Full == ref || shortName(r.Full) == shortName(ref) {
+  91 ~ 		p, ok := ix.pos[r.Hash]
+  92 ~ 		if !ok || stackedOn(p) {
+  93 + 			continue
+  94 + 		}
+  95 + 		for {
+  96 + 			if reach[p] {
+  97 + 				ix.walk(p, cut)
+ 100 ~ 			next, ok := firstParent(p)
+ 101 + 			if !ok {
+ 102 + 				break
+ 103 + 			}
+ 104 + 			p = next
+ 108 + 	for p := range reach {
+ 109 + 		if reach[p] && !cut[p] {
+ 120 + 
+ 121 + // walk marks every commit reachable from p, stopping at ones already marked.
+ 122 + func (ix *Index) walk(p int, seen []bool) {
+ 123 + 	stack := []int{p}
+ 124 + 	for len(stack) > 0 {
+ 125 + 		p := stack[len(stack)-1]
+ 126 + 		stack = stack[:len(stack)-1]
+ 127 + 		if seen[p] {
+ 128 + 			continue
+ 129 + 		}
+ 130 + 		seen[p] = true
+ 131 + 		for _, h := range ix.commits[p].Parents {
+ 132 + 			if q, ok := ix.pos[h]; ok && !seen[q] {
+ 133 + 				stack = append(stack, q)
+ 134 + 			}
+ 135 + 		}
+ 136 + 	}
+ 137 + }

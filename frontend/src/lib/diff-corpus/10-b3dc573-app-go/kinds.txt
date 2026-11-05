@@ -1,0 +1,64 @@
+old
+ 325 ~ // names the newest selected commit after. Marks never leak across branches.
+ 332 ~ 	if name, ok := a.scopes[newest]; ok {
+ 333 > 		a.mu.Unlock()
+ 336 - 	a.mu.Unlock()
+ 337 > 	names, err := repo.NameCommits(a.ctx, root, []string{newest})
+ 338 ~ 	if err != nil {
+ 339 - 		return ""
+ 340 - 	}
+ 341 ~ 	name := names[newest]
+ 342 - 	if name == "" {
+ 343 > 		name = "(detached)"
+ 358 ~ 	marks, err := a.reviewed.Marks(root, a.reviewScope(root, cs))
+ 359 - 	if err != nil || len(marks) == 0 {
+ 360 - 		return cs
+ 361 - 	}
+ 398 ~ 		return a.reviewed.Set(root, a.reviewScope(root, cs), path, blob)
+
+new
+ 325 ~ // names the newest selected commit after. It is empty when there is nothing
+ 326 + // to review: the commit is already on the default branch, so the work is
+ 327 + // merged and marks would only be noise. Marks never leak across branches.
+ 334 ~ 	name, cached := a.scopes[newest]
+ 335 + 	index := a.index
+ 336 > 	a.mu.Unlock()
+ 337 + 	if cached {
+ 340 + 	name = ""
+ 341 + 	if tip := a.defaultBranchTip(root); tip == "" || !index.Reaches(tip, newest) {
+ 342 > 		names, err := repo.NameCommits(a.ctx, root, []string{newest})
+ 343 ~ 		if err == nil {
+ 344 ~ 			if name = names[newest]; name == "" {
+ 345 > 				name = "(detached)"
+ 346 + 			}
+ 347 + 		}
+ 355 + // defaultBranchTip is main or master, local first, then origin's.
+ 356 + func (a *App) defaultBranchTip(root string) string {
+ 357 + 	refs, err := a.refsFor(root)
+ 358 + 	if err != nil {
+ 359 + 		return ""
+ 360 + 	}
+ 361 + 	for _, full := range []string{"refs/heads/main", "refs/heads/master", "refs/remotes/origin/main", "
+ 362 + 		for _, r := range refs {
+ 363 + 			if r.Full == full {
+ 364 + 				return r.Hash
+ 365 + 			}
+ 366 + 		}
+ 367 + 	}
+ 368 + 	return ""
+ 369 + }
+ 370 + 
+ 378 ~ 	scope := a.reviewScope(root, cs)
+ 380 + 	out.Reviewable = scope != ""
+ 381 + 	if scope == "" {
+ 382 + 		return &out
+ 383 + 	}
+ 384 + 	marks, err := a.reviewed.Marks(root, scope)
+ 385 + 	if err != nil || len(marks) == 0 {
+ 386 + 		return &out
+ 387 + 	}
+ 419 + 		scope := a.reviewScope(root, cs)
+ 420 + 		if scope == "" {
+ 421 + 			return fmt.Errorf("unknown: this work is already on the default branch, nothing to review")
+ 422 + 		}
+ 427 ~ 		return a.reviewed.Set(root, scope, path, blob)

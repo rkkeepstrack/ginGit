@@ -1,0 +1,27 @@
+old
+   7 ~   import type { FileChange } from '../../lib/types'
+   9 -   import { repo } from '../../state/repo.svelte'
+  14 -   import { FileDiff } from './fileDiff.svelte'
+  16 ~   let { file, hashes, collapsed, ontoggle, scrollRoot }: { file: FileChange; hashes: string[]; colla
+  20 -   const diff = new FileDiff()
+  31 ~   $effect(() => { diff.watch(repo.info?.path, hashes, file.path, near && !collapsed) })
+  67 ~       {#if diff.error}<Notice kind="error">{diff.error}</Notice>{/if}
+  68 ~       {#if !diff.result && !diff.error}
+  75 ~       {#if diff.result}<DiffBody result={diff.result} path={file.path} mode={ui.diffMode} stacked={t
+
+new
+   7 ~   import type { DiffResult, FileChange } from '../../lib/types'
+  14 +   let { file, collapsed, result, error, ontoggle, onnear, scrollRoot }: {
+  15 ~     file: FileChange
+  16 +     collapsed: boolean
+  17 +     result: DiffResult | null
+  18 +     error: string | null
+  19 +     ontoggle: () => void
+  20 +     /** Called once when the section comes within reach; the parent fetches in batches. */
+  21 +     onnear: () => void
+  22 +     scrollRoot: HTMLElement | undefined
+  23 +   } = $props()
+  37 ~   $effect(() => { if (near && !collapsed) onnear() })
+  73 ~       {#if error}<Notice kind="error">{error}</Notice>{/if}
+  74 ~       {#if !result && !error}
+  81 ~       {#if result}<DiffBody result={result} path={file.path} mode={ui.diffMode} stacked={true} />{/i

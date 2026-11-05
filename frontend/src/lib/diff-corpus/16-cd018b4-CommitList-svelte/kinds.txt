@@ -1,0 +1,68 @@
+old
+  22 -   /** While a jump glides, rows around the destination are rendered too, so it never scrolls into bl
+  23 -   let jumpTop = $state<number | null>(null)
+  24 -   const range = $derived.by(() => {
+  25 ~     const now = visibleRange(scrollTop, height, ROW_H, count)
+  26 -     if (jumpTop === null) return now
+  27 -     const there = visibleRange(jumpTop, height, ROW_H, count)
+  28 -     return { start: Math.min(now.start, there.start), end: Math.max(now.end, there.end) }
+  29 -   })
+  34 ~   const columns = $derived(fitColumns(panelWidth, graphWidth, authorW))
+  37 ~   // the commits around the branch are on screen too.
+  42 -     const matches = search.matches
+  43 ~     if (cursor === null || !scroller) return
+  44 ~     const row = matches ? matches.indexOf(cursor) : cursor
+  45 >     if (row < 0) return
+  46 >     const jump = reveal !== handledReveal
+  47 >     handledReveal = reveal
+  48 ~     const top = scrollTopFor(row, ROW_H, scroller.clientHeight, scroller.scrollTop, jump ? 'center' 
+  49 ~     if (!jump) { scroller.scrollTo({ top, behavior: 'instant' }); return }
+  50 ~     // A jump glides so the eye can follow where the branch went.
+  51 -     jumpTop = top
+  52 ~     scroller.scrollTo({ top, behavior: 'smooth' })
+  53 ~     const settle = () => { jumpTop = null; scroller?.removeEventListener('scrollend', settle) }
+  54 ~     scroller.addEventListener('scrollend', settle)
+  55 -     setTimeout(settle, 1500)
+  56 -   })
+
+new
+   1 + <script lang="ts" module>
+   2 +   /** True while a jump glides; editor mounting waits for it. */
+   3 +   export const gliding = $state({ now: false })
+   4 + </script>
+   5 + 
+   7 +   import { untrack } from 'svelte'
+  28 ~   const range = $derived(visibleRange(scrollTop, height, ROW_H, count))
+  33 +   // Same object while no breakpoint is crossed, so rows don't update on every resize frame.
+  34 +   let lastColumns: ReturnType<typeof fitColumns> | null = null
+  35 +   const columns = $derived.by(() => {
+  36 ~     const next = fitColumns(panelWidth, graphWidth, authorW)
+  37 +     if (!lastColumns || next.author !== lastColumns.author || next.date !== lastColumns.date || next
+  38 +     return lastColumns
+  39 +   })
+  42 ~   // the commits around the branch are on screen too. Only the cursor and the
+  43 +   // reveal counter are tracked; a search result must not scroll the list.
+  48 +     const el = scroller
+  49 ~     if (cursor === null || !el) return
+  50 +     untrack(() => {
+  51 ~       const row = search.matches ? search.matches.indexOf(cursor) : cursor
+  52 >       if (row < 0) return
+  53 >       const jump = reveal !== handledReveal
+  54 >       handledReveal = reveal
+  55 ~       const top = scrollTopFor(row, ROW_H, height, scrollTop, jump ? 'center' : 'auto')
+  56 ~       if (!jump) { el.scrollTo({ top, behavior: 'instant' }); return }
+  57 +       glideTo(el, top)
+  58 +     })
+  59 +   })
+  60 + 
+  61 +   // A long glide is unfollowable and WebKit flings through it anyway: hop to
+  62 ~   // two screens away instantly, then glide the rest so the eye can land.
+  63 +   function glideTo(el: HTMLDivElement, top: number) {
+  64 +     const hop = height * 2
+  65 ~     if (Math.abs(top - el.scrollTop) > hop) el.scrollTo({ top: top > el.scrollTop ? top - hop : top 
+  66 +     gliding.now = true
+  67 ~     const settle = () => { gliding.now = false; el.removeEventListener('scrollend', settle); clearTi
+  68 +     const timer = setTimeout(settle, 'onscrollend' in el ? 1500 : 700)
+  69 ~     el.addEventListener('scrollend', settle)
+  70 +     el.scrollTo({ top, behavior: 'smooth' })
+  71 +   }

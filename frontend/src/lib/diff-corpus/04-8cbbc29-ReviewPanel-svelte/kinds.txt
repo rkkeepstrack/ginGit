@@ -1,0 +1,53 @@
+old
+   5 ~   import type { DiffResult, FileChange } from '../../lib/types'
+   6 ~   import { changes } from '../../state/changes.svelte'
+  10 ~   import { tick } from 'svelte'
+  12 -   import FindBar from './FindBar.svelte'
+  13 -   import { find } from '../../state/find.svelte'
+  16 ~   const files = $derived.by(() => {
+  17 -     const byPath = new Map(changes.changeSet?.files.map((f) => [f.path, f]))
+  18 -     return changes.paths.map((p) => byPath.get(p)).filter((f): f is FileChange => !!f)
+  19 -   })
+  20 -   let collapsed = $state.raw<Set<string>>(new Set())
+  21 -   let scroller = $state<HTMLDivElement>()
+  22 -   const allCollapsed = $derived(collapsed.size >= files.length && files.length > 0)
+  23 -   const reviewed = $derived(files.filter((f) => f.review === 'reviewed').length)
+  25 -   let seeded = false
+  26 -   $effect(() => {
+  27 -     if (seeded || files.length === 0) return
+  28 -     seeded = true
+  29 ~     collapsed = new Set(files.filter((f) => f.review === 'reviewed').map((f) => f.path))
+  30 -   })
+  34 -   let flashed = $state<string | null>(null)
+  40 -     void tick().then(() => {
+  41 -       const el = scroller?.querySelector<HTMLElement>(`[data-path="${CSS.escape(path)}"]`)
+  42 ~       el?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+  43 -       flashed = path
+  44 -       setTimeout(() => { if (flashed === path) flashed = null }, 1200)
+  45 -     })
+  76 ~       const message = (e as ApiError).display ?? String(e)
+  90 ~     <span class="font-medium tabular-nums">{files.length} {files.length === 1 ? 'file' : 'files'}</s
+  91 ~     {#if reviewed > 0}<span class="opacity-60 tabular-nums">{reviewed} of {files.length} reviewed</s
+  93 ~     <button class="btn btn-ghost btn-xs btn-square" onclick={() => (collapsed = allCollapsed ? new S
+  99 ~     {#each files as f (f.path)}
+ 103 -         flashed={flashed === f.path}
+
+new
+   4 +   import { tick, untrack } from 'svelte'
+   6 +   import { plural } from '../../lib/format'
+   7 ~   import type { DiffResult } from '../../lib/types'
+   8 ~   import { files } from '../../state/files.svelte'
+   9 +   import { find } from '../../state/find.svelte'
+  13 ~   import FindBar from './FindBar.svelte'
+  17 ~   const entries = $derived(files.visible)
+  19 ~   let collapsed = $state.raw<Set<string>>(new Set(untrack(() => files.visible.filter((f) => f.review
+  20 +   let scroller = $state<HTMLDivElement>()
+  21 +   const allCollapsed = $derived(collapsed.size >= entries.length && entries.length > 0)
+  22 +   const reviewed = $derived(entries.filter((f) => f.review === 'reviewed').length)
+  31 ~     void tick().then(() => scroller?.querySelector(`[data-path="${CSS.escape(path)}"]`)?.scrollIntoV
+  62 ~       const message = (e as ApiError).display
+  76 ~     <span class="font-medium tabular-nums">{plural(entries.length, 'file')}</span>
+  77 ~     {#if reviewed > 0}<span class="opacity-60 tabular-nums">{reviewed} of {entries.length} reviewed<
+  79 ~     <button class="btn btn-ghost btn-xs btn-square" onclick={() => (collapsed = allCollapsed ? new S
+  85 ~     {#each entries as f (f.path)}
+  89 +         current={selection.file === f.path}

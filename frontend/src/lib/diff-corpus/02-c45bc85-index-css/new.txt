@@ -1,0 +1,424 @@
+@import "tailwindcss";
+@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/inter";
+
+@plugin "daisyui" {
+  themes: pastel --default, dim --prefersdark;
+  logs: false;
+}
+
+/* The key color is the gin in the glass, deepened until it can carry a button. */
+@plugin "daisyui/theme" {
+  name: "pastel";
+  default: true;
+  --color-primary: #228be6;
+  --color-primary-content: #ffffff;
+  --color-secondary: #7048e8;
+  --color-secondary-content: #ffffff;
+  --color-accent: #0ca678;
+  --color-accent-content: #ffffff;
+  --color-neutral: #495057;
+  --color-neutral-content: #f8f9fa;
+  --color-base-100: #ffffff;
+  --color-base-200: #f3f5f9;
+  --color-base-300: #e6e9f0;
+  --color-base-content: #1f2430;
+}
+
+/* Same geometry as pastel; dim's own would turn the pills into rounded boxes in the dark. */
+@plugin "daisyui/theme" {
+  name: "dim";
+  prefersdark: true;
+  --radius-field: 2rem;
+  --border: 2px;
+  --color-primary: #74c0fc;
+  --color-primary-content: #0b1a2a;
+  --color-secondary: #b197fc;
+  --color-secondary-content: #140c2b;
+  --color-accent: #63e6be;
+  --color-accent-content: #04261c;
+}
+
+/* Lane, diff and syntax colors live next to the daisyUI theme they belong
+   to, so switching data-theme switches everything at once. */
+[data-theme="pastel"] {
+  --brand: #228be6;
+  /* The logo's gin blue, as a wash over the toolbar. */
+  --chrome-bg: color-mix(in oklab, #a5d8ff 38%, var(--color-base-100));
+  --lane-0: #228be6;
+  --lane-1: #f06595;
+  --lane-2: #20c997;
+  --lane-3: #fd7e14;
+  --lane-4: #845ef7;
+  --lane-5: #15aabf;
+  --lane-6: #e64980;
+  --lane-7: #74b816;
+  /* Editor diff style: new lines green, changed lines in the logo's blue,
+     removed lines slate. The pure-text pair is the word highlight inside a
+     wholly new or wholly removed block, where every word changed anyway. */
+  --diff-add-bg: #e3f7ec;
+  --diff-add-text: #c3ecd5;
+  --diff-add-bar: #20c997;
+  --diff-add-pure-text: transparent;
+  --diff-del-bg: #eceef2;
+  --diff-del-text: #d5d9e0;
+  --diff-del-bar: #8a94a6;
+  --diff-del-pure-text: transparent;
+  --diff-mod-bg: #e5f2fd;
+  --diff-mod-text: #c2e0fa;
+  --diff-mod-bar: #228be6;
+  --diff-mod-old-bg: var(--diff-mod-bg);
+  --diff-mod-old-text: var(--diff-mod-text);
+  --diff-mod-old-bar: var(--diff-mod-bar);
+  --diff-mod-new-bg: var(--diff-mod-bg);
+  --diff-mod-new-text: var(--diff-mod-text);
+  --diff-mod-new-bar: var(--diff-mod-bar);
+  --diff-collapsed-bg: #f1f3f5;
+  --review-ok: #2f9e44;
+  --review-stale: #e8a000;
+  --ct-added: #0ca678;
+  --ct-deleted: #6b7480;
+  --ct-renamed: #7048e8;
+  --kind-feat: #2f9e44;
+  --kind-fix: #e03131;
+  --kind-chore: #868e96;
+  --kind-refactor: #f08c00;
+  --kind-docs: #1b5fd1;
+  --kind-test: #7048e8;
+  --ft-code: #3b5bdb;
+  --ft-style: #e64980;
+  --ft-data: #f08c00;
+  --ft-text: #868e96;
+  --ft-shell: #2f9e44;
+  --ft-media: #be4bdb;
+  --ft-lock: #adb5bd;
+  --syn-keyword: #7048e8;
+  --syn-string: #2b8a3e;
+  --syn-number: #d9480f;
+  --syn-comment: #868e96;
+  --syn-type: #1971c2;
+  --syn-fn: #c2255c;
+  --syn-prop: #0b7285;
+  --syn-op: #495057;
+  --syn-punct: #868e96;
+  --syn-tag: #e8590c;
+  --syn-attr: #5c7cfa;
+}
+
+[data-theme="dim"] {
+  --brand: #74c0fc;
+  --chrome-bg: color-mix(in oklab, #a5d8ff 12%, var(--color-base-100));
+  --lane-0: #74c0fc;
+  --lane-1: #faa2c1;
+  --lane-2: #63e6be;
+  --lane-3: #ffc078;
+  --lane-4: #b197fc;
+  --lane-5: #66d9e8;
+  --lane-6: #f783ac;
+  --lane-7: #c0eb75;
+  --diff-add-bg: #1d3a33;
+  --diff-add-text: #285a4c;
+  --diff-add-bar: #63e6be;
+  --diff-add-pure-text: transparent;
+  --diff-del-bg: #343a46;
+  --diff-del-text: #4a5262;
+  --diff-del-bar: #8a94a6;
+  --diff-del-pure-text: transparent;
+  --diff-mod-bg: #22364d;
+  --diff-mod-text: #2e5478;
+  --diff-mod-bar: #74c0fc;
+  --diff-mod-old-bg: var(--diff-mod-bg);
+  --diff-mod-old-text: var(--diff-mod-text);
+  --diff-mod-old-bar: var(--diff-mod-bar);
+  --diff-mod-new-bg: var(--diff-mod-bg);
+  --diff-mod-new-text: var(--diff-mod-text);
+  --diff-mod-new-bar: var(--diff-mod-bar);
+  --diff-collapsed-bg: #2a2e37;
+  --review-ok: #69db7c;
+  --review-stale: #ffd43b;
+  --ct-added: #63e6be;
+  --ct-deleted: #9aa3b2;
+  --ct-renamed: #b197fc;
+  --kind-feat: #69db7c;
+  --kind-fix: #ff8787;
+  --kind-chore: #868e96;
+  --kind-refactor: #ffc078;
+  --kind-docs: #74c0fc;
+  --kind-test: #b197fc;
+  --ft-code: #91a7ff;
+  --ft-style: #faa2c1;
+  --ft-data: #ffc078;
+  --ft-text: #adb5bd;
+  --ft-shell: #8ce99a;
+  --ft-media: #e599f7;
+  --ft-lock: #868e96;
+  --syn-keyword: #b197fc;
+  --syn-string: #8ce99a;
+  --syn-number: #ffa94d;
+  --syn-comment: #868e96;
+  --syn-type: #74c0fc;
+  --syn-fn: #faa2c1;
+  --syn-prop: #66d9e8;
+  --syn-op: #ced4da;
+  --syn-punct: #adb5bd;
+  --syn-tag: #ffa94d;
+  --syn-attr: #91a7ff;
+}
+
+/* Patch diff style, as in a pull request: everything new is green, everything
+   old is red, a changed line is simply both. */
+[data-diff="patch"] {
+  --diff-add-pure-text: var(--diff-add-text);
+  --diff-del-pure-text: var(--diff-del-text);
+  --diff-mod-old-bg: var(--diff-del-bg);
+  --diff-mod-old-text: var(--diff-del-text);
+  --diff-mod-old-bar: var(--diff-del-bar);
+  --diff-mod-new-bg: var(--diff-add-bg);
+  --diff-mod-new-text: var(--diff-add-text);
+  --diff-mod-new-bar: var(--diff-add-bar);
+}
+[data-theme="pastel"][data-diff="patch"] {
+  --diff-add-bg: #d3f9d8;
+  --diff-add-text: #c0eec8;
+  --diff-del-bg: #ffe3e3;
+  --diff-del-text: #ffb8b8;
+  --diff-add-bar: #2b2;
+  --diff-del-bar: #e43;
+  --ct-added: #2f9e44;
+  --ct-deleted: #c92a2a;
+}
+[data-theme="dim"][data-diff="patch"] {
+  --diff-add-bg: #1f3a2a;
+  --diff-add-text: #2f6b45;
+  --diff-del-bg: #44262b;
+  --diff-del-text: #7e3a44;
+  --diff-add-bar: #8f8;
+  --diff-del-bar: #fa9;
+  --ct-added: #69db7c;
+  --ct-deleted: #ff8787;
+}
+
+:root {
+  /* SF on macOS, bundled Inter elsewhere (and in the snapshot container). */
+  --font-ui: -apple-system, BlinkMacSystemFont, "Inter Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Root stays at 16px so daisyUI's rem-sized controls keep their proportions;
+   only the app's own text is dense. */
+body {
+  background: var(--color-base-100);
+  color: var(--color-base-content);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 1, "cv11" 1;
+}
+
+.logo svg { width: 100%; height: 100%; display: block; }
+[data-theme="dim"] .logo path[stroke="#1e1e1e"] { stroke: var(--color-base-content); }
+
+/* The toolbar is a wash of the logo's blue; no lines above or below it. */
+.chrome { background: var(--chrome-bg); }
+.chrome .input { background: color-mix(in oklab, var(--color-base-100) 70%, transparent); }
+
+/* Wails' own drag hint; the Electron-style app-region does nothing here. */
+.drag-region { --wails-draggable: drag; }
+
+.mono { font-family: var(--font-mono); font-size: 12px; font-feature-settings: "liga" 0; }
+.panel-head { height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 8px; font-size: 12px; flex-shrink: 0; white-space: nowrap; }
+.col-head { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; text-transform: uppercase; color: color-mix(in oklab, var(--color-base-content) 50%, transparent); }
+
+.select-text { -webkit-user-select: text; user-select: text; }
+
+/* Hairline dividers instead of borders everywhere. */
+.hairline-b { box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+.hairline-t { box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+
+/* Commit rows */
+.log-row { white-space: nowrap; cursor: default; }
+.log-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
+.log-row.selected { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
+.log-row.selected:hover { background: color-mix(in oklab, var(--brand) 22%, transparent); }
+.hash-cell { cursor: copy; border-radius: 4px; padding: 0 4px; margin-left: -4px; background: none; border: 0; font: inherit; line-height: inherit; }
+.hash-cell:hover { background: color-mix(in oklab, var(--color-base-content) 8%, transparent); opacity: 1; }
+
+.ref-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 18px; padding: 0 6px; border-radius: 4px;
+  font-size: 11px; line-height: 18px; font-weight: 500; letter-spacing: 0;
+  vertical-align: middle;
+  background: color-mix(in oklab, var(--pill) 18%, var(--color-base-100));
+  color: color-mix(in oklab, var(--pill) 70%, var(--color-base-content));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--pill) 40%, transparent);
+  white-space: nowrap; flex-shrink: 0; cursor: pointer; border: 0; font-family: inherit;
+}
+.ref-pill:hover { filter: saturate(1.4) brightness(0.97); }
+.ref-pill.head { --pill: var(--brand); font-weight: 600; }
+.ref-pill.branch { --pill: var(--color-secondary); }
+.ref-pill.remote { --pill: var(--color-neutral); }
+.ref-pill.tag { --pill: var(--color-accent); }
+
+/* Change-type badges */
+.kind { font-weight: 500; }
+.kind-feat { color: var(--kind-feat); }
+.kind-fix { color: var(--kind-fix); }
+.kind-chore { color: var(--kind-chore); }
+.kind-refactor { color: var(--kind-refactor); }
+.kind-docs { color: var(--kind-docs); }
+.kind-test { color: var(--kind-test); }
+
+/* File names stay in the text color; only a deletion marks the name itself. */
+.fn-deleted { color: color-mix(in oklab, var(--ct-deleted) 70%, var(--color-base-content)); text-decoration: line-through; }
+.ft-code { color: var(--ft-code); }
+.ft-style { color: var(--ft-style); }
+.ft-data { color: var(--ft-data); }
+.ft-text { color: var(--ft-text); }
+.ft-shell { color: var(--ft-shell); }
+.ft-media { color: var(--ft-media); }
+.ft-lock { color: var(--ft-lock); }
+
+/* Change-type marks: a quiet colored letter or word, no box. */
+.ct { display: inline-flex; width: 14px; height: 16px; font-size: 11px; font-weight: 600; align-items: center; justify-content: center; font-family: var(--font-ui); flex-shrink: 0; }
+.ct-label { font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.ct-added { color: var(--ct-added); }
+.ct-deleted { color: var(--ct-deleted); }
+.ct-renamed { color: var(--ct-renamed); }
+
+/* Placeholder for a diff that is still on its way: faint lines where code will be. */
+.skeleton-lines { display: flex; flex-direction: column; gap: 6px; }
+.skeleton-line { height: 12px; border-radius: 3px; background: color-mix(in oklab, var(--color-base-content) 6%, transparent); }
+
+/* Review marks: seen (green), seen an older version (amber), untouched (faint). */
+.review-reviewed { color: var(--review-ok); }
+.review-stale { color: var(--review-stale); }
+.review-none { opacity: 0.35; }
+.review-none:hover { opacity: 1; }
+.entry-head.reviewed { opacity: 0.6; }
+.entry-head.stale { box-shadow: inset 2px 0 0 var(--review-stale); }
+
+/* Accordion headers in the all-files review: solid bars with a gap between
+   them, so a run of collapsed files reads as separate things. */
+.entry { margin-top: 3px; contain: layout paint; content-visibility: auto; contain-intrinsic-size: auto 400px; }
+.entry:first-child { margin-top: 0; }
+.entry-head {
+  cursor: pointer;
+  background: var(--color-base-200);
+  border-top: 1px solid color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 8%, transparent);
+  transition: background 80ms;
+}
+.entry-head:hover { background: color-mix(in oklab, var(--color-base-content) 6%, var(--color-base-200)); }
+.entry-head:active { background: color-mix(in oklab, var(--color-base-content) 10%, var(--color-base-200)); }
+.entry-head.open { box-shadow: inset 2px 0 0 var(--brand); }
+.entry.current .entry-head { background: color-mix(in oklab, var(--brand) 22%, var(--color-base-200)); }
+.tree-row { height: 24px; line-height: 24px; white-space: nowrap; cursor: pointer; font-size: 12.5px; }
+.tree-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
+.tree-row.active { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
+
+/* Images in the review: before and after next to each other, on a checkerboard
+   so transparency shows, barred like the code. */
+.image-pair { display: grid; gap: 1px; background: color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+.image-pair.both { grid-template-columns: 1fr 1fr; }
+.image-side { margin: 0; display: flex; flex-direction: column; min-width: 0; background: var(--color-base-100); }
+.image-side.old { box-shadow: inset 3px 0 0 var(--diff-del-bar); }
+.image-side.new { box-shadow: inset 3px 0 0 var(--diff-add-bar); }
+.image-pair.both .image-side.old { box-shadow: inset 3px 0 0 var(--diff-mod-old-bar); }
+.image-pair.both .image-side.new { box-shadow: inset 3px 0 0 var(--diff-mod-new-bar); }
+.image-frame { display: flex; align-items: center; justify-content: center; padding: 16px; min-height: 80px; }
+.image-frame img {
+  /* Big enough to read a phone screenshot, small enough to see both at once. */
+  max-width: 100%; max-height: 600px; object-fit: contain;
+  background: repeating-conic-gradient(color-mix(in oklab, var(--color-base-content) 8%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px;
+}
+.image-side figcaption { padding: 0 16px 10px; text-align: center; font-size: 11px; color: color-mix(in oklab, var(--color-base-content) 55%, transparent); font-variant-numeric: tabular-nums; }
+
+/* Panels relayout independently while the window resizes. */
+.panel { contain: layout style; }
+
+/* Panel splitters: a hairline with a wider invisible grab area. */
+.resize-handle { position: relative; width: 1px; flex-shrink: 0; background: color-mix(in oklab, var(--color-base-content) 10%, transparent); cursor: col-resize; }
+.resize-handle::after { content: ""; position: absolute; inset: 0 -4px; }
+.resize-handle:hover, .resize-handle:active { background: var(--brand); }
+.brand { color: var(--brand); }
+/* daisyUI focuses inputs with a border and an offset outline; one ring is plenty. */
+.input:focus-within, .input:focus { outline: none; border-color: var(--brand); box-shadow: none; }
+
+/* CodeMirror */
+.cm-host { contain: layout paint; }
+.cm-host .cm-mergeViewEditor { overflow: hidden; }
+.cm-host .cm-editor { font-size: 12px; background: var(--color-base-100); color: var(--color-base-content); }
+.cm-host .cm-scroller { font-family: var(--font-mono); line-height: 1.5; }
+.cm-host .cm-gutters { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); color: color-mix(in oklab, var(--color-base-content) 45%, transparent); border-right: 1px solid color-mix(in oklab, var(--color-base-content) 10%, transparent); }
+.cm-host .cm-content { -webkit-user-select: text; user-select: text; }
+/* Prefixed with .cm-editor so they outrank the merge view's own green and red
+   theme. Lines carry their kind from the line diff (lib/lineKinds.ts): inserted,
+   modified or deleted. Unified view shows removed lines in a widget, which
+   stays in the removed colours. */
+.cm-host .cm-editor .cm-changedLine, .cm-host .cm-editor .cm-insertedLine { background: var(--diff-add-bg); }
+.cm-host .cm-editor .cm-changedText { background: var(--diff-add-text); }
+.cm-host .cm-editor .cm-kind-inserted .cm-changedText { background: var(--diff-add-pure-text); }
+.cm-host .cm-editor .cm-kind-modified.cm-changedLine, .cm-host .cm-editor .cm-kind-modified .cm-insertedLine { background: var(--diff-mod-new-bg); }
+.cm-host .cm-editor .cm-kind-modified .cm-changedText { background: var(--diff-mod-new-text); }
+.cm-host .cm-editor .cm-deletedChunk { background: var(--diff-del-bg); }
+.cm-host .cm-editor .cm-deletedText { background: var(--diff-del-text); }
+.cm-host .cm-editor.cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-changedText { background: var(--diff-del-text); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-deleted .cm-changedText { background: var(--diff-del-pure-text); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-modified.cm-changedLine { background: var(--diff-mod-old-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText { background: var(--diff-mod-old-text); }
+/* Only the indentation moved: the line colour says so, a highlight would only mark spaces. */
+.cm-host .cm-editor .cm-line.cm-kind-reindented .cm-changedText { background: transparent; }
+/* Indentation is never a word, but the character diff of a re-indented block
+   marks it anyway. lib/lineKinds.ts wraps a changed line's leading and trailing
+   whitespace in .cm-ws, inside the highlight, which paints it back in the
+   line's own colour. */
+.cm-host .cm-editor .cm-kind-inserted .cm-changedText .cm-ws { background: var(--diff-add-bg); }
+.cm-host .cm-editor .cm-kind-modified .cm-changedText .cm-ws { background: var(--diff-mod-new-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-deleted .cm-changedText .cm-ws { background: var(--diff-del-bg); }
+.cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText .cm-ws { background: var(--diff-mod-old-bg); }
+.cm-host .cm-collapsedLines {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--diff-collapsed-bg);
+  color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+  padding: 3px 8px; font-family: var(--font-ui); font-size: 11px; line-height: 16px; cursor: pointer;
+}
+.cm-host .cm-collapsedLines:hover { color: var(--brand); }
+/* Replace the ⦚ glyphs with lucide's unfold-vertical, drawn through a mask so it takes currentColor. */
+.cm-host .cm-collapsedLines::before {
+  content: ""; width: 13px; height: 13px; margin: 0; flex-shrink: 0; background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22v-6'/%3E%3Cpath d='M12 8V2'/%3E%3Cpath d='M4 12H2'/%3E%3Cpath d='M10 12H8'/%3E%3Cpath d='M16 12h-2'/%3E%3Cpath d='M22 12h-2'/%3E%3Cpath d='m15 19-3 3-3-3'/%3E%3Cpath d='m15 5-3-3-3 3'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.cm-host .cm-collapsedLines::after { content: none; }
+/* The merge view's own theme paints its gutter bars green and red; ours follow the style. */
+.cm-host .cm-editor .cm-changedLineGutter { background: var(--diff-add-bar); }
+.cm-host .cm-editor .cm-changedLineGutter.cm-kind-modified { background: var(--diff-mod-new-bar); }
+.cm-host .cm-editor.cm-merge-a .cm-changedLineGutter, .cm-host .cm-editor .cm-deletedLineGutter { background: var(--diff-del-bar); }
+.cm-host .cm-editor.cm-merge-a .cm-changedLineGutter.cm-kind-modified { background: var(--diff-mod-old-bar); }
+/* One-sided files: tinted lines plus the merge view's gutter bar, numbers untouched. */
+.cm-host.single-added .cm-line { background: var(--diff-add-bg); }
+.cm-host.single-deleted .cm-line { background: var(--diff-del-bg); }
+.cm-host.single-added .cm-changeGutter, .cm-host.single-deleted .cm-changeGutter { width: 3px; padding-left: 1px; }
+.cm-host.single-added .cm-changedLineGutter { background: var(--diff-add-bar); }
+.cm-host.single-deleted .cm-deletedLineGutter { background: var(--diff-del-bar); }
+.cm-host .cm-findMatch { background: color-mix(in oklab, var(--brand) 35%, transparent); border-radius: 2px; }
+.cm-host .cm-selectionBackground { background: color-mix(in oklab, var(--brand) 30%, transparent) !important; }
+.cm-host .cm-mergeSpacer { background: color-mix(in oklab, var(--color-base-200) 60%, var(--color-base-100)); }
+.cm-host .cm-editor.cm-focused { outline: none; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--color-base-content) 18%, transparent); border-radius: 6px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--color-base-content) 30%, transparent); }
+::-webkit-scrollbar-track { background: transparent; }
+
+.stat-add { color: var(--ct-added); }
+.stat-del { color: var(--ct-deleted); }

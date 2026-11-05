@@ -1,0 +1,60 @@
+old
+   2 ~ // is "I have seen this path at this blob"; it lives in the user's config dir,
+   3 ~ // never in the repository, one file per repository.
+  44 ~ func (s *Store) load(root string) (map[string]Mark, error) {
+  47 ~ 		return map[string]Mark{}, nil
+  52 - 	marks := map[string]Mark{}
+  53 ~ 	if err := json.Unmarshal(data, &marks); err != nil {
+  54 ~ 		return map[string]Mark{}, nil // a corrupt file forgets, it never blocks
+  56 ~ 	return marks, nil
+  59 ~ func (s *Store) save(root string, marks map[string]Mark) error {
+  60 ~ 	data, err := json.MarshalIndent(marks, "", " ")
+  67 ~ // Marks returns every mark for a repository, keyed by path.
+  68 ~ func (s *Store) Marks(root string) (map[string]Mark, error) {
+  71 ~ 	return s.load(root)
+  74 ~ // Set records that path was seen at blob; an empty blob forgets the mark.
+  75 ~ func (s *Store) Set(root, path, blob string) error {
+  78 ~ 	marks, err := s.load(root)
+  83 ~ 		delete(marks, path)
+  85 ~ 		marks[path] = Mark{Blob: blob, At: time.Now()}
+  87 ~ 	return s.save(root, marks)
+
+new
+   2 ~ // is "I have seen this path at this blob, while reviewing this branch"; it
+   3 ~ // lives in the user's config dir, never in the repository, one file per
+   4 + // repository with the marks grouped by branch.
+  45 + // marks on disk: branch → path → mark
+  46 + type file map[string]map[string]Mark
+  47 + 
+  48 ~ func (s *Store) load(root string) (file, error) {
+  51 ~ 		return file{}, nil
+  56 + 	f := file{}
+  57 ~ 	if err := json.Unmarshal(data, &f); err != nil {
+  58 ~ 		return file{}, nil // a corrupt file forgets, it never blocks
+  60 ~ 	return f, nil
+  63 ~ func (s *Store) save(root string, f file) error {
+  64 ~ 	data, err := json.MarshalIndent(f, "", " ")
+  71 ~ // Marks returns the marks made while reviewing a branch, keyed by path.
+  72 ~ func (s *Store) Marks(root, branch string) (map[string]Mark, error) {
+  75 ~ 	f, err := s.load(root)
+  76 + 	if err != nil {
+  77 + 		return nil, err
+  78 + 	}
+  79 + 	marks := f[branch]
+  80 + 	if marks == nil {
+  81 + 		marks = map[string]Mark{}
+  82 + 	}
+  83 + 	return marks, nil
+  86 ~ // Set records that path was seen at blob while reviewing branch; an empty
+  87 + // blob forgets the mark.
+  88 ~ func (s *Store) Set(root, branch, path, blob string) error {
+  91 ~ 	f, err := s.load(root)
+  95 + 	if f[branch] == nil {
+  96 + 		f[branch] = map[string]Mark{}
+  97 + 	}
+  99 ~ 		delete(f[branch], path)
+ 100 + 		if len(f[branch]) == 0 {
+ 101 + 			delete(f, branch)
+ 102 + 		}
+ 104 ~ 		f[branch][path] = Mark{Blob: blob, At: time.Now()}
+ 106 ~ 	return s.save(root, f)

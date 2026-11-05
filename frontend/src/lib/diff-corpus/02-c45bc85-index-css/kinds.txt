@@ -1,0 +1,135 @@
+old
+  56 ~   --diff-add-bg: #d3f9d8;
+  57 ~   --diff-add-text: #c0eec8;
+  58 ~   --diff-del-bg: #ffe3e3;
+  59 ~   --diff-del-text: #ffb8b8;
+  61 -   --diff-add-bar: #2b2;
+  62 -   --diff-del-bar: #e43;
+  65 ~   --ct-added: #2f9e44;
+  66 ~   --ct-deleted: #c92a2a;
+ 105 ~   --diff-add-bg: #1f3a2a;
+ 106 ~   --diff-add-text: #2f6b45;
+ 107 ~   --diff-del-bg: #44262b;
+ 108 ~   --diff-del-text: #7e3a44;
+ 110 -   --diff-add-bar: #8f8;
+ 111 -   --diff-del-bar: #fa9;
+ 114 ~   --ct-added: #69db7c;
+ 115 ~   --ct-deleted: #ff8787;
+ 303 ~ .cm-host .cm-changedLine { background: var(--diff-add-bg); }
+ 304 ~ .cm-host .cm-changedText { background: var(--diff-add-text); }
+ 305 ~ .cm-host .cm-deletedChunk { background: var(--diff-del-bg); }
+ 306 ~ .cm-host .cm-deletedText { background: var(--diff-del-text); }
+ 307 - /* The unified view marks inserted lines with its own class, not changedLine. */
+ 308 ~ .cm-host .cm-insertedLine { background: var(--diff-add-bg); }
+ 309 ~ .cm-host .cm-insertedLine .cm-changedText { background: var(--diff-add-text); }
+ 310 ~ .cm-host .cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
+ 311 ~ .cm-host .cm-merge-a .cm-changedText { background: var(--diff-del-text); }
+
+new
+  56 +   /* Editor diff style: new lines green, changed lines in the logo's blue,
+  57 +      removed lines slate. The pure-text pair is the word highlight inside a
+  58 +      wholly new or wholly removed block, where every word changed anyway. */
+  59 ~   --diff-add-bg: #e3f7ec;
+  60 ~   --diff-add-text: #c3ecd5;
+  61 +   --diff-add-bar: #20c997;
+  62 +   --diff-add-pure-text: transparent;
+  63 ~   --diff-del-bg: #eceef2;
+  64 ~   --diff-del-text: #d5d9e0;
+  65 +   --diff-del-bar: #8a94a6;
+  66 +   --diff-del-pure-text: transparent;
+  67 +   --diff-mod-bg: #e5f2fd;
+  68 +   --diff-mod-text: #c2e0fa;
+  69 +   --diff-mod-bar: #228be6;
+  70 +   --diff-mod-old-bg: var(--diff-mod-bg);
+  71 +   --diff-mod-old-text: var(--diff-mod-text);
+  72 +   --diff-mod-old-bar: var(--diff-mod-bar);
+  73 +   --diff-mod-new-bg: var(--diff-mod-bg);
+  74 +   --diff-mod-new-text: var(--diff-mod-text);
+  75 +   --diff-mod-new-bar: var(--diff-mod-bar);
+  79 ~   --ct-added: #0ca678;
+  80 ~   --ct-deleted: #6b7480;
+ 119 ~   --diff-add-bg: #1d3a33;
+ 120 ~   --diff-add-text: #285a4c;
+ 121 +   --diff-add-bar: #63e6be;
+ 122 +   --diff-add-pure-text: transparent;
+ 123 ~   --diff-del-bg: #343a46;
+ 124 ~   --diff-del-text: #4a5262;
+ 125 +   --diff-del-bar: #8a94a6;
+ 126 +   --diff-del-pure-text: transparent;
+ 127 +   --diff-mod-bg: #22364d;
+ 128 +   --diff-mod-text: #2e5478;
+ 129 +   --diff-mod-bar: #74c0fc;
+ 130 +   --diff-mod-old-bg: var(--diff-mod-bg);
+ 131 +   --diff-mod-old-text: var(--diff-mod-text);
+ 132 +   --diff-mod-old-bar: var(--diff-mod-bar);
+ 133 +   --diff-mod-new-bg: var(--diff-mod-bg);
+ 134 +   --diff-mod-new-text: var(--diff-mod-text);
+ 135 +   --diff-mod-new-bar: var(--diff-mod-bar);
+ 139 ~   --ct-added: #63e6be;
+ 140 ~   --ct-deleted: #9aa3b2;
+ 168 + /* Patch diff style, as in a pull request: everything new is green, everything
+ 169 +    old is red, a changed line is simply both. */
+ 170 + [data-diff="patch"] {
+ 171 +   --diff-add-pure-text: var(--diff-add-text);
+ 172 +   --diff-del-pure-text: var(--diff-del-text);
+ 173 +   --diff-mod-old-bg: var(--diff-del-bg);
+ 174 +   --diff-mod-old-text: var(--diff-del-text);
+ 175 +   --diff-mod-old-bar: var(--diff-del-bar);
+ 176 +   --diff-mod-new-bg: var(--diff-add-bg);
+ 177 +   --diff-mod-new-text: var(--diff-add-text);
+ 178 +   --diff-mod-new-bar: var(--diff-add-bar);
+ 179 + }
+ 180 + [data-theme="pastel"][data-diff="patch"] {
+ 181 +   --diff-add-bg: #d3f9d8;
+ 182 +   --diff-add-text: #c0eec8;
+ 183 +   --diff-del-bg: #ffe3e3;
+ 184 +   --diff-del-text: #ffb8b8;
+ 185 +   --diff-add-bar: #2b2;
+ 186 +   --diff-del-bar: #e43;
+ 187 +   --ct-added: #2f9e44;
+ 188 +   --ct-deleted: #c92a2a;
+ 189 + }
+ 190 + [data-theme="dim"][data-diff="patch"] {
+ 191 +   --diff-add-bg: #1f3a2a;
+ 192 +   --diff-add-text: #2f6b45;
+ 193 +   --diff-del-bg: #44262b;
+ 194 +   --diff-del-text: #7e3a44;
+ 195 +   --diff-add-bar: #8f8;
+ 196 +   --diff-del-bar: #fa9;
+ 197 +   --ct-added: #69db7c;
+ 198 +   --ct-deleted: #ff8787;
+ 199 + }
+ 200 + 
+ 335 + .image-pair.both .image-side.old { box-shadow: inset 3px 0 0 var(--diff-mod-old-bar); }
+ 336 + .image-pair.both .image-side.new { box-shadow: inset 3px 0 0 var(--diff-mod-new-bar); }
+ 363 + /* Prefixed with .cm-editor so they outrank the merge view's own green and red
+ 364 +    theme. Lines carry their kind from the line diff (lib/lineKinds.ts): inserted,
+ 365 +    modified or deleted. Unified view shows removed lines in a widget, which
+ 366 +    stays in the removed colours. */
+ 367 ~ .cm-host .cm-editor .cm-changedLine, .cm-host .cm-editor .cm-insertedLine { background: var(--diff-a
+ 368 ~ .cm-host .cm-editor .cm-changedText { background: var(--diff-add-text); }
+ 369 + .cm-host .cm-editor .cm-kind-inserted .cm-changedText { background: var(--diff-add-pure-text); }
+ 370 + .cm-host .cm-editor .cm-kind-modified.cm-changedLine, .cm-host .cm-editor .cm-kind-modified .cm-inse
+ 371 + .cm-host .cm-editor .cm-kind-modified .cm-changedText { background: var(--diff-mod-new-text); }
+ 372 ~ .cm-host .cm-editor .cm-deletedChunk { background: var(--diff-del-bg); }
+ 373 ~ .cm-host .cm-editor .cm-deletedText { background: var(--diff-del-text); }
+ 374 ~ .cm-host .cm-editor.cm-merge-a .cm-changedLine { background: var(--diff-del-bg); }
+ 375 ~ .cm-host .cm-editor.cm-merge-a .cm-changedText { background: var(--diff-del-text); }
+ 376 + .cm-host .cm-editor.cm-merge-a .cm-kind-deleted .cm-changedText { background: var(--diff-del-pure-te
+ 377 ~ .cm-host .cm-editor.cm-merge-a .cm-kind-modified.cm-changedLine { background: var(--diff-mod-old-bg)
+ 378 ~ .cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText { background: var(--diff-mod-old-te
+ 379 + /* Only the indentation moved: the line colour says so, a highlight would only mark spaces. */
+ 380 + .cm-host .cm-editor .cm-line.cm-kind-reindented .cm-changedText { background: transparent; }
+ 381 + /* Indentation is never a word, but the character diff of a re-indented block
+ 382 +    marks it anyway. lib/lineKinds.ts wraps a changed line's leading and trailing
+ 383 +    whitespace in .cm-ws, inside the highlight, which paints it back in the
+ 384 +    line's own colour. */
+ 385 + .cm-host .cm-editor .cm-kind-inserted .cm-changedText .cm-ws { background: var(--diff-add-bg); }
+ 386 + .cm-host .cm-editor .cm-kind-modified .cm-changedText .cm-ws { background: var(--diff-mod-new-bg); }
+ 387 + .cm-host .cm-editor.cm-merge-a .cm-kind-deleted .cm-changedText .cm-ws { background: var(--diff-del-
+ 388 + .cm-host .cm-editor.cm-merge-a .cm-kind-modified .cm-changedText .cm-ws { background: var(--diff-mod
+ 402 + /* The merge view's own theme paints its gutter bars green and red; ours follow the style. */
+ 403 + .cm-host .cm-editor .cm-changedLineGutter { background: var(--diff-add-bar); }
+ 404 + .cm-host .cm-editor .cm-changedLineGutter.cm-kind-modified { background: var(--diff-mod-new-bar); }
+ 405 + .cm-host .cm-editor.cm-merge-a .cm-changedLineGutter, .cm-host .cm-editor .cm-deletedLineGutter { ba
+ 406 + .cm-host .cm-editor.cm-merge-a .cm-changedLineGutter.cm-kind-modified { background: var(--diff-mod-o
