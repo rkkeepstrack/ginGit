@@ -17,6 +17,7 @@ export function actionFor(e: KeyboardEvent): Action | null {
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'r') return 'refresh'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'f') return 'find'
   if (mod && !e.shiftKey && e.key.toLowerCase() === 'p') return 'search'
+  if (mod && !e.shiftKey && e.key.toLowerCase() === 'e') return 'filterFiles'
   if (mod && e.shiftKey && e.key.toLowerCase() === 'd') return 'toggleDiff'
   if (mod && e.key === '1') return 'focusLog'
   if (mod && e.key === '2') return 'focusReview'

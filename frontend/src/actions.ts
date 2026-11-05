@@ -1,5 +1,5 @@
 import { tick } from 'svelte'
-import { focus } from './lib/dom'
+import { focus, focusSelected } from './lib/dom'
 import { stepFile } from './state/changes.svelte'
 import { closeFind, find } from './state/find.svelte'
 import { open, refresh } from './state/repo.svelte'
@@ -8,7 +8,7 @@ import { clear, selection } from './state/selection.svelte'
 import { ui } from './state/ui.svelte'
 
 export type Action =
-  | 'open' | 'refresh' | 'search' | 'find' | 'toggleDiff' | 'escape'
+  | 'open' | 'refresh' | 'search' | 'find' | 'filterFiles' | 'toggleDiff' | 'escape'
   | 'focusLog' | 'focusFiles' | 'focusReview' | 'prevFile' | 'nextFile'
   | 'themeLight' | 'themeDark' | 'themeSystem' | 'diffEditor' | 'diffPatch'
 
@@ -27,6 +27,7 @@ export function runAction(action: Action, target: HTMLElement | null = document.
     case 'open': void open(); break
     case 'refresh': void refresh(); break
     case 'search': focus(anchors.search); break
+    case 'filterFiles': focusSelected(anchors.files); break
     case 'find': if (selection.hashes.length > 0) { find.open = true; void tick().then(() => focus(anchors.find)) } break
     case 'toggleDiff': ui.toggleDiffMode(); break
     case 'escape':

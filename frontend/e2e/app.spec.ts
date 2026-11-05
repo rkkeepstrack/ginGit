@@ -65,6 +65,20 @@ test('collapse all also folds the file picked in the tree', async ({ page }) => 
   await expect(page.locator('#review .entry-head.open')).toHaveCount(0)
 })
 
+test('the file filter is one shortcut away and clears with its x', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, "Merge branch 'feature/login'").click()
+  const filter = page.getByPlaceholder('Filter files')
+  await page.keyboard.press('ControlOrMeta+E')
+  await expect(filter).toBeFocused()
+  await page.keyboard.type('login')
+  await expect(page.locator('#files .tree-row', { hasText: 'main.ts' })).toHaveCount(0)
+  await page.locator('#files label.input button').click()
+  await expect(filter).toHaveValue('')
+  await expect(page.locator('#files .tree-row', { hasText: 'main.ts' })).toHaveCount(1)
+})
+
 test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await installBridge(page)
   await loaded(page)

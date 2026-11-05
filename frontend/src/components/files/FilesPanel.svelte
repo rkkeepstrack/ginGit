@@ -10,6 +10,7 @@
   import Tags from '@lucide/svelte/icons/tags'
   import X from '@lucide/svelte/icons/x'
   import { plural } from '../../lib/format'
+  import { keys } from '../../lib/platform'
   import { activate } from '../../lib/shortcuts'
   import { visibleRange } from '../../lib/virtual'
   import { changes } from '../../state/changes.svelte'
@@ -42,7 +43,10 @@
     <button class="btn btn-ghost btn-xs btn-square shrink-0" onclick={clear} use:hint={'Clear selection  Esc'}><X size={14} strokeWidth={1.75} /></button>
   </div>
   <div class="flex items-center gap-1 px-2 py-1 hairline-b shrink-0">
-    <input class="input input-xs flex-1 min-w-0 text-[12px]" placeholder="Filter files" bind:value={files.filter} />
+    <label class="input input-xs flex-1 min-w-0 flex items-center gap-1 text-[12px] pr-0.5">
+      <input class="grow min-w-0" placeholder="Filter files  {keys('mod', 'E')}" bind:value={files.filter} />
+      {#if files.filter}<button class="btn btn-ghost btn-xs btn-square h-4 min-h-0 w-4" onclick={() => (files.filter = '')} use:hint={'Clear filter'}><X size={12} strokeWidth={1.75} /></button>{/if}
+    </label>
     <button class="btn btn-ghost btn-xs btn-square shrink-0" onclick={() => (ui.fileSort = ui.fileSort === 'name' ? 'type' : 'name')} use:hint={ui.fileSort === 'name' ? 'Sorted by name, click to sort by change type' : 'Sorted by change type, click to sort by name'}>
       {#if ui.fileSort === 'name'}<ArrowDownAZ size={15} strokeWidth={1.75} />{:else}<Tags size={15} strokeWidth={1.75} />{/if}
     </button>

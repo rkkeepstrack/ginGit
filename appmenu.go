@@ -35,6 +35,7 @@ func (a *App) appMenu() *menu.Menu {
 	view := m.AddSubmenu("View")
 	view.AddText("Find in Changes", keys.CmdOrCtrl("f"), act("find"))
 	view.AddText("Find Commit", keys.CmdOrCtrl("p"), act("search"))
+	view.AddText("Filter Files", keys.CmdOrCtrl("e"), act("filterFiles"))
 	view.AddSeparator()
 	view.AddText("Toggle Side-by-side / Unified Diff", keys.Combo("d", keys.CmdOrCtrlKey, keys.ShiftKey), act("toggleDiff"))
 	view.AddSeparator()
