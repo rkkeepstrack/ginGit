@@ -35,14 +35,24 @@ export function click(index: number, mods: ClickModifiers) {
   selection.file = null
 }
 
-/** visible lists the commit indices a search left on screen; null means all of them. */
-export function moveCursor(delta: number, extend: boolean, visible: readonly number[] | null) {
+/**
+ * The arrow keys in the log. With a review open they select at once; in the
+ * full-width log they only move the cursor, to browse, and Enter opens it.
+ * visible lists the commit indices a search left on screen; null means all.
+ */
+export function step(delta: number, extend: boolean, visible: readonly number[] | null) {
   const count = visible ? visible.length : repo.commits.length
   if (count === 0) return
   const cursor = selection.cursor
   const pos = cursor === null ? -1 : visible ? visible.indexOf(cursor) : cursor
-  const next = Math.max(0, Math.min(count - 1, pos + delta))
-  click(visible ? visible[next] : next, { toggle: false, range: extend })
+  const next = visible ? visible[Math.max(0, Math.min(count - 1, pos + delta))] : Math.max(0, Math.min(count - 1, pos + delta))
+  if (selection.hashes.length > 0) click(next, { toggle: false, range: extend })
+  else selection.cursor = next
+}
+
+/** Enter in the full-width log: opens the commit the cursor is on. */
+export function openCursor() {
+  if (selection.cursor !== null && selection.hashes.length === 0) click(selection.cursor, { toggle: false, range: false })
 }
 
 export function clear() {

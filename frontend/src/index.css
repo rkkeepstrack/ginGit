@@ -249,8 +249,10 @@ body {
 .log-row:hover { background: color-mix(in oklab, var(--color-base-content) 5%, transparent); }
 .log-row.selected { background: color-mix(in oklab, var(--brand) 16%, transparent); box-shadow: inset 2px 0 0 var(--brand); }
 .log-row.selected:hover { background: color-mix(in oklab, var(--brand) 22%, transparent); }
-/* The list holds the keyboard focus; the ring marks the row the arrow keys are on. */
+/* The list holds the keyboard focus; the ring marks the row the arrow keys are on,
+   and in the full-width log, where they only browse, a tint does too. */
 [role="grid"]:focus .log-row.cursor { outline: 1px solid color-mix(in oklab, var(--brand) 60%, transparent); outline-offset: -1px; }
+[role="grid"]:focus .log-row.cursor:not(.selected) { background: color-mix(in oklab, var(--brand) 8%, transparent); }
 .hash-cell { cursor: copy; border-radius: 4px; padding: 0 4px; margin-left: -4px; background: none; border: 0; font: inherit; line-height: inherit; }
 .hash-cell:hover { background: color-mix(in oklab, var(--color-base-content) 8%, transparent); opacity: 1; }
 

@@ -5,7 +5,7 @@
   import { gliding } from '../../state/gliding.svelte'
   import { repo } from '../../state/repo.svelte'
   import { search } from '../../state/search.svelte'
-  import { moveCursor, selection } from '../../state/selection.svelte'
+  import { openCursor, selection, step } from '../../state/selection.svelte'
   import Notice from '../shell/Notice.svelte'
   import LogRow from './LogRow.svelte'
   import { GRAPH_PAD, LANE_W, MAX_LANES, ROW_H } from './LogLanes.svelte'
@@ -37,6 +37,13 @@
   // Keep the cursor in view. A jump (clicking a pill) centres it instead, so
   // the commits around the branch are on screen too. Only the cursor and the
   // reveal counter are tracked; a search result must not scroll the list.
+  // A repository that just opened (or reloaded) hands the keyboard to the log,
+  // unless something else has it, like the search field.
+  $effect(() => {
+    void repo.loadId
+    if (scroller && document.activeElement === document.body) scroller.focus({ preventScroll: true })
+  })
+
   let handledReveal = 0
   $effect(() => {
     const cursor = selection.cursor
@@ -79,9 +86,10 @@
   }
 
   function onKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter') return openCursor()
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
     e.preventDefault()
-    moveCursor(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
+    step(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
   }
 </script>
 

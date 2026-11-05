@@ -4,7 +4,8 @@
   import { actionFor } from './lib/shortcuts'
   import { changes } from './state/changes.svelte'
   import { repo } from './state/repo.svelte'
-  import { selection } from './state/selection.svelte'
+  import { search } from './state/search.svelte'
+  import { selection, step } from './state/selection.svelte'
   import ReviewPanel from './components/review/ReviewPanel.svelte'
   import FilesPanel from './components/files/FilesPanel.svelte'
   import LogPanel from './components/log/LogPanel.svelte'
@@ -21,6 +22,16 @@
   // sees it; the keydown path covers the browser dev tab and anything the
   // menu doesn't bind, like [ and ].
   function onKey(e: KeyboardEvent) {
+    // Focus nowhere (a dialog just closed, a click on empty space): the arrows
+    // still pick commits instead of scrolling the page.
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !e.metaKey && !e.ctrlKey && !e.altKey && document.activeElement === document.body) {
+      const log = document.querySelector<HTMLElement>('#log [role="grid"]')
+      if (!log) return
+      e.preventDefault()
+      log.focus({ preventScroll: true })
+      step(e.key === 'ArrowDown' ? 1 : -1, e.shiftKey, search.matches)
+      return
+    }
     const action = actionFor(e)
     if (!action) return
     if (action !== 'escape') e.preventDefault()

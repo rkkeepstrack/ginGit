@@ -133,6 +133,27 @@ test('enter in the commit search opens the first hit, and the arrows go on from 
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
 
+test('the full-width log browses with the arrows and opens with enter; with a review open they select', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await expect(page.locator('#log [role="grid"]')).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/cursor/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(0)
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.log-row').nth(1)).toHaveClass(/selected/)
+  await expect(page.locator('#review .entry-head').first()).toBeVisible()
+  // the review is open: now each arrow opens the commit it lands on
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  // and with the focus lost to the page, the arrows still go to the log
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur())
+  await page.keyboard.press('ArrowDown')
+  await expect(page.locator('.log-row').nth(3)).toHaveClass(/selected/)
+})
+
 test('cmd-shift-o opens the recent repositories, the arrows walk them, esc closes', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
