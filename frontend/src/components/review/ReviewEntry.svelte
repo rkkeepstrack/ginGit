@@ -96,7 +96,7 @@
     {#if file.review === 'stale'}
       <!-- Clicks stay here instead of folding the entry. -->
       <!-- svelte-ignore a11y_click_events_have_key_events, a11y_interactive_supports_focus -->
-      <div role="tablist" class="tabs tabs-box tabs-xs p-0.5" onmousedown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
+      <div role="tablist" class="tabs tabs-box tabs-xs p-0.5 shrink-0" onmousedown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
         <button role="tab" class="tab px-1.5" class:tab-active={!since} class:brand={!since} class:opacity-60={since} onclick={() => (since = false)} use:hint={'The whole diff of the selection'}>All</button>
         <button role="tab" class="tab px-1.5" class:tab-active={since} class:brand={since} class:opacity-60={!since} onclick={() => (since = true)} use:hint={'Only what changed since you reviewed it'}>New</button>
       </div>
