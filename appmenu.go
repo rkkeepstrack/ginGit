@@ -46,6 +46,10 @@ func (a *App) appMenu() *menu.Menu {
 	appearance.AddText("Light", nil, act("themeLight"))
 	appearance.AddText("Dark", nil, act("themeDark"))
 	appearance.AddText("System", nil, act("themeSystem"))
+	appearance.AddSeparator()
+	diffStyle := appearance.AddSubmenu("Diff Style")
+	diffStyle.AddText("Editor", nil, act("diffEditor"))
+	diffStyle.AddText("Patch", nil, act("diffPatch"))
 
 	nav := m.AddSubmenu("Navigate")
 	nav.AddText("Previous File", keys.CmdOrCtrl("up"), act("prevFile"))

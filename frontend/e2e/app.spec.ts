@@ -152,6 +152,22 @@ test('a changed image shows before and after side by side', async ({ page }) => 
   await shoot(page, 'image.png')
 })
 
+test('editor diff style: new lines green, changed lines blue; patch is one menu away', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  // README only gains lines here
+  await row(page, 'docs: usage section').click()
+  await expect(page.locator('.cm-editor .cm-kind-inserted.cm-changedLine').first()).toHaveCSS('background-color', 'rgb(227, 247, 236)')
+  // package.json changes its version line and grows a block below it
+  await row(page, 'chore(LD-2): depend on left-pad, as one does').click()
+  const changed = page.locator('.cm-editor .cm-kind-modified.cm-changedLine').first()
+  await expect(changed).toHaveCSS('background-color', 'rgb(229, 242, 253)')
+  await page.locator('.dropdown-end [role="button"]').click()
+  await page.getByRole('button', { name: 'Patch' }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-diff', 'patch')
+  await expect(changed).toHaveCSS('background-color', 'rgb(211, 249, 216)')
+})
+
 test('marking a file as reviewed folds it, and a later change turns the mark stale', async ({ page }) => {
   await installBridge(page, { reviewed: { 'src/base.ts': 'some-older-blob' } })
   await loaded(page)

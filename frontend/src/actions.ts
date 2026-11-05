@@ -10,7 +10,7 @@ import { ui } from './state/ui.svelte'
 export type Action =
   | 'open' | 'refresh' | 'search' | 'find' | 'toggleDiff' | 'escape'
   | 'focusLog' | 'focusFiles' | 'focusReview' | 'prevFile' | 'nextFile'
-  | 'themeLight' | 'themeDark' | 'themeSystem'
+  | 'themeLight' | 'themeDark' | 'themeSystem' | 'diffEditor' | 'diffPatch'
 
 /** DOM anchors the actions need; components set these ids. */
 const anchors = {
@@ -43,5 +43,7 @@ export function runAction(action: Action, target: HTMLElement | null = document.
     case 'themeLight': ui.theme = 'pastel'; break
     case 'themeDark': ui.theme = 'dim'; break
     case 'themeSystem': ui.theme = 'system'; break
+    case 'diffEditor': ui.diffStyle = 'editor'; break
+    case 'diffPatch': ui.diffStyle = 'patch'; break
   }
 }

@@ -1,17 +1,20 @@
 export type ThemeChoice = 'system' | 'pastel' | 'dim'
 export type DiffMode = 'unified' | 'split'
+/** Editor: new green, changed blue, removed gray, like an IDE. Patch: green and red, like a pull request. */
+export type DiffStyle = 'editor' | 'patch'
 
 interface Persisted {
   theme: ThemeChoice
   diffMode: DiffMode
   fileSort: 'name' | 'type'
   flatFiles: boolean
+  diffStyle: DiffStyle
   /** Graph and diff column widths in percent; the files panel takes the rest. */
   panels: [number, number]
 }
 
 const KEY = 'gingit-ui'
-const defaults: Persisted = { theme: 'system', diffMode: 'split', fileSort: 'name', flatFiles: false, panels: [40, 40] }
+const defaults: Persisted = { theme: 'system', diffMode: 'split', fileSort: 'name', flatFiles: false, diffStyle: 'editor', panels: [40, 40] }
 
 function restore(): Persisted {
   try {
@@ -28,6 +31,7 @@ class UIStore {
   diffMode = $state<DiffMode>(defaults.diffMode)
   fileSort = $state<'name' | 'type'>(defaults.fileSort)
   flatFiles = $state(defaults.flatFiles)
+  diffStyle = $state<DiffStyle>(defaults.diffStyle)
   panels = $state.raw<[number, number]>(defaults.panels)
 
   constructor() {
@@ -54,9 +58,10 @@ function applyTheme(choice: ThemeChoice) {
 
 $effect.root(() => {
   $effect(() => {
-    const snapshot: Persisted = { theme: ui.theme, diffMode: ui.diffMode, fileSort: ui.fileSort, flatFiles: ui.flatFiles, panels: ui.panels }
+    const snapshot: Persisted = { theme: ui.theme, diffMode: ui.diffMode, fileSort: ui.fileSort, flatFiles: ui.flatFiles, diffStyle: ui.diffStyle, panels: ui.panels }
     try { localStorage.setItem(KEY, JSON.stringify(snapshot)) } catch { /* private mode */ }
   })
   $effect(() => applyTheme(ui.theme))
+  $effect(() => { document.documentElement.dataset.diff = ui.diffStyle })
 })
 dark.addEventListener('change', () => applyTheme(ui.theme))
