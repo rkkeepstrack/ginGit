@@ -55,6 +55,16 @@ test('side by side, and the tree click scrolls to the file', async ({ page }) =>
   await shoot(page, 'single-split.png')
 })
 
+test('collapse all also folds the file picked in the tree', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, "Merge branch 'feature/login'").click()
+  await page.locator('#files .tree-row', { hasText: 'main.ts' }).click()
+  await expect(page.locator('#review .entry-head.open')).toHaveCount(2)
+  await page.locator('#review .panel-head button').click()
+  await expect(page.locator('#review .entry-head.open')).toHaveCount(0)
+})
+
 test('a file changed twice with a gap stacks its diffs', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
