@@ -4,6 +4,8 @@ import { closeDropdown } from './dom'
  * `use:menuKeys` on a menu or a daisyUI dropdown around one: the arrow keys
  * walk its entries (from the trigger, too), Home and End jump to the ends, Esc
  * closes it. Esc stops here: the app's own Esc would clear the selection.
+ * Moving the mouse moves the focus along, so pointer and keyboard never mark
+ * two entries at once (see .menu in index.css).
  */
 export function menuKeys(root: HTMLElement) {
   const onKey = (e: KeyboardEvent) => {
@@ -24,6 +26,16 @@ export function menuKeys(root: HTMLElement) {
       closeDropdown()
     }
   }
+  const onMove = (e: MouseEvent) => {
+    const entry = (e.target as HTMLElement).closest<HTMLElement>('li > button')
+    if (entry && root.contains(entry) && document.activeElement !== entry) entry.focus({ preventScroll: true })
+  }
   root.addEventListener('keydown', onKey)
-  return { destroy: () => root.removeEventListener('keydown', onKey) }
+  root.addEventListener('mousemove', onMove)
+  return {
+    destroy: () => {
+      root.removeEventListener('keydown', onKey)
+      root.removeEventListener('mousemove', onMove)
+    },
+  }
 }

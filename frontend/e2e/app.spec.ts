@@ -191,6 +191,21 @@ test('arrows in the commit search browse the hits in the log; enter there opens 
   await expect(page.locator('.log-row').nth(2)).toHaveClass(/selected/)
 })
 
+test('a menu opened by keyboard marks one entry, not also the one under the pointer', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  // park the pointer where the menu's first entry will appear
+  const trigger = (await page.locator('#repo-menu > [role="button"]').boundingBox())!
+  await page.mouse.move(trigger.x + 30, trigger.y + trigger.height + 18)
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  const open = page.locator('#repo-menu li > button', { hasText: 'Open…' })
+  await expect(page.locator('#repo-menu li > button[title]')).toBeFocused()
+  await expect(open).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+  // moving the mouse takes the focus along
+  await open.hover({ position: { x: 40, y: 8 } })
+  await expect(open).toBeFocused()
+})
+
 test('the focus stays on the list, its ring follows the arrow keys', async ({ page }) => {
   await installBridge(page)
   await loaded(page)
