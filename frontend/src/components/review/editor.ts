@@ -1,5 +1,6 @@
 import { EditorState, type Extension } from '@codemirror/state'
 import { EditorView, lineNumbers } from '@codemirror/view'
+import { lineKinds } from '../../lib/lineKinds'
 import { findHighlight } from '../../lib/findHighlight'
 import { highlighting } from '../../lib/highlight'
 import { languageFor } from '../../lib/language'
@@ -8,7 +9,7 @@ import { gliding } from '../../state/gliding.svelte'
 
 /** What every read-only code view in the app shares. */
 export function readOnlyBase(lang: Extension | null): Extension[] {
-  return [lineNumbers(), highlighting, findHighlight, EditorView.editable.of(false), EditorState.readOnly.of(true), ...(lang ? [lang] : [])]
+  return [lineNumbers(), highlighting, findHighlight, lineKinds, EditorView.editable.of(false), EditorState.readOnly.of(true), ...(lang ? [lang] : [])]
 }
 
 // Building an editor costs a few milliseconds; a screenful at once stalls the
