@@ -254,6 +254,8 @@ function grams(line: string): Map<string, number> {
  * How alike two lines are, 0 to 1: the share of character pairs they have in
  * common. A line that grew (or shrank) counts too: when most of the shorter
  * one, at least a few characters of it, is found in the longer, it's an edit.
+ * One measure can't do both: a field that gained a trailing comment shares
+ * less than half of everything with its old self (see the diff corpus).
  */
 function similarity(x: Map<string, number>, y: Map<string, number>): number {
   let common = 0
