@@ -51,6 +51,8 @@ type ChangeSet struct {
 	Hashes []string     `json:"hashes"` // newest first
 	Merges []string     `json:"merges"`
 	Files  []FileChange `json:"files"`
+	// Bodies are the commit messages below the subject, for the commits that have one.
+	Bodies map[string]string `json:"bodies"`
 	// Reviewable says whether review marks apply: the newest selected commit
 	// is not on the default branch yet. Stamped by review.Annotate.
 	Reviewable bool `json:"reviewable"`
@@ -75,7 +77,7 @@ func newestFirst(ix *history.Index, hashes []string) ([]string, error) {
 // Compute builds the change set. hashes may be in any order.
 func Compute(ctx context.Context, root string, ix *history.Index, hashes []string) (*ChangeSet, error) {
 	if len(hashes) == 0 {
-		return &ChangeSet{Hashes: []string{}, Merges: []string{}, Files: []FileChange{}}, nil
+		return &ChangeSet{Hashes: []string{}, Merges: []string{}, Files: []FileChange{}, Bodies: map[string]string{}}, nil
 	}
 	for _, h := range hashes {
 		if err := gitcmd.ValidateHash(h); err != nil {
@@ -86,10 +88,13 @@ func Compute(ctx context.Context, root string, ix *history.Index, hashes []strin
 	if err != nil {
 		return nil, err
 	}
-	cs := &ChangeSet{Hashes: sorted, Merges: []string{}, Files: []FileChange{}}
+	cs := &ChangeSet{Hashes: sorted, Merges: []string{}, Files: []FileChange{}, Bodies: map[string]string{}}
 	for _, h := range sorted {
 		if p, _ := ix.Parents(h); len(p) > 1 {
 			cs.Merges = append(cs.Merges, h)
+		}
+		if b, _ := ix.Body(h); b != "" {
+			cs.Bodies[h] = b
 		}
 	}
 	perCommit, err := diffAll(ctx, root, sorted)

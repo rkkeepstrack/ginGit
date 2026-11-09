@@ -52,6 +52,8 @@ export interface ChangeSet {
   hashes: string[]
   merges: string[]
   files: FileChange[]
+  /** Commit messages below the subject, for the commits that have one. */
+  bodies: Record<string, string>
   /** Review marks apply: the newest selected commit is not on the default branch yet. */
   reviewable: boolean
 }

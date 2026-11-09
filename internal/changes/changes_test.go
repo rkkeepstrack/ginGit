@@ -63,6 +63,22 @@ func TestSingleCommit(t *testing.T) {
 	}
 }
 
+func TestBodiesOnlyForCommitsThatHaveOne(t *testing.T) {
+	r := gittest.New(t)
+	r.Write("a.txt", "a\n")
+	r.Commit("terse")
+	r.Write("a.txt", "b\n")
+	r.Commit("chatty\n\nexplains itself\nat length")
+	ix := index(t, r)
+	cs, err := Compute(context.Background(), r.Path, ix, []string{r.H("terse"), r.H("chatty")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cs.Bodies) != 1 || cs.Bodies[r.H("chatty")] != "explains itself\nat length" {
+		t.Errorf("bodies: %q", cs.Bodies)
+	}
+}
+
 func TestRootCommitDiffsAgainstEmptyTree(t *testing.T) {
 	r := linearRepo(t)
 	ix := index(t, r)

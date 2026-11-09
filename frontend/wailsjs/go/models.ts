@@ -32,6 +32,7 @@ export namespace changes {
 	    hashes: string[];
 	    merges: string[];
 	    files: FileChange[];
+	    bodies: Record<string, string>;
 	    reviewable: boolean;
 	
 	    static createFrom(source: any = {}) {
@@ -43,6 +44,7 @@ export namespace changes {
 	        this.hashes = source["hashes"];
 	        this.merges = source["merges"];
 	        this.files = this.convertValues(source["files"], FileChange);
+	        this.bodies = source["bodies"];
 	        this.reviewable = source["reviewable"];
 	    }
 	

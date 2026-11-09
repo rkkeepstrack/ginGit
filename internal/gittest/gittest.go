@@ -72,14 +72,14 @@ func (r *Repo) Rename(from, to string) {
 	}
 }
 
-// Commit stages everything and commits with the label as message, recording
-// the resulting hash under that label.
-func (r *Repo) Commit(label string) string {
+// Commit stages everything and commits it, recording the resulting hash
+// under the message's first line.
+func (r *Repo) Commit(message string) string {
 	r.T.Helper()
 	r.Git("add", "-A")
-	r.Git("commit", "-q", "--allow-empty", "-m", label)
+	r.Git("commit", "-q", "--allow-empty", "-m", message)
 	h := r.Git("rev-parse", "HEAD")
-	r.Hashes[label] = h
+	r.Hashes[strings.SplitN(message, "\n", 2)[0]] = h
 	return h
 }
 

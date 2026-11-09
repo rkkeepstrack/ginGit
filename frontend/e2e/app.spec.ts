@@ -36,6 +36,8 @@ test('a selection shows every file as a collapsible entry', async ({ page }) => 
   await row(page, 'docs: more usage').click()
   await row(page, 'chore(LD-2): depend on left-pad, as one does').click({ modifiers: ['Shift'] })
   await expect(page.locator('#review .entry-head')).toHaveCount(4)
+  // several commits: their messages stay in the log
+  await expect(page.locator('#files')).not.toContainText('eleven lines of padding')
   // the deleted logo is binary and gets a notice; the deleted changelog is full-width red
   await expect(ready(page)).toHaveCount(3)
   await expect(page.locator('.cm-host.single-deleted .cm-editor')).toHaveCount(1)
@@ -288,6 +290,8 @@ test('a changed image shows before and after side by side', async ({ page }) => 
   await installBridge(page)
   await loaded(page)
   await row(page, 'chore(LD-2): depend on left-pad, as one does').click()
+  // one commit: its full message heads the files
+  await expect(page.locator('#files')).toContainText("eleven lines of padding, now somebody else's eleven lines")
   await expect(page.locator('.image-pair.both .image-side')).toHaveCount(2)
   await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('.image-side img')].every((i) => i.complete && i.naturalWidth > 0))
   await expect(page.locator('.image-side figcaption')).toHaveText(['Before · 96 × 96 · 578 B', 'After · 128 × 96 · 662 B'])

@@ -16,6 +16,7 @@
   import { changes } from '../../state/changes.svelte'
   import { files, toggleDir } from '../../state/files.svelte'
   import { hint } from '../../state/hint.svelte'
+  import { commitOf } from '../../state/repo.svelte'
   import { clear, selection, setFile } from '../../state/selection.svelte'
   import { ui } from '../../state/ui.svelte'
   import Notice from '../shell/Notice.svelte'
@@ -43,6 +44,14 @@
     <div class="flex-1"></div>
     <button class="btn btn-ghost btn-xs btn-square shrink-0" onclick={clear} use:hint={'Clear selection  Esc'}><X size={14} strokeWidth={1.75} /></button>
   </div>
+  <!-- One message reads well; several stacked up only repeat the log's subjects. -->
+  {#if changes.changeSet?.hashes.length === 1}
+    {@const h = changes.changeSet.hashes[0]}
+    <div class="max-h-[30%] overflow-auto shrink-0 hairline-b px-2 py-1.5 text-[12px] select-text break-words">
+      <p class="font-medium">{commitOf(h)?.subject}</p>
+      {#if changes.changeSet.bodies[h]}<p class="whitespace-pre-wrap opacity-70 mt-0.5">{changes.changeSet.bodies[h]}</p>{/if}
+    </div>
+  {/if}
   <div class="flex items-center gap-1 px-2 py-1 hairline-b shrink-0">
     <label class="input input-xs flex-1 min-w-0 flex items-center gap-1 text-[12px] pr-0.5">
       <input bind:this={filterInput} class="grow min-w-0" placeholder="Filter files  {keys('mod', 'E')}" bind:value={files.filter} />
