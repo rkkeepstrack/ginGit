@@ -97,6 +97,12 @@ export async function loadRecent() {
   }
 }
 
+/** Recent repositories besides the open one, with every word of query in name or path. */
+export function findRecent(query: string): RecentRepo[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean)
+  return repo.recent.filter((r) => r.path !== repo.info?.path && words.every((w) => `${r.name} ${r.path}`.toLowerCase().includes(w)))
+}
+
 export async function forget(path: string) {
   await api.forgetRepository(path)
   await loadRecent()
