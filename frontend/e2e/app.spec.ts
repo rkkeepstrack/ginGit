@@ -17,6 +17,18 @@ async function shoot(page: Page, name: string) {
   await expect(page).toHaveScreenshot(name)
 }
 
+/**
+ * Esc as the built app delivers it: WebKit hands the key to the page first and,
+ * unless the page marks it handled, to the native menu's Clear Selection as well.
+ */
+async function escape(page: Page) {
+  await page.evaluate(() => {
+    const e = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })
+    ;(document.activeElement ?? document.body).dispatchEvent(e)
+    if (!e.defaultPrevented) (window as unknown as { runtime: { EventsEmit: (n: string, d: string) => void } }).runtime.EventsEmit('menu', 'escape')
+  })
+}
+
 test('welcome screen', async ({ page }) => {
   await installBridge(page, { initialRepo: false })
   await page.goto('/')
@@ -271,8 +283,10 @@ test('find in changes opens the matching files and steps through hits', async ({
   await page.keyboard.press('Enter')
   await expect(page.locator('.cm-findMatch').first()).toBeVisible()
   await shoot(page, 'find.png')
-  await page.keyboard.press('Escape')
+  const selected = await page.locator('.log-row.selected').count()
+  await escape(page)
   await expect(page.locator('#find-input')).toHaveCount(0)
+  await expect(page.locator('.log-row.selected')).toHaveCount(selected)
   await expect(page.locator('#review .entry-head.open')).toHaveCount(4)
 })
 
@@ -392,13 +406,15 @@ test('a click enlarges an image, the arrows step through all of them, esc closes
   await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('#image-viewer img')].every((i) => i.complete && i.naturalWidth > 0))
   await expect(viewer.locator('img.pixelated')).toHaveCount(2)
   await shoot(page, 'viewer.png')
+  // WebKit leaves the focus outside the dialog when it opens; the arrows work regardless
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur())
   await page.keyboard.press('ArrowLeft')
   await expect(viewer.locator('.panel-head')).toContainText('1 / 2')
   await expect(viewer.locator('.panel-head')).toContainText('assets/badge.png')
   await page.keyboard.press('ArrowLeft')
   await expect(viewer.locator('.panel-head')).toContainText('1 / 2')
   // esc closes it and nothing else: the review stays, now at the image seen last
-  await page.keyboard.press('Escape')
+  await escape(page)
   await expect(viewer).toHaveCount(0)
   await expect(page.locator('.log-row.selected')).toHaveCount(1)
   await expect(page.locator('.entry.current .entry-head')).toContainText('badge.png')

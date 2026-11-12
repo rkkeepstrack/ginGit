@@ -21,6 +21,7 @@
   // sees it; the keydown path covers the browser dev tab and anything the
   // menu doesn't bind, like [ and ].
   function onKey(e: KeyboardEvent) {
+    if (e.isComposing) return
     // Focus nowhere (a dialog just closed, a click on empty space) and only the
     // log on screen: the arrows browse it instead of scrolling the page. With a
     // review open they are left alone; they may be meant for it.
@@ -31,7 +32,9 @@
     }
     const action = actionFor(e)
     if (!action) return
-    if (action !== 'escape') e.preventDefault()
+    // Handled here means handled: WebKit passes an unhandled Esc on to the native
+    // menu, whose Clear Selection would undo the review the Esc just returned to.
+    e.preventDefault()
     runAction(action, e.target as HTMLElement | null)
   }
 </script>

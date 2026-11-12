@@ -42,7 +42,10 @@
   }
 </script>
 
-<dialog bind:this={dialog} class="modal" id="image-viewer" aria-label="Images" onclose={() => onclose(path)} onkeydown={onKey}>
+<!-- On the window: WebKit opens the dialog without moving the focus into it. -->
+<svelte:window onkeydown={onKey} />
+
+<dialog bind:this={dialog} class="modal" id="image-viewer" aria-label="Images" onclose={() => onclose(path)}>
   <div class="modal-box p-0 w-[calc(100vw-3rem)] max-w-none h-[calc(100vh-3rem)] max-h-none flex flex-col overflow-hidden">
     <div class="panel-head hairline-b">
       <span class="tabular-nums opacity-60 shrink-0">{at + 1} / {paths.length}</span>
