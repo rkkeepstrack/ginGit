@@ -16,14 +16,14 @@
   {
    "name": "feature/stack-base",
    "full": "refs/heads/feature/stack-base",
-   "hash": "4d73838a284213ec8a91ac3f0c767a9b69cb434c",
+   "hash": "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b",
    "kind": "head",
    "isHead": false
   },
   {
    "name": "feature/stack-top",
    "full": "refs/heads/feature/stack-top",
-   "hash": "7700b1622cdf920dd9419313db0cacc2cbbc7bcd",
+   "hash": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
    "kind": "head",
    "isHead": false
   },
@@ -44,9 +44,9 @@
  ],
  "commits": [
   {
-   "hash": "7700b1622cdf920dd9419313db0cacc2cbbc7bcd",
+   "hash": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
    "parents": [
-    "4d73838a284213ec8a91ac3f0c767a9b69cb434c"
+    "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b"
    ],
    "author": "Test",
    "authorEmail": "test@example.com",
@@ -67,7 +67,7 @@
    }
   },
   {
-   "hash": "4d73838a284213ec8a91ac3f0c767a9b69cb434c",
+   "hash": "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b",
    "parents": [
     "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41"
    ],
@@ -482,57 +482,6 @@
    },
    "reviewable": false
   },
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c": {
-   "hashes": [
-    "4d73838a284213ec8a91ac3f0c767a9b69cb434c"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "src/base.ts",
-     "type": "added",
-     "additions": 1,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "bodies": {},
-   "reviewable": false
-  },
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c,7700b1622cdf920dd9419313db0cacc2cbbc7bcd": {
-   "hashes": [
-    "7700b1622cdf920dd9419313db0cacc2cbbc7bcd",
-    "4d73838a284213ec8a91ac3f0c767a9b69cb434c"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "src/base.ts",
-     "type": "added",
-     "additions": 1,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    },
-    {
-     "path": "src/top.ts",
-     "type": "added",
-     "additions": 2,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "bodies": {},
-   "reviewable": false
-  },
   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c": {
    "hashes": [
     "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c"
@@ -690,6 +639,87 @@
    "bodies": {},
    "reviewable": false
   },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b": {
+   "hashes": [
+    "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b"
+   ],
+   "merges": [],
+   "files": [
+    {
+     "path": "assets/icon.png",
+     "type": "added",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/base.ts",
+     "type": "added",
+     "additions": 1,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "bodies": {},
+   "reviewable": false
+  },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19": {
+   "hashes": [
+    "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+    "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b"
+   ],
+   "merges": [],
+   "files": [
+    {
+     "path": "assets/badge.png",
+     "type": "added",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "assets/icon.png",
+     "type": "added",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 2,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/base.ts",
+     "type": "added",
+     "additions": 1,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/top.ts",
+     "type": "added",
+     "additions": 2,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "bodies": {},
+   "reviewable": false
+  },
   "6d29c096a2b08ead328b4d5cab2e230df301f777": {
    "hashes": [
     "6d29c096a2b08ead328b4d5cab2e230df301f777"
@@ -734,26 +764,6 @@
      "deletions": 1,
      "binary": false,
      "touchCount": 2,
-     "review": "",
-     "composable": true
-    }
-   ],
-   "bodies": {},
-   "reviewable": false
-  },
-  "7700b1622cdf920dd9419313db0cacc2cbbc7bcd": {
-   "hashes": [
-    "7700b1622cdf920dd9419313db0cacc2cbbc7bcd"
-   ],
-   "merges": [],
-   "files": [
-    {
-     "path": "src/top.ts",
-     "type": "added",
-     "additions": 2,
-     "deletions": 0,
-     "binary": false,
-     "touchCount": 1,
      "review": "",
      "composable": true
     }
@@ -843,6 +853,46 @@
      "path": "src/login.ts",
      "type": "added",
      "additions": 3,
+     "deletions": 0,
+     "binary": false,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    }
+   ],
+   "bodies": {},
+   "reviewable": false
+  },
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19": {
+   "hashes": [
+    "ba0a7ce954f3067bf8e760a3993134a01d0b4f19"
+   ],
+   "merges": [],
+   "files": [
+    {
+     "path": "assets/badge.png",
+     "type": "added",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "assets/icon.png",
+     "type": "modified",
+     "additions": 0,
+     "deletions": 0,
+     "binary": true,
+     "touchCount": 1,
+     "review": "",
+     "composable": true
+    },
+    {
+     "path": "src/top.ts",
+     "type": "added",
+     "additions": 2,
      "deletions": 0,
      "binary": false,
      "touchCount": 1,
@@ -1341,93 +1391,6 @@
     }
    ]
   },
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c,7700b1622cdf920dd9419313db0cacc2cbbc7bcd|src/base.ts": {
-   "path": "src/base.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "4d73838a284213ec8a91ac3f0c767a9b69cb434c",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/base.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
-      "path": "src/base.ts",
-      "content": "export const base = 1\n",
-      "size": 22,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c,7700b1622cdf920dd9419313db0cacc2cbbc7bcd|src/top.ts": {
-   "path": "src/top.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "7700b1622cdf920dd9419313db0cacc2cbbc7bcd",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/top.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
-      "path": "src/top.ts",
-      "content": "import { base } from './base'\nexport const top = base + 1\n",
-      "size": 58,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c|src/base.ts": {
-   "path": "src/base.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "4d73838a284213ec8a91ac3f0c767a9b69cb434c",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/base.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
-      "path": "src/base.ts",
-      "content": "export const base = 1\n",
-      "size": 22,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|CHANGELOG.md": {
    "path": "CHANGELOG.md",
    "type": "added",
@@ -1770,6 +1733,180 @@
     }
    ]
   },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/badge.png": {
+   "path": "assets/badge.png",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/badge.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "9abcf6cf07fc14605a4853218db139a6f7fc9d13",
+      "path": "assets/badge.png",
+      "content": "",
+      "size": 174,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/icon.png": {
+   "path": "assets/icon.png",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/icon.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "28c334b255d899f1ce551d0a859bd8d9a5fdc95d",
+      "path": "assets/icon.png",
+      "content": "",
+      "size": 157,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|src/base.ts": {
+   "path": "src/base.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/base.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
+      "path": "src/base.ts",
+      "content": "export const base = 1\n",
+      "size": 22,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|src/top.ts": {
+   "path": "src/top.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/top.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+      "path": "src/top.ts",
+      "content": "import { base } from './base'\nexport const top = base + 1\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b|assets/icon.png": {
+   "path": "assets/icon.png",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/icon.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "2b8800d27409fe7c663c01d8e899825d3abae766",
+      "path": "assets/icon.png",
+      "content": "",
+      "size": 157,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b|src/base.ts": {
+   "path": "src/base.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/base.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "87c1df521ab8f0d468527193fd43b326384e0576",
+      "path": "src/base.ts",
+      "content": "export const base = 1\n",
+      "size": 22,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": {
    "path": "src/app.ts",
    "type": "modified",
@@ -1850,35 +1987,6 @@
       "path": "src/login.ts",
       "content": "export function login(user: string, password: string) {\n  if (!password) return false\n  return user.length \u003e 0\n}\n",
       "size": 113,
-      "missing": false,
-      "binary": false,
-      "tooLarge": false
-     }
-    }
-   ]
-  },
-  "7700b1622cdf920dd9419313db0cacc2cbbc7bcd|src/top.ts": {
-   "path": "src/top.ts",
-   "type": "added",
-   "stacked": false,
-   "pairs": [
-    {
-     "commit": "7700b1622cdf920dd9419313db0cacc2cbbc7bcd",
-     "type": "added",
-     "old": {
-      "blob": "0000000000000000000000000000000000000000",
-      "path": "src/top.ts",
-      "content": "",
-      "size": 0,
-      "missing": true,
-      "binary": false,
-      "tooLarge": false
-     },
-     "new": {
-      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
-      "path": "src/top.ts",
-      "content": "import { base } from './base'\nexport const top = base + 1\n",
-      "size": 58,
       "missing": false,
       "binary": false,
       "tooLarge": false
@@ -2060,6 +2168,93 @@
     }
    ]
   },
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/badge.png": {
+   "path": "assets/badge.png",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "assets/badge.png",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "9abcf6cf07fc14605a4853218db139a6f7fc9d13",
+      "path": "assets/badge.png",
+      "content": "",
+      "size": 174,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/icon.png": {
+   "path": "assets/icon.png",
+   "type": "modified",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+     "type": "modified",
+     "old": {
+      "blob": "2b8800d27409fe7c663c01d8e899825d3abae766",
+      "path": "assets/icon.png",
+      "content": "",
+      "size": 157,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "28c334b255d899f1ce551d0a859bd8d9a5fdc95d",
+      "path": "assets/icon.png",
+      "content": "",
+      "size": 157,
+      "missing": false,
+      "binary": true,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19|src/top.ts": {
+   "path": "src/top.ts",
+   "type": "added",
+   "stacked": false,
+   "pairs": [
+    {
+     "commit": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
+     "type": "added",
+     "old": {
+      "blob": "0000000000000000000000000000000000000000",
+      "path": "src/top.ts",
+      "content": "",
+      "size": 0,
+      "missing": true,
+      "binary": false,
+      "tooLarge": false
+     },
+     "new": {
+      "blob": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+      "path": "src/top.ts",
+      "content": "import { base } from './base'\nexport const top = base + 1\n",
+      "size": 58,
+      "missing": false,
+      "binary": false,
+      "tooLarge": false
+     }
+    }
+   ]
+  },
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": {
    "path": "README.md",
    "type": "added",
@@ -2212,10 +2407,10 @@
    "b179da9e48d66a81a6dda4f0d4fa01301ab54156"
   ],
   "refs/heads/feature/stack-base": [
-   "4d73838a284213ec8a91ac3f0c767a9b69cb434c"
+   "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b"
   ],
   "refs/heads/feature/stack-top": [
-   "7700b1622cdf920dd9419313db0cacc2cbbc7bcd"
+   "ba0a7ce954f3067bf8e760a3993134a01d0b4f19"
   ],
   "refs/heads/main": [
    "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41",
@@ -2233,14 +2428,14 @@
  },
  "names": {
   "15387b9d9c0583f350f1795ee77d1700a349dab6": "main",
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c": "feature/stack-base",
   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c": "main",
   "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41": "main",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b": "feature/stack-base",
   "6d29c096a2b08ead328b4d5cab2e230df301f777": "feature/login",
-  "7700b1622cdf920dd9419313db0cacc2cbbc7bcd": "feature/stack-top",
   "7adf6354c6e5a673359abb6ceeddcb25c5372862": "main",
   "a8f454dcdb317da01beadfa9251833c48c124af0": "main",
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156": "feature/login",
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19": "feature/stack-top",
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9": "feature/login",
   "cc9936d928a1ba5df0986ab53d2564166cbea84b": "main"
  },
@@ -2257,9 +2452,6 @@
   "15387b9d9c0583f350f1795ee77d1700a349dab6,5ef156163e1356cc9f82c1af7054cd1ed0ae2a41,cc9936d928a1ba5df0986ab53d2564166cbea84b|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
   "15387b9d9c0583f350f1795ee77d1700a349dab6|assets/logo.png": "0e9015bd56d51b6140be13370438930ef3b3b62f",
   "15387b9d9c0583f350f1795ee77d1700a349dab6|package.json": "350ec2d93b5927ce63915c03a6e1a2b4b6a10f88",
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c,7700b1622cdf920dd9419313db0cacc2cbbc7bcd|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c,7700b1622cdf920dd9419313db0cacc2cbbc7bcd|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
-  "4d73838a284213ec8a91ac3f0c767a9b69cb434c|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
   "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c,7adf6354c6e5a673359abb6ceeddcb25c5372862,a8f454dcdb317da01beadfa9251833c48c124af0|assets/logo.png": "8474b64844e46f7725b7a0fa666c50112c28865f",
@@ -2271,16 +2463,24 @@
   "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
   "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41,c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
   "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41|README.md": "29f07e8f4629f8fbde80f4b9c6ff343d8cf5ea3d",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/badge.png": "9abcf6cf07fc14605a4853218db139a6f7fc9d13",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/icon.png": "28c334b255d899f1ce551d0a859bd8d9a5fdc95d",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b,ba0a7ce954f3067bf8e760a3993134a01d0b4f19|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b|assets/icon.png": "2b8800d27409fe7c663c01d8e899825d3abae766",
+  "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b|src/base.ts": "87c1df521ab8f0d468527193fd43b326384e0576",
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "6d29c096a2b08ead328b4d5cab2e230df301f777,b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
   "6d29c096a2b08ead328b4d5cab2e230df301f777|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
-  "7700b1622cdf920dd9419313db0cacc2cbbc7bcd|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
   "7adf6354c6e5a673359abb6ceeddcb25c5372862|CHANGELOG.md": "9d18a405a1bf4c001a80e003afcd0d8ceb3b6bfe",
   "7adf6354c6e5a673359abb6ceeddcb25c5372862|README.md": "b0f2079ab61c0de5c65e9d470de21d85d42cb2c2",
   "a8f454dcdb317da01beadfa9251833c48c124af0|src/login.ts": "2edcdd84d23755e19996ab7836e4274c249ed4af",
   "a8f454dcdb317da01beadfa9251833c48c124af0|src/main.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/app.ts": "aca630dc9a9b970eac0344a63c9b9f40fa40374e",
   "b179da9e48d66a81a6dda4f0d4fa01301ab54156|src/login.ts": "c6df7193098bc53415df8cef39031bcf446ae48e",
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/badge.png": "9abcf6cf07fc14605a4853218db139a6f7fc9d13",
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19|assets/icon.png": "28c334b255d899f1ce551d0a859bd8d9a5fdc95d",
+  "ba0a7ce954f3067bf8e760a3993134a01d0b4f19|src/top.ts": "0340dad71187a2d425e4f34f8def8c7042cfbfcc",
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|README.md": "92fc3cf5a9d84d02e920e17b17314c8978fff5ce",
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|package.json": "dc58d08696b063e6b492c5e35b2bc99dae99d302",
   "c5b4fb57b7c6b84b7ac0cb76a5afdd1aa9ec43d9|src/app.ts": "4770de86c735b89e69843e5be081e6e1e9bdf791",
@@ -2295,8 +2495,8 @@
   "docs: more usage": "5ef156163e1356cc9f82c1af7054cd1ed0ae2a41",
   "docs: usage section": "7adf6354c6e5a673359abb6ceeddcb25c5372862",
   "feat(LD-1): login helper and wire it into main": "b179da9e48d66a81a6dda4f0d4fa01301ab54156",
-  "feat(LD-3): base of the stack": "4d73838a284213ec8a91ac3f0c767a9b69cb434c",
-  "feat(LD-3): top of the stack": "7700b1622cdf920dd9419313db0cacc2cbbc7bcd",
+  "feat(LD-3): base of the stack": "5f0eb2b0edba86d3b5cf9170dd1a8926bd49b98b",
+  "feat(LD-3): top of the stack": "ba0a7ce954f3067bf8e760a3993134a01d0b4f19",
   "fix(LD-1): a login needs a password": "6d29c096a2b08ead328b4d5cab2e230df301f777",
   "refactor: app.ts becomes main.ts, logo lands": "4e79bf927bba59df8e4fe32b33b6d9cd385ca86c"
  }

@@ -344,6 +344,13 @@ body {
   max-width: 100%; max-height: 600px; object-fit: contain;
   background: repeating-conic-gradient(color-mix(in oklab, var(--color-base-content) 8%, transparent) 0 25%, transparent 0 50%) 0 0 / 16px 16px;
 }
+.image-open { display: flex; max-width: 100%; cursor: zoom-in; border-radius: 2px; }
+.image-open:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+/* The viewer sizes the images itself (ImagePair's scale). */
+.image-pair.fill { height: 100%; grid-template-rows: minmax(0, 1fr); }
+.image-pair.fill .image-frame { flex: 1 1 0; min-height: 0; overflow: hidden; }
+.image-pair.fill .image-frame img { max-width: none; max-height: none; }
+.image-frame img.pixelated { image-rendering: pixelated; }
 .image-side figcaption { padding: 0 16px 10px; text-align: center; font-size: 11px; color: color-mix(in oklab, var(--color-base-content) 55%, transparent); font-variant-numeric: tabular-nums; }
 
 /* Panels relayout independently while the window resizes. */
