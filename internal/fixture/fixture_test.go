@@ -84,7 +84,7 @@ func script(t *testing.T) *gittest.Repo {
 
 	r.Write("assets/logo.png", disc(128, 96, color.NRGBA{0x63, 0xe6, 0xbe, 0xff}))
 	r.Write("package.json", "{\n  \"name\": \"demo\",\n  \"version\": \"1.1.0\",\n  \"dependencies\": {\n    \"left-pad\": \"^1.3.0\"\n  }\n}\n")
-	r.Commit("chore(LD-2): depend on left-pad, as one does")
+	r.Commit("chore(LD-2): depend on left-pad, as one does\n\n- eleven lines of padding, now somebody else's eleven lines\n- pinned to ^1.3.0, the one that was never unpublished")
 	r.Remove("assets/logo.png")
 	r.Remove("CHANGELOG.md")
 	r.Commit("chore: logo was a mistake")

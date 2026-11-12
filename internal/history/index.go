@@ -39,6 +39,17 @@ func (ix *Index) Parents(hash string) ([]string, bool) {
 	return ix.commits[p].Parents, true
 }
 
+// Body is the commit message below the subject.
+func (ix *Index) Body(hash string) (string, bool) {
+	ix.mu.RLock()
+	defer ix.mu.RUnlock()
+	p, ok := ix.pos[hash]
+	if !ok {
+		return "", false
+	}
+	return ix.commits[p].Body, true
+}
+
 // Each calls fn for every commit in order until fn returns false.
 func (ix *Index) Each(fn func(i int, c *Commit) bool) {
 	ix.mu.RLock()
