@@ -93,9 +93,12 @@ func script(t *testing.T) *gittest.Repo {
 
 	r.Branch("feature/stack-base")
 	r.Write("src/base.ts", "export const base = 1\n")
+	r.Write("assets/icon.png", disc(24, 24, color.NRGBA{0x63, 0xe6, 0xbe, 0xff}))
 	r.Commit("feat(LD-3): base of the stack")
 	r.Branch("feature/stack-top")
 	r.Write("src/top.ts", "import { base } from './base'\nexport const top = base + 1\n")
+	r.Write("assets/icon.png", disc(24, 24, color.NRGBA{0x74, 0xc0, 0xfc, 0xff}))
+	r.Write("assets/badge.png", disc(40, 24, color.NRGBA{0xff, 0xa9, 0x4d, 0xff}))
 	r.Commit("feat(LD-3): top of the stack")
 	r.Checkout("main")
 	return r

@@ -3,14 +3,17 @@
   import ChevronsUpDown from '@lucide/svelte/icons/chevrons-up-down'
   import { tick, untrack } from 'svelte'
   import { ApiError, api } from '../../lib/api'
+  import { isImage } from '../../lib/image'
   import { plural } from '../../lib/format'
   import type { DiffResult } from '../../lib/types'
   import { files } from '../../state/files.svelte'
   import { find } from '../../state/find.svelte'
   import { hint } from '../../state/hint.svelte'
   import { repo } from '../../state/repo.svelte'
-  import { selection } from '../../state/selection.svelte'
+  import { selection, setFile } from '../../state/selection.svelte'
   import FindBar from './FindBar.svelte'
+  import ImageViewer from './ImageViewer.svelte'
+  import { setImageView } from './imageView'
   import ReviewEntry from './ReviewEntry.svelte'
 
   // Every changed file, one collapsible entry each, in the files panel's order.
@@ -67,6 +70,16 @@
     }
   }
 
+  // The enlarged images: every image file of the selection, one after the other.
+  let viewing = $state<string | null>(null)
+  const images = $derived(entries.filter((f) => isImage(f.path)).map((f) => f.path))
+  setImageView({ enlarge: (path) => (viewing = path) })
+  // Closing leaves the review at the image looked at last.
+  const closeViewer = (last: string) => {
+    if (last !== viewing) setFile(last)
+    viewing = null
+  }
+
   const toggle = (path: string) => {
     const n = new Set(collapsed)
     n.has(path) ? n.delete(path) : n.add(path)
@@ -99,4 +112,5 @@
       />
     {/each}
   </div>
+  {#if viewing}<ImageViewer paths={images} start={viewing} {results} {errors} {want} onclose={closeViewer} />{/if}
 </div>

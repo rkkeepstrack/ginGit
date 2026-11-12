@@ -33,6 +33,9 @@ function openRecent() {
 
 /** One implementation behind the native menu, the keyboard and the buttons. */
 export function runAction(action: Action, target: HTMLElement | null = document.activeElement as HTMLElement | null) {
+  // An open dialog keeps the keys: Esc closes it, the rest waits until it's gone.
+  const dialog = document.querySelector<HTMLDialogElement>('dialog[open]')
+  if (dialog) { if (action === 'escape') dialog.close(); return }
   switch (action) {
     case 'open': void open(); break
     case 'openRecent': openRecent(); break

@@ -325,7 +325,7 @@ test('marking a file as reviewed folds it, and a later change turns the mark sta
   // the unmerged stack: both of its commits
   await row(page, 'feat(LD-3): top of the stack').click()
   await row(page, 'feat(LD-3): base of the stack').click({ modifiers: ['ControlOrMeta'] })
-  await expect(page.locator('#review .entry-head')).toHaveCount(2)
+  await expect(page.locator('#review .entry-head')).toHaveCount(4)
   // base.ts was reviewed at an older version: stale, open, with an All / New toggle
   await expect(page.locator('#review .entry-head.stale')).toHaveCount(1)
   await expect(page.locator('#review .entry-head.stale')).toContainText('base.ts')
@@ -334,7 +334,7 @@ test('marking a file as reviewed folds it, and a later change turns the mark sta
   await page.locator('#review .entry-head', { hasText: 'top.ts' }).locator('.review').click()
   await expect(page.locator('#review .entry-head.reviewed')).toHaveCount(1)
   await expect(page.locator('#review .entry-head.reviewed')).not.toHaveClass(/open/)
-  await expect(page.locator('#review')).toContainText('1 of 2 reviewed')
+  await expect(page.locator('#review')).toContainText('1 of 4 reviewed')
   await expect(page.locator('#files .review-reviewed')).toHaveCount(1)
   await expect(ready(page)).toHaveCount(1)
   await shoot(page, 'reviewed.png')
@@ -377,4 +377,35 @@ test('the recent repositories over the full-width history', async ({ page }) => 
   await page.keyboard.press('ControlOrMeta+Shift+O')
   await expect(page.locator('#repo-menu input')).toBeFocused()
   await shoot(page, 'recent.png')
+})
+
+test('a click enlarges an image, the arrows step through all of them, esc closes', async ({ page }) => {
+  await installBridge(page)
+  await loaded(page)
+  await row(page, 'feat(LD-3): top of the stack').click()
+  const viewer = page.locator('#image-viewer')
+  await page.locator('.entry', { hasText: 'icon.png' }).locator('.image-open').first().click()
+  await expect(viewer).toBeVisible()
+  await expect(viewer.locator('.panel-head')).toContainText('2 / 2')
+  await expect(viewer.locator('.panel-head')).toContainText('assets/icon.png')
+  // 24 × 24 before and after, enlarged by a whole factor, pixel-sharp
+  await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('#image-viewer img')].every((i) => i.complete && i.naturalWidth > 0))
+  await expect(viewer.locator('img.pixelated')).toHaveCount(2)
+  await shoot(page, 'viewer.png')
+  await page.keyboard.press('ArrowLeft')
+  await expect(viewer.locator('.panel-head')).toContainText('1 / 2')
+  await expect(viewer.locator('.panel-head')).toContainText('assets/badge.png')
+  await page.keyboard.press('ArrowLeft')
+  await expect(viewer.locator('.panel-head')).toContainText('1 / 2')
+  // esc closes it and nothing else: the review stays, now at the image seen last
+  await page.keyboard.press('Escape')
+  await expect(viewer).toHaveCount(0)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
+  await expect(page.locator('.entry.current .entry-head')).toContainText('badge.png')
+  // in the built app the native menu catches Esc before the page sees it
+  await page.locator('.entry', { hasText: 'icon.png' }).locator('.image-open').first().click()
+  await expect(viewer).toBeVisible()
+  await page.evaluate(() => (window as unknown as { runtime: { EventsEmit: (n: string, d: string) => void } }).runtime.EventsEmit('menu', 'escape'))
+  await expect(viewer).toHaveCount(0)
+  await expect(page.locator('.log-row.selected')).toHaveCount(1)
 })
