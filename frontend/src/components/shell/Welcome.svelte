@@ -2,10 +2,14 @@
   import FolderOpen from '@lucide/svelte/icons/folder-open'
   import { abbreviatePath } from '../../lib/format'
   import { menuKeys } from '../../lib/menuKeys'
-  import { open, repo } from '../../state/repo.svelte'
+  import { findRecent, open, repo } from '../../state/repo.svelte'
   import Logo from './Logo.svelte'
   import Notice from './Notice.svelte'
+  import RecentSearch from './RecentSearch.svelte'
   import TitleBar from './TitleBar.svelte'
+
+  let query = $state('')
+  const recent = $derived(findRecent(query))
 </script>
 
 <div class="h-full flex flex-col">
@@ -26,8 +30,8 @@
       </button>
       {#if repo.recent.length > 0}
         <ul class="menu menu-sm p-0 mt-2 w-full" id="welcome-recent" use:menuKeys>
-          <li class="menu-title text-[10px] text-center">Recent</li>
-          {#each repo.recent as r (r.path)}
+          <RecentSearch bind:query onenter={() => { if (recent[0]) void open(recent[0].path) }} />
+          {#each recent as r (r.path)}
             <li>
               <button onclick={() => void open(r.path)} title={r.path} class="flex flex-col items-center gap-0 py-1 text-center">
                 <span class="font-medium">{r.name}</span>
@@ -35,6 +39,7 @@
               </button>
             </li>
           {/each}
+          {#if recent.length === 0}<li class="menu-disabled"><span class="justify-center text-[11.5px]">No match</span></li>{/if}
         </ul>
       {/if}
     </div>

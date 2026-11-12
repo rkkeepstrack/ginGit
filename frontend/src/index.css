@@ -356,7 +356,7 @@ body {
 .brand { color: var(--brand); }
 /* While the keyboard walks a menu, the entry under a resting pointer doesn't
    light up too; moving the mouse moves the focus with it (lib/menuKeys.ts). */
-.menu:has(li > button:focus-visible) li > button:hover:not(:focus-visible) { background-color: transparent; }
+.menu:has(li > button:focus-visible, input:focus) li > button:hover:not(:focus-visible) { background-color: transparent; }
 /* daisyUI focuses inputs with a border and an offset outline; one ring is plenty. */
 .input:focus-within, .input:focus { outline: none; border-color: var(--brand); box-shadow: none; }
 

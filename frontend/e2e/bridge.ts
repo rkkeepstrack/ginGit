@@ -31,7 +31,10 @@ export async function installBridge(page: Page, opts: BridgeOptions = {}) {
       TitleBarCenter: async () => 0,
       OpenRepository: async (path: string) => (path === fx.repo.path ? fx.repo : fail(`not_a_repository: ${path} is not a git repository`)),
       OpenRepositoryDialog: async () => fx.repo,
-      RecentRepositories: async () => [{ path: fx.repo.path, name: fx.repo.name, lastOpen: '2026-01-01T00:00:00Z' }],
+      RecentRepositories: async () => [
+        { path: fx.repo.path, name: fx.repo.name, lastOpen: '2026-01-01T00:00:00Z' },
+        { path: '/home/ada/elsewhere', name: 'elsewhere', lastOpen: '2025-12-31T00:00:00Z' },
+      ],
       ForgetRepository: async () => {},
       Refs: async (root: string) => (repoOpen(root) ? fx.refs : fail('object_not_found: not open')),
       LoadHistory: async (root: string, id: number) => {

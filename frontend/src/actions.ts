@@ -2,7 +2,7 @@ import { tick } from 'svelte'
 import { closeDropdown, focus, focusSelected } from './lib/dom'
 import { stepFile } from './state/changes.svelte'
 import { closeFind, find } from './state/find.svelte'
-import { open, refresh, repo } from './state/repo.svelte'
+import { open, refresh } from './state/repo.svelte'
 import { setText } from './state/search.svelte'
 import { clear, selection } from './state/selection.svelte'
 import { ui } from './state/ui.svelte'
@@ -28,8 +28,7 @@ const anchors = {
  */
 function openRecent() {
   document.querySelector<HTMLElement>('#repo-menu > [role="button"]')?.focus()
-  const entries = [...document.querySelectorAll<HTMLElement>('#repo-menu li > button[title], #welcome-recent li > button[title]')]
-  ;(entries.find((b) => b.title !== repo.info?.path) ?? entries[0])?.focus()
+  document.querySelector<HTMLElement>('#repo-menu input, #welcome-recent input')?.focus()
 }
 
 /** One implementation behind the native menu, the keyboard and the buttons. */
